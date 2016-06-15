@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<style>
+body {
+	background-color: lightblue;
+}
+</style>
+<script type="text/javascript">
+window.onload = function () {
+	var userDetails;
+   (function (global) {
+	   userDetails=global.localStorage.getItem("mySharedData"); 
+	}(window));
+   alert("userDetails14 "+userDetails);
+    var source = "http://"+ userDetails +"@localhost:5601/app/kibana#/dashboard/google_dashboard";
+    //var source = "http://"+ userDetails +"@localhost:5601";
+    document.getElementById("myFrame").src = source;
+}
+</script>
+</head>
+<body>
+<h1 align="center">This is dashboard resources page.</h1>
+ 
+<!-- <iframe id="myFrame" width="600" height="300"></iframe> -->
+<iframe id="myFrame" width="1000" height="500"></iframe>
+</body>
+</html>

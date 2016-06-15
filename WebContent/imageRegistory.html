@@ -1,0 +1,139 @@
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content" style="width: 90%;height: 90%"> 
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head"> 
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>Service Configuration Wizard </h1>
+        </div>
+        <!-- END PAGE TITLE --> 
+        
+      </div>
+      <!-- END PAGE HEAD-->
+      <hr>
+      
+      <!-- Progress Bar -->
+      
+      <div id="progress-bar">
+        <div  class="step">
+          <div class="circle" >1</div>
+          <div class="title">Service</div>
+        </div>
+        <div  class="stepcurrent">
+          <div class="circle">2</div>
+          <div class="title">Image Registory</div>
+        </div>
+        <div  class="stepinactive">
+          <div class="circle">3</div>
+          <div class="title">Run Settings</div>
+        </div>
+        <div  class="stepinactive">
+          <div class="circle">4</div>
+          <div class="title">Networking Policy</div>
+        </div>
+         <div  class="stepinactive">
+          <div class="circle">5</div>
+          <div class="title">Health Check Routes</div>
+        </div>
+        
+         <div  class="stepinactive">
+          <div class="circle">6</div>
+          <div class="title">Volumes</div>
+        </div>   <div  class="stepinactive">
+          <div class="circle">7</div>
+          <div class="title">Subnet </div>
+        </div>
+      </div>
+      
+      <!-- End Progress Bar --> 
+      
+      <!-- BEGIN PAGE BASE CONTENT -->
+      <div class="row">
+        <div class="col-md-12">
+               <h1>Step : Image Registory</h1>
+       
+          <div id="spacer"></div>
+         
+          <div class="col-md-2 col-sm-3 col-xs-3">
+            <ul class="nav nav-tabs tabs-left">
+              <li > <a  data-toggle="tab"> Service </a> </li>
+              <li class="active" > <a href="#" data-toggle="tab">  Image Registory </a> </li>
+              <li> <a href="#" data-toggle="tab"> Run Settings </a> </li>
+              <li> <a href="#" data-toggle="tab"> Networking Policy </a> </li>
+              <li> <a href="#" data-toggle="tab"> Health Check Routes </a> </li>
+              <li > <a href="#" data-toggle="tab"> Volumes </a> </li>
+              <li > <a href="#" data-toggle="tab"> Subnet </a> </li>
+            </ul>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-6"> 
+          
+          
+            <!-- TAB CONTENT -->
+                <form action="#" id="step-1" class="form-horizontal">
+                  <div class="form-body">
+                    <div class="form-group">
+                      <label class="control-label col-md-4">Image Registry <span class="required"> * </span> </label>
+                      <div class="col-md-6">
+                       			<select	class="form-control ng-pristine ng-valid ng-touched" id="imageRegistry"  name="imageRegistry" data-ng-init="selectImageRegistry()"
+                       			 	  data-ng-model="field.imageRegistry" 
+                       			 	data-ng-options="choice.name as choice.name  for choice in imageregistry">
+									<option selected="selected" value="?"></option>
+								</select>
+								<span class="help-block"> Enter Image Registry</span> </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-md-4">Image Repository <span class="required"> * </span> </label>
+                      <div class="col-md-6">
+                        <input type="text" id="imageRepository" name="imageRepository" data-ng-model="field.imageRepository"  class="form-control"  data-ng-blur="selectSummary(field)"/>
+                        <span class="help-block"> Enter Image Repository</span> </div>
+                    </div>
+                     
+                    <div class="form-group">
+                      <label class="control-label col-md-4">Tag <span class="required"> * </span> </label>
+                      <div class="col-md-6">
+								<select class="form-control ng-pristine ng-valid ng-touched"
+									id="tag" data-ng-model="field.tag"
+									data-ng-options="choice.name as choice.name  for choice in reponames"><option
+										selected="selected" value="?"></option>
+								</select> 
+						 
+                    </div>
+                  </div>
+                  
+                  <div class="form-group" data-ng-show="isImg">
+                      <div class="col-md-6">
+								<img src="smallload.gif">fetching from
+									{{field.imageRegistry}}
+						 
+                    </div>
+                  </div>
+                  
+                   
+                </form>
+            
+            <br>
+            Service Wizards Data :{{field}}
+            <!-- END TAB CONTENT --> 
+            
+          </div>
+            </div>
+          <div class="col-md-12">
+            <hr>
+            <div id="spacer"></div>
+            <a href="#" class="btn grey-salsa btn-outline pull-left">Cancel</a>
+            
+          <a ui-sref="form.run" class="btn green pull-right"> Continue ></a>
+                    <a ui-sref="form.run" class="btn green pull-right"> Skip </a>
+          
+                                <a ui-sref="form.service" class="btn green pull-right btnspacer" > < back </a>
+          
+           <div id="spacer"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- END PAGE BASE CONTENT --> 
+    </div>
+    <!-- END CONTENT BODY --> 
+
+  <!-- END CONTENT --> 

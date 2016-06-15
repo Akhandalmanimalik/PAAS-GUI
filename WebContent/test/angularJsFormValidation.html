@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script  src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script  src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<link href="bootstrap-combined.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<form name="form" action="ss" ng-app>
+<div class="control-group" ng-class="{true: 'error'}[submitted && form.email.$invalid]">
+        <label class="control-label" for="email">Your email address</label>
+        <div class="controls">
+            <input type="email" name="email" ng-model="email" required /><br>
+            <span class="help-inline" ng-show="submitted && form.email.$error.required">Required</span>
+            <span class="help-inline" ng-show="submitted && form.email.$error.email">Invalid email</span>
+        </div>
+        
+        
+    </div>
+   <label class="control-label" for="email">password</label>
+        <div class="controls">
+            <input type="password" name="password" ng-model="password" required /><br>
+            <span class="help-inline" ng-show="submitted && form.password.$error.required">Required</span>
+             
+        </div>
+    <button type="submit" class="btn btn-primary btn-large" ng-click="submitted=true">Submit</button>
+</form>
+</body>
+</html>
+
+
+

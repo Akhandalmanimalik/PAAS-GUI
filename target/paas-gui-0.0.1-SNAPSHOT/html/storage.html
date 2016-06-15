@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="StorageApp">
+<head>
+<meta charset="utf-8">
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Nas Storage</title>
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
+
+<script src="../js/storage/storage.js"
+	type="text/javascript"></script>
+	<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link rel="stylesheet" href="../css/table/table.css">
+
+
+	
+</head>
+
+<body >
+	<div   ng-controller="StorageCtrl"
+		 ng-init="selectServices();selectStorageList()" >
+
+		<div class="container">
+
+			<div class="page-header" align="center">
+				<h1>Nas Storage</h1>
+			</div>
+
+			<button ng-click="toggleModal()" class="btn btn-primary">Add
+				Storage</button>
+
+			<modal title="Add" visible="showModal">
+
+			<form role="form" onsubmit="return closeSelf()">
+
+				<div class="container tabs-wrap">
+
+
+
+
+					<ul class="nav nav-tabs col-xs-9" role="tablist">
+
+						<li role="presentation" class="active">
+						<a href="#Service"
+							aria-controls="Service" role="tab" data-toggle="tab"
+							aria-expanded="true">Service </a></li>
+							
+						<li><a href="#services" aria-controls="services" role="tab"
+							data-toggle="tab" aria-expanded="false">Volume</a></li>
+							
+						
+						
+						
+						
+
+						
+
+					</ul>
+
+
+
+					<div class="tab-content">
+						<div class="tab-pane active col-xs-12" id="Service">
+							<form class="form-horizontal" role="form">
+
+								</br>
+
+								<div class="form-group">
+										<label for="version" class="control-label col-sm-2">Service Name</label>
+										<div class="col-sm-6">
+											<select class="form-control" id="ACL"
+												ng-model="field.serviceName" name="serviceName"
+												ng-change="selectappfortag(field.serviceName)"
+												ng-options="group.serviceName as group.serviceName for group in  services">
+
+											</select>
+										</div>
+										
+									</div>
+
+								
+								</br> </br>
+								
+								
+								<div class="form-group">
+										<label for="path" class="control-label col-sm-2">Tags</label>
+										<div class="col-sm-6">
+										
+											<input type="text" class="form-control" ng-model="field.tag"
+												>
+										</div>
+									</div>
+								<br /> <br /> <br />
+								<div class="modal-footer"
+									style="background: #ccefff; width: 45%">
+									<div class="bootstrap-dialog-footer">
+										<div class="bootstrap-dialog-footer-buttons">
+											<button type="button"
+												class="btn btn-danger btn-nirmata col-xs-2"
+												data-dismiss="modal">Cancel</button>
+											<a class="btn btn-primary continue">Next</a>
+											<button class="btn btn-primary btn-nirmata"
+												disabled="disabled">Finish</button>
+										</div>
+									</div>
+								</div>
+
+							</form>
+						</div>
+
+
+						<!-- end of 1st service  -->
+
+
+						<div role="tabpanel" class="tab-pane col-xs-12" id="services">
+							<form role="form">
+
+								<br />
+
+
+								<div class="form-group">
+									<label for="applicantName" class="control-label col-sm-2">Volume
+										Size</label>
+									<div class="col-sm-3">
+										<input type="text" class="form-control" id="volumeSize"
+											placeholder="Volume"
+											ng-model="field.volumeSize">
+									</div>
+
+								</div>
+
+
+								</br>
+								</br>
+
+
+
+								
+								
+
+								
+
+
+
+								<br /> <br /> <br /> <br /> <br /> <br /> <br />
+								<div class="modal-footer"
+									style="background: #ccefff; width: 45%">
+									<div class="bootstrap-dialog-footer">
+										<div class="bootstrap-dialog-footer-buttons">
+											<button type="button"
+												class="btn btn-danger btn-nirmata col-xs-2"
+												data-dismiss="modal">Cancel</button>
+											<a class="btn btn-primary back">Previous</a> 
+											<button class="btn btn-success btn-nirmata" ng-click="storage()"
+												data-dismiss="modal">Finish</button>
+										</div>
+									</div>
+								</div>
+
+							</form>
+						</div>
+						
+
+
+						
+
+						
+						
+						
+						
+						
+						
+						
+
+
+					</div>
+				</div>
+
+</form>
+</modal>
+				
+
+		 <hr />
+		 
+		 <div class="container">
+				<table border="1" cellpadding="10">
+					<thead>
+						<tr>
+							
+							<th>Service</th>
+							<th>Tag</th>
+							<th>Volume</th>
+							
+
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="field12 in storageList">
+							<td>{{field12.serviceName}}</td>
+							<td>{{field12.tag}}</td>
+							<td>{{field12.volumeSize}}</td>
+							
+							
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		 
+<!-- <accordion>
+
+
+    <accordion-group ng-repeat="group in services" heading="{{group.serviceName}}">
+   
+		<div  class="panel-body">
+			<div class="col-md-12">
+				<div style="padding-bottom: 20px" class="row">
+					<div class="pull-right">
+						<button data-id="ecbb02fa-29e6-4663-821f-d7cd5d698c8e"
+							data-action="deleteService" class="btn btn-danger btn-small" ng-click="deleteServiceByName(group.serviceName)">
+							<i class="fa fa-times"> Delete Service</i>
+						</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<div>
+							<legend class="legend legend-info">
+								Service
+								<div class="pull-right">
+									<button class="btn btn-primary btn-xs" type="button"
+										data-action="editService"
+										data-id="ecbb02fa-29e6-4663-821f-d7cd5d698c8e">
+										<span class="glyphicon glyphicon-edit"></span>
+									</button>
+								</div>
+							</legend>
+							<div>
+								<form data-fieldsets="" onsubmit="return false" role="form"
+									class="form-horizontal">
+									<fieldset data-fields="">
+										<div style="margin-bottom: 0px"
+											class="form-group field-containerType">
+											<label for="containerType"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Type:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="containerType" class="" name="containerType">{{group.type}}</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-dependsOn">
+											<label for="dependsOn"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Depends
+													On:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="dependsOn" class="" name="dependsOn"></span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-imageRepository">
+											<label for="imageRepository"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Image
+													Repository:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="imageRepository" class="" name="imageRepository">{{group.imageRegistry}}</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px" class="form-group field-tag">
+											<label for="tag" style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Tag:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="tag" class="" name="tag">{{group.tag}}</span></span>
+											</div>
+										</div>
+									</fieldset>
+								</form>
+								<p class="text-danger text-right" id="form-errors"></p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div>
+							<legend class="legend legend-info">
+								Networking
+								<div class="pull-right">
+									<button class="btn btn-primary btn-xs" type="button"
+										data-action="editServiceNetworking"
+										data-id="fc56054d-7492-4c00-b95d-5f3e0b3ed0cb">
+										<span class="glyphicon glyphicon-edit"></span>
+									</button>
+								</div>
+							</legend>
+							<div>
+								<form data-fieldsets="" onsubmit="return false" role="form"
+									class="form-horizontal">
+									<fieldset data-fields="">
+										<div style="margin-bottom: 0px"
+											class="form-group field-enableServiceNetworking">
+											<label for="enableServiceNetworking"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Service
+													Networking:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="enableServiceNetworking" class=""
+													name="enableServiceNetworking">enabled</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px" class="form-group field-fqdn">
+											<label for="fqdn"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">FQDN:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="fqdn" class="" name="fqdn">passDemo.jbossFuse.local</span></span>
+											</div>
+										</div>
+									</fieldset>
+								</form>
+								<p class="text-danger text-right" id="form-errors"></p>
+							</div>
+							<span><h5>Service Ports</h5></span>
+							<hr style="margin-top: 0px;">
+							<div class="servicePortTable">
+								<table class="backgrid">
+									<thead>
+										<tr>
+											<th class="sortable renderable name ascending"><a>Name<b
+													class="sort-caret"></b></a></th>
+											<th class="sortable renderable type"><a>Port Type<b
+													class="sort-caret"></b></a></th>
+											<th class="sortable renderable hostPort"><a>Host
+													Port<b class="sort-caret"></b>
+											</a></th>
+											<th class="sortable renderable containerPort"><a>Container
+													Port<b class="sort-caret"></b>
+											</a></th>
+										</tr>
+									</thead>
+									<tbody>
+									 		<tr ng-repeat="scale1 in group.scales">
+											<td class="string-cell sortable renderable">{{scale1.portname}}</td>
+											<td class="string-cell sortable renderable">{{scale1.porttype}}</td>
+											<td class="string-cell sortable renderable">{{scale1.hostport}}</td>
+											<td class="string-cell sortable renderable">{{scale1.containerport}}</td>
+										</tr>
+										
+										
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="padding-top: 20px" class="row">
+					<div class="col-md-6">
+						<div>
+							<legend class="legend legend-info">
+								Run Settings
+								<div class="pull-right">
+									<button class="btn btn-primary btn-xs" type="button"
+										data-action="editServiceRunSettings"
+										data-id="fc56054d-7492-4c00-b95d-5f3e0b3ed0cb">
+										<span class="glyphicon glyphicon-edit"></span>
+									</button>
+								</div>
+							</legend>
+							<div>
+								<form data-fieldsets="" onsubmit="return false" role="form"
+									class="form-horizontal">
+									<fieldset data-fields="">
+										<div style="margin-bottom: 0px"
+											class="form-group field-runCommand">
+											<label for="runCommand"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Run
+													Command:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="runCommand" class="" name="runCommand">{{group.run}}</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-hostname">
+											<label for="hostname"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Hostname:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="hostname" class="" name="hostname">{{group.hostname}}</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-properties">
+											<label for="properties"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Environment
+													Variables:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="properties" class="" name="properties"></span></span>
+											</div>
+										</div>
+									</fieldset>
+								</form>
+								<p class="text-danger text-right" id="form-errors"></p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div>
+							<legend class="legend legend-info">
+								Scaling Policy
+								<div class="pull-right">
+								
+								
+									<button class="btn btn-primary btn-xs"  data-toggle="modal" data-target="#myModal{{group.serviceName}}" type="button" 
+										data-action="editGatewayRoutes"
+										data-id="ecbb02fa-29e6-4663-821f-d7cd5d698c8e">
+										<span class="glyphicon glyphicon-edit"></span>
+									</button>
+									
+									<div id="myModal{{group.serviceName}}" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    Modal content
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Scaling Policy</h4>
+      </div>
+      <div class="modal-body">
+      <span>Scaling Policy</span>
+       <input type="number" ng-model="scaling.instance">
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="scaling()" data-dismiss="modal">Submit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+								</div>
+							</legend>
+							<span><h5>Scaling Policy</h5></span>
+							<input type="number" value="{{scaling.instance}}" readonly="readonly">
+							<hr style="margin-top: 0px;">
+							<div class="gatewayRoutesTable">
+								<table class="backgrid">
+									<thead>
+										<tr>
+											<th class="sortable renderable type"><a>Type<b
+													class="sort-caret"></b></a></th>
+											<th class="sortable renderable endpoint"><a>Port<b
+													class="sort-caret"></b></a></th>
+											<th class="sortable renderable route"><a>Route<b
+													class="sort-caret"></b></a></th>
+											<th class="sortable renderable targetUrl"><a>Target
+													URL<b class="sort-caret"></b>
+											</a></th>
+											<th class="renderable stickySessions"><a>Sticky</a></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="link-cell sortable renderable">DNS Route</td>
+											<td class="link-cell sortable renderable">HTTP:8181</td>
+											<td class="string-cell sortable renderable">passDemo.jbossFuse.local</td>
+											<td class="string-cell sortable renderable">/</td>
+											<td class="boolean-cell renderable"><input
+												type="checkbox" tabindex="-1" checked="checked"
+												disabled="disabled"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="padding-top: 20px" class="row">
+					<div class="col-md-6">
+						<div>
+							<legend class="legend legend-info">
+								Health Check
+								<div class="pull-right">
+									<button class="btn btn-primary btn-xs" type="button"
+										data-action="editHealthCheck"
+										data-id="f0fb83e2-635b-4fb5-8f87-82eea299d54d">
+										<span class="glyphicon glyphicon-edit"></span>
+									</button>
+								</div>
+							</legend>
+							<div>
+								<form data-fieldsets="" onsubmit="return false" role="form"
+									class="form-horizontal">
+									<fieldset data-fields="">
+										<div style="margin-bottom: 0px" class="form-group field-type">
+											<label for="type"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Type:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="type" class="" name="type">TCP</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-endpoint">
+											<label for="endpoint"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Endpoint:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="endpoint" class="" name="endpoint">HTTP</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-startDelay">
+											<label for="startDelay"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Start
+													Delay (seconds):</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="startDelay" class="" name="startDelay" step="1"
+													max="300">30</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-checkInterval">
+											<label for="checkInterval"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Interval
+													(seconds):</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="checkInterval" class="" name="checkInterval" step="1"
+													min="1" max="300">60</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-checkTimeout">
+											<label for="checkTimeout"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Timeout
+													(seconds):</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="checkTimeout" class="" name="checkTimeout" step="1"
+													max="300">60</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-failureThreshold">
+											<label for="failureThreshold"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Failure
+													Threshold:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="failureThreshold" class="" name="failureThreshold"
+													step="1" min="1" max="10">3</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-successThreshold">
+											<label for="successThreshold"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Success
+													Threshold:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="successThreshold" class="" name="successThreshold"
+													step="1" min="1" max="10">1</span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px" class="form-group field-path">
+											<label for="path"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Path:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="path" class="" name="path">/</span></span>
+											</div>
+										</div>
+									</fieldset>
+								</form>
+								<p class="text-danger text-right" id="form-errors"></p>
+							</div>
+						</div>
+						
+						
+					</div>
+					<div class="col-md-6">
+						<div>
+							<legend class="legend legend-info">
+								Volumes
+								<div class="pull-right">
+									<button class="btn btn-primary btn-xs" type="button"
+										data-action="editServiceVolumes"
+										data-id="fc56054d-7492-4c00-b95d-5f3e0b3ed0cb">
+										<span class="glyphicon glyphicon-edit"></span>
+									</button>
+								</div>
+							</legend>
+							<div>
+								<form data-fieldsets="" onsubmit="return false" role="form"
+									class="form-horizontal">
+									<fieldset data-fields="">
+										<div style="margin-bottom: 0px"
+											class="form-group field-volumeMappings">
+											<label for="volumeMappings"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Volumes:</p></label>
+												
+												
+												  <div class="modal-dialog">
+
+  
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="volumeMappings" class="" name="volumeMappings"></span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-volumesFrom">
+											<label for="volumesFrom"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Volumes
+													From:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="volumesFrom" class="" name="volumesFrom"></span></span>
+											</div>
+										</div>
+									</fieldset>
+									  Modal content
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Scaling Policy</h4>
+      </div>
+      <div class="modal-body">
+      <span>Scaling Policy</span>
+       <input type="number" ng-model="scaling.instance">
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="scaling()" data-dismiss="modal">Submit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+
+  </div>
+								</form>
+								<p class="text-danger text-right" id="form-errors"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="padding-top: 20px" class="row">
+					<div class="col-md-6">
+						<div>
+							<legend class="legend legend-info">
+								Logging
+								<div class="pull-right">
+									<button class="btn btn-primary btn-xs" type="button"
+										data-action="editServiceLogSettings"
+										data-id="fc56054d-7492-4c00-b95d-5f3e0b3ed0cb">
+										<span class="glyphicon glyphicon-edit"></span>
+									</button>
+								</div>
+							</legend>
+							<div>
+								<form data-fieldsets="" onsubmit="return false" role="form"
+									class="form-horizontal">
+									<fieldset data-fields="">
+										<div style="margin-bottom: 0px"
+											class="form-group field-loggingType">
+											<label for="loggingType"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Type:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="loggingType" class="" name="loggingType"></span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px"
+											class="form-group field-loggingOptions">
+											<label for="loggingOptions"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Options:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="loggingOptions" class="" name="loggingOptions"></span></span>
+											</div>
+										</div>
+									</fieldset>
+								</form>
+								<p class="text-danger text-right" id="form-errors"></p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div>
+							<legend class="legend legend-info">
+								Advanced Settings
+								<div class="pull-right">
+									<button class="btn btn-primary btn-xs" type="button"
+										data-action="editAdvancedSettings"
+										data-id="fc56054d-7492-4c00-b95d-5f3e0b3ed0cb">
+										<span class="glyphicon glyphicon-edit"></span>
+									</button>
+								</div>
+							</legend>
+							<div>
+								<form data-fieldsets="" onsubmit="return false" role="form"
+									class="form-horizontal">
+									<fieldset data-fields="">
+										<div style="margin-bottom: 0px"
+											class="form-group field-isPrivileged">
+											<label for="isPrivileged"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">Privileged
+													Mode:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="isPrivileged" class="" name="isPrivileged"></span></span>
+											</div>
+										</div>
+										<div style="margin-bottom: 0px" class="form-group field-user">
+											<label for="user"
+												style="padding-top: 0px; padding-right: 0px"
+												class="col-sm-4 control-label"><p class="text-info">User:</p></label>
+											<div style="padding-top: 0px" class="col-sm-8">
+												<span style="word-wrap: break-word;" data-editor=""><span
+													id="user" class="" name="user"></span></span>
+											</div>
+										</div>
+									</fieldset>
+								</form>
+								<p class="text-danger text-right" id="form-errors"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		
+    </accordion-group>
+    
+  </accordion>
+		</div>
+  
+		</div> -->
+		
+
+
+		
+</body>
+</html>

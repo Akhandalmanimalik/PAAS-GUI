@@ -1,0 +1,102 @@
+package com.getusroi.paas.vo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Subnet {
+	private int id;
+	private String subnetName;
+	private String cidr;
+	private String environmentName;
+	private String vpcName;
+    private int tenantId;
+	private List<String> aclList =new ArrayList<String>();
+	
+	public Subnet() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Subnet(int id, String subnetName, String cidr,
+			String environmentName, String vpcName, int tenantId,
+			List<String> aclList) {
+		super();
+		this.id = id;
+		this.subnetName = subnetName;
+		this.cidr = cidr;
+		this.environmentName = environmentName;
+		this.vpcName = vpcName;
+		this.tenantId = tenantId;
+		this.aclList = aclList;
+	}
+
+	@Override
+	public String toString() {
+		return "Subnet [id=" + id + ", subnetName=" + subnetName + ", cidr="
+				+ cidr + ", environmentName=" + environmentName + ", vpcName="
+				+ vpcName + ", tenantId=" + tenantId + ", aclList=" + aclList
+				+ "]";
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getSubnetName() {
+		return subnetName;
+	}
+
+	public void setSubnetName(String subnetName) {
+		this.subnetName = subnetName;
+	}
+
+	public String getCidr() {
+		return cidr;
+	}
+
+	public void setCidr(String cidr) {
+		this.cidr = cidr;
+	}
+
+	public String getEnvironmentName() {
+		return environmentName;
+	}
+
+	public void setEnvironmentName(String environmentName) {
+		this.environmentName = environmentName;
+	}
+
+	public String getVpcName() {
+		return vpcName;
+	}
+
+	public void setVpcName(String vpcName) {
+		this.vpcName = vpcName;
+	}
+
+	public int getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(int tenantId) {
+		this.tenantId = tenantId;
+	}
+
+	public List<String> getAclList() {
+		return aclList;
+	}
+
+	public void setAclList(List<String> aclList) {
+		this.aclList = aclList;
+	}
+	
+	
+	
+	 
+}

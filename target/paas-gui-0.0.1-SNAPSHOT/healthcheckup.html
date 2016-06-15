@@ -1,0 +1,129 @@
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content" style="width: 90%;height: 90%"> 
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head"> 
+        <!-- BEGIN PAGE TITLE -->
+       <div class="page-title">
+          <h1>Service Configuration Wizard </h1>
+        </div>
+        <!-- END PAGE TITLE --> 
+        
+      </div>
+      <!-- END PAGE HEAD-->
+      <hr>
+      
+      <!-- Progress Bar -->
+      
+      <div id="progress-bar">
+        <div  class="step">
+          <div class="circle" >1</div>
+          <div class="title">Service</div>
+        </div>
+        <div  class="step">
+          <div class="circle">2</div>
+          <div class="title">Image Registory</div>
+        </div>
+        <div  class="step">
+          <div class="circle">3</div>
+          <div class="title">Run Settings</div>
+        </div>
+        <div  class="step">
+          <div class="circle">4</div>
+          <div class="title">Networking Policy</div>
+        </div>
+         <div  class="stepcurrent">
+          <div class="circle">5</div>
+          <div class="title">Health Check Routes</div>
+        </div>
+         <div  class="stepinactive">
+          <div class="circle">6</div>
+          <div class="title">Volumes</div>
+        </div>   <div  class="stepinactive">
+          <div class="circle">7</div>
+          <div class="title">Subnet </div>
+        </div>
+      </div>
+      
+      <!-- End Progress Bar --> 
+      
+      <!-- BEGIN PAGE BASE CONTENT -->
+      <div class="row">
+        <div class="col-md-12">
+              <h1>Step : Health Check Routes</h1>
+      
+          <div id="spacer"></div>
+         
+          <div class="col-md-2 col-sm-3 col-xs-3">
+            <ul class="nav nav-tabs tabs-left">
+              <li  > <a  data-toggle="tab"> Service </a> </li>
+              <li> <a  data-toggle="tab">  Image Registory </a> </li>
+              <li > <a  data-toggle="tab"> Run Settings </a> </li>
+              <li > <a  data-toggle="tab"> Networking Policy </a> </li>
+              <li class="active"> <a  data-toggle="tab"> Health Check Routes </a> </li>
+              <li > <a  data-toggle="tab"> Volumes </a> </li>
+                            <li > <a  data-toggle="tab"> Subnet </a> </li>
+              
+            </ul>
+          </div>
+                    <div class="col-md-7 col-sm-7 col-xs-7"> 
+          
+     
+              <form action="#" id="step-1" class="form-horizontal">
+                  <div class="form-body">
+                    <div class="form-group">
+                      <label class="control-label col-md-2"> Type Name </label>
+                      <div class="col-md-4">
+                        <select id="typeName" name="typeName" data-ng-model="field.typeName" aria-required="true" aria-describedby="select-error" class="form-control">
+                          <option value="1.0">Type 1</option>
+                          <option value="2.0">Type 2</option>
+                        </select>
+                        <span class="help-block"> Select Type</span> </div>
+                      <label class="control-label col-md-2"> Interval </label>
+                      <div class="col-md-4">
+                        <input type="text" id="envInterval"  name="envInterval" data-ng-model="field.envInterval" value="">
+                        <span class="help-block"> Seconds</span> </div>
+                    </div>
+                   
+                    <div class="form-group">
+                      <label class="control-label col-md-2"> Path </label>
+                      <div class="col-md-4">
+                        <input type="text" id="envPath" name="envPath" data-ng-model="field.envPath" class="form-control"/>
+                        <span class="help-block"> Enter Path </span> </div>
+                      <label class="control-label col-md-2"> Failure Threshold </label>
+                      <div class="col-md-4">
+                        <input type="text" id="envThreshold" name="envThreshold" data-ng-model="field.envThreshold" value="" >
+                        <span class="help-block"> Seconds</span> </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-md-2"> Ignore </label>
+                      <div class="col-md-4">
+                        <input type="text" id="envIgnore" name="envIgnore" data-ng-model="field.envIgnore"  value="">
+                        <span class="help-block"> Seconds</span> </div>
+                    </div>
+                  </div>
+                </form>
+                <br>
+            Service Wizards Data :{{field}}
+              </div>
+          <div class="col-md-12">
+            <hr>
+            <div id="spacer"></div>
+            <a href="#" class="btn grey-salsa btn-outline pull-left">Cancel</a>
+            
+            
+          <a ui-sref="form.volume" class="btn green pull-right"> Continue ></a>
+                    <a ui-sref="form.volume" class="btn green pull-right">Skip</a>
+          
+          <a ui-sref="form.network" class="btn green pull-right"> < Back  </a>
+          
+          
+           <div id="spacer"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- END PAGE BASE CONTENT --> 
+    </div>
+    <!-- END CONTENT BODY --> 
+
+  <!-- END CONTENT --> 

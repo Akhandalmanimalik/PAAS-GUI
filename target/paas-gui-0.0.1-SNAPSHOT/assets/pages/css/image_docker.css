@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+.w3-card {
+  
+  height: 250px;
+  margin: 1px;
+  margin-left: 100px;
+   margin-top: 100px;
+  padding: 106px;
+  display: inline-block
+  
+}
+.card-circle-green {
+    background: #2cda00 none repeat scroll 0 0;
+    box-shadow: 0 0 2px 0 #000, 0 0 2px #460 inset, 0 0 4px #a0fd0c;
+}
+.card-circle {
+    border: 1px solid #000;
+    border-radius: 50%;
+    display: inline-block;
+    font-size: inherit;
+    padding: 10px;
+}
+
+.card-content {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    margin: 1%;
+    padding: 20px !important;
+    position: relative;
+    transition: box-shadow 0.04s linear 0s, border-color 0.2s linear 0s;
+    width: 100%;
+}
+

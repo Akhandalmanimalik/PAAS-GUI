@@ -49,7 +49,6 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
     /*======================= To get all Subnet details with current user  =========================*/
     $scope.selectSubnetnew = function() {
     
-  	//var response = $http.get('/PAAS-GUI/rest/fetchData/selectVpc');
   	var response = $http.get('/paas-gui/rest/networkservice/getAllSubnet');
   	response.success(function(data){
   	

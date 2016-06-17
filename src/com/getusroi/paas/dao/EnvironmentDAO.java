@@ -39,6 +39,7 @@ public class EnvironmentDAO {
 	private static final String SELECT_APPLICATION_SUMMARY_BY_APPLICATION_NAME = "SELECT applicantName FROM appsummary";
 	private static final String SELECT_IMAGE_REPOSITORY_FROM_APPLICANT_NAME = "SELECT imageRepository FROM appsummary WHERE applicantName=?";
 	private static final String INSERT_ENVIRONMENTS_QUERY = "INSERT INTO envirnament VALUES(?,?,?,?,?,?)";
+	 private final String GET_ENVIRONMENT_NAME_USING_ID_AND_TENANTID="select environment_name from environments where id =? and tenant_id=?";
 	//private static final String SELECT_ADD_SERVICE_QUERY = "SELECT * FROM addService";
 	//private static final String READ_ENVIRONMENT_VARIABLE = "SELECT * FROM environment_variable WHERE serviceName =?";
 	//private static final String READ_ROUTE = "SELECT * FROM route WHERE serviceName =?";
@@ -416,6 +417,49 @@ public class EnvironmentDAO {
 		return envId;
 	} // end of selectImageRegesitoryFromSummary method
 	
-	 
+	public String getEnvironmentNameByEnvIdAndTenantId(int envid,int tenantId)
+			throws DataBaseOperationFailedException {
+		LOGGER.debug(".getAllVPCRegionName method of NetworkDAO");
+		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+		 
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		ResultSet result = null;
+		String empName=null;
+	
+		try {
+			connection = connectionFactory.getConnection("mysql");
+			stmt =(PreparedStatement)connection.prepareStatement(GET_ENVIRONMENT_NAME_USING_ID_AND_TENANTID);
+			stmt.setInt(1, envid);
+			stmt.setInt(2, tenantId);
+			result = stmt.executeQuery( );
+			if (result != null && result.next()) {
+				empName=result.getString("environment_name");
+			} else {
+				LOGGER.debug("No data available in vpc_region");
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Error in getting the vpc region names from db");
+			throw new DataBaseOperationFailedException(
+					"Unable to fetch vpc region names from db", e);
+		} catch (SQLException e) {
+			if (e.getErrorCode() == 1064) {
+				String message = "Error in getting the vpc region names because "
+						+ PAASErrorCodeExceptionHelper
+								.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if (e.getErrorCode() == 1146) {
+				String message = "Error in getting the vpc region names because: "
+						+ PAASErrorCodeExceptionHelper
+								.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException(
+						"Unable to fetch vpc region names from db", e);
+		} finally {
+			DataBaseHelper.dbCleanup(connection, stmt, result);
+		}
+		return empName;
+	}
 	
 }

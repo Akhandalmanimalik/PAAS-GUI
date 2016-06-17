@@ -61,7 +61,7 @@
 				 	
 				<tbody>
 				<tr data-ng-repeat="val in fields">
-					<td>{{val.aclName}}</td>
+					<td data-ng-click="setAclId(val.id)">{{val.aclName}}</td>
 					<td>{{val.description}}</td>
 					<td align="center"><a data-ng-click="deleteAcl(val.aclName)"
 									class="btn btn-danger"><i class="fa fa-remove"></a></td>

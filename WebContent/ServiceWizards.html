@@ -28,11 +28,17 @@
         <link href="assets/pages/css/layout.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/pages/css/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
         <link rel="shortcut icon" href="favicon.ico" />
+        <!-- JS -->
+    <!-- load angular, nganimate, and ui-router -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.min.js"></script>
+    <script src="app.js"></script>
+        </head>
     <!-- END HEAD -->
-
      <body data-ng-app="formApp">       
             <!-- views will be injected here -->
-		<div ui-view ></div>
+		<div ui-view></div>
 		
     </body>
 </html>

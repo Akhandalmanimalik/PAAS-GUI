@@ -32,8 +32,7 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
     }
   	};
   	
-  	           /*POPULATE DATA TO TABLE*/
-  
+  	  /*POPULATE DATA TO TABLE*/
   	 $scope.selectVpc = function() {
      	var response = $http.get('/paas-gui/rest/networkservice/getAllVPC');
      	response.success(function(data){

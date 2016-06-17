@@ -19,17 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
-import com.getusroi.paas.dao.EnvironmentDAO;
 import com.getusroi.paas.dao.NetworkDAO;
-import com.getusroi.paas.dao.SubnetDAO;
-import com.getusroi.paas.helper.PAASConstant;
-import com.getusroi.paas.helper.PAASGenericHelper;
-import com.getusroi.paas.helper.ScriptService;
 import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.PAASNetworkServiceException;
-import com.getusroi.paas.sdn.service.SDNInterface;
 import com.getusroi.paas.sdn.service.impl.SDNServiceImplException;
-import com.getusroi.paas.sdn.service.impl.SDNServiceWrapperImpl;
 import com.getusroi.paas.vo.ACL;
 import com.getusroi.paas.vo.Subnet;
 import com.getusroi.paas.vo.VPC;
@@ -157,11 +150,8 @@ public class PAASNetworkService {
 	 public String getAllSubnet(@Context HttpServletRequest request) throws DataBaseOperationFailedException{
 
 			LOGGER.debug(".getAllSubnet method of PAASNetworkService");
-
-		
 			NetworkDAO networkDAO = new NetworkDAO();
 			String subnetJsonString = null;
-			Subnet subnet = new Subnet();
 			try {
 				HttpSession session = request.getSession(true);
 				List<Subnet> subnetList = networkDAO.getAllSubnetByTenantId((int)session.getAttribute("id"));
@@ -171,7 +161,6 @@ public class PAASNetworkService {
 				subnetJsonString = gson.toJson(subnetList);
 			} catch (Exception e) {
 				e.printStackTrace();
-
 			}
 			return subnetJsonString;
 	 }//end of method getAllSubnet
@@ -210,8 +199,8 @@ public class PAASNetworkService {
 		 LOGGER.debug(".addACLRule method of PAASNetworkService");
 		 ObjectMapper mapper = new ObjectMapper();
 		 NetworkDAO networkDAO=new NetworkDAO();
-		 SDNInterface sdnService = new SDNServiceWrapperImpl();
-		 boolean flowFlag=false;
+		 /*SDNInterface sdnService = new SDNServiceWrapperImpl();
+		 boolean flowFlag=false;*/
 		 try {
 			ACL acl = mapper.readValue(aclData, ACL.class);			
 //			flowFlag = sdnService.installFlow(acl.getAclName(), acl.getSourceIp(), acl.getDestinationIp(),PAASConstant.ACL_PASS_ACTION_KEY);
@@ -245,9 +234,7 @@ public class PAASNetworkService {
 				throws DataBaseOperationFailedException {
 	 		LOGGER.debug(".deleteAclByName method of PAASNetworkService");
 	 		LOGGER.debug("Name is"+aclName);
-			
-			
-			ObjectMapper mapper = new ObjectMapper();
+			 
 			NetworkDAO networkDAO = new NetworkDAO();
 			RestServiceHelper restServiceHelper = new RestServiceHelper();
 			HttpSession session = req.getSession(true);

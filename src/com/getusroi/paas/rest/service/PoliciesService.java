@@ -21,15 +21,14 @@ import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.dao.PoliciesDAO;
-import com.getusroi.paas.dao.PoliciesDAO;
 import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.PoliciesServiceException;
+import com.getusroi.paas.vo.ContainerTypes;
 import com.getusroi.paas.vo.HostScalingPolicy;
 import com.getusroi.paas.vo.ResourceSelection;
 import com.getusroi.paas.vo.ScalingAndRecovery;
 import com.getusroi.paas.vo.ServiceAffinities;
 import com.google.gson.Gson;
-import com.getusroi.paas.vo.ContainerTypes;
 
 
 /**

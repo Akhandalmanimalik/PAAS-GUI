@@ -219,10 +219,11 @@ public class ImageRegistryDAO {
 	/**
 	 * This method is used to get  image registry from db by name
 	 * @param imageRegistryName : image registry name in String
+	 * @param tenant_id TODO
 	 * @return ImageRegistry : image registry from db based on name
 	 * @throws DataBaseOperationFailedException : unable to fetch image regsitry from db
 	 */
-	public Integer getImageRegistryIdByName(String imageRegistryName) throws DataBaseOperationFailedException{
+	public Integer getImageRegistryIdByName(String imageRegistryName, int tenant_id) throws DataBaseOperationFailedException{
 		logger.debug(".getImageRegistryIdByName method of ImageRegistryDAO");
 		
 		Connection connection=null;

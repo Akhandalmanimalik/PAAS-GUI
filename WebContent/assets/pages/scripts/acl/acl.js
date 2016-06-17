@@ -2,6 +2,7 @@ var myfirewall = angular.module('myAcl', []);
 
 myfirewall.controller('MainCtrl', function($scope,$http) {
 	$scope.field = {};
+	$scope.rule = {};
 	$scope.showModal = false;
 	$scope.toggleModal = function() {
 		$scope.showModal = !$scope.showModal;
@@ -39,13 +40,14 @@ myfirewall.controller('MainCtrl', function($scope,$http) {
     
     
     /*==================POPULATE DATA TO TABLE===================*/
-    
+   
  	 $scope.selectAcl = function() {
  		
     	var response = $http.get('/paas-gui/rest/networkservice/getAllACL');
     	response.success(function(data){
     		$scope.fields = data;
     		console.log($scope.fields);
+    		 
     		console.log("data given");
     	});
     	response.error(function(data, status, headers, config) {
@@ -98,7 +100,7 @@ $scope.regFirewallInbounds = function() {
 /*==================POPULATE DATA TO TABLE===================*/
 
 	 $scope.selectFirewallInbounds = function() {
-		 console.log("hiii");
+	console.log("hiii");
 	var response = $http.get('/PAAS-GUI/rest/firewallService/getAllInboundFirewall');
 	response.success(function(data){
 		$scope.fields1 = data;
@@ -123,9 +125,34 @@ $scope.deleteFirewallInbounds = function(data) {
 
 };
 
+/*To get specific ACL id for adding new Rule*/
+$scope.setAclId = function(aclIds) {
+	alert("aclIds check"+aclIds);
+	window.location.href = '/paas-gui/html/inoutbound_rule_interface.html?val=' + aclIds;
+ 	document.location.href = '/paas-gui/html/inoutbound_rule_interface.html';
+ 	
+ 	
+};
 
-
-
+/* To add rule */
+$scope.regRule = function($scope, $rootScope) {
+	alert("comming to regRule ");
+	 
+	   
+	  /*var res = $http.post('/paas-gui/rest/networkservice/addACLRule', userData);
+	  console.log(userData);
+	  res.success(function(data, status, headers, config) {
+		  alert(""+data);
+		// $location.path('/paas-gui/html/Acl.html');
+	    //document.location.href = '/paas-gui/html/Acl.html';
+	  });
+	  res.error(function(data, status, headers, config) {
+	    alert("failure message: " + JSON.stringify({
+	      data : data
+	    }));
+	  });*/
+	 
+	};
 
 
 

@@ -31,11 +31,10 @@ import com.getusroi.paas.vo.VPCRegion;
 public class NetworkDAO {
 	 static final Logger LOGGER = LoggerFactory.getLogger(SubnetDAO.class);
 	 private final String REGISTER_VPC_QUERY="insert into vpc(vpc_name,tenant_id,createdDTM,acl) values(?,?,NOW(),?)";
-	 private final String GET_VPCID_BY_VPCNAME_AND_TENANT_ID_QUERY="select vpc_id from vpc where vpc_name=? and tenant_id=?";
 	 private final String GET_ALL_VPC_QUERY="select * from vpc where tenant_id=?";
 	 private final String DELETE_VPC_BY_NAME_QUERY="delete from vpc where vpc_name=?";
 	 private final String UPDATE_VPC_BY_NAME_AND_VPCID_QUERY="update vpc set vpc_region=? , cidr=?, acl=? where vpcId=? AND vpc_name=?";
-	 private final String GET_VPC_NAME_USING_VPCID_TENANTID = "select vpc_name from vpc where vpc_id =? and tenant_id=?";
+	 
 	 
 	 private final String INSERT_VPC_REGION_QUERY="insert into vpc_region (region) values(?)";
 	 private final String GET_VPC_REGION_NAME_QUERY="select region from vpc_region";
@@ -53,7 +52,7 @@ public class NetworkDAO {
 	 private final String DELETE_SUBNET_BY_SUBNET_NAME_QUERY="delete from subnet where subnet_name=?";
 	 private final String UPDATE_SUBNET_BY_SUBNETID_AND_SUBNETNAME_QUERY="update subnet set vpc_name =? , cidr=?, acl=?, vpcId=? where subnetId=? AND subnet_name=?";
 	 
-	 private final String GET_ENVIRONMENT_NAME_USING_ID_AND_TENANTID="select environment_name from environments where id =? and tenant_id=?";
+	
 	/**
 	 * This method is used to add VPC to database
 	 * @param vpc : VPC object containg data need to be stored
@@ -90,51 +89,7 @@ public class NetworkDAO {
 		}
 	}//end of method registerVPC
 	
-	/**
-	 * This method is used to get vpc id using vpc name
-	 * @return String : VPC Id in string
-	 * @throws DataBaseOperationFailedException : Unable to get vpc id using vpc name
-	 */
-	public int getVPCIdByVPCNames(String vpcname,int tenant_id) throws DataBaseOperationFailedException{
-		LOGGER.debug(".getVPCIdByVPCNames method of NetworkDAO vpcName: "+vpcname+" tenant_id : "+tenant_id);
-		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
-		Integer vpcId=null;
-		Connection connection=null;
-		PreparedStatement pstmt=null;
-		ResultSet result=null;
-		try {
-			connection=connectionFactory.getConnection("mysql");
-			pstmt=(PreparedStatement) connection.prepareStatement(GET_VPCID_BY_VPCNAME_AND_TENANT_ID_QUERY);
-			 
-			pstmt.setString(1, vpcname);
-			pstmt.setInt(2, tenant_id);
-			result=pstmt.executeQuery();
-			
-			if(result !=null){
-				while(result.next()){
-					 vpcId=result.getInt("vpc_id");
-					LOGGER.debug(" vpcId : "+vpcId);					
-				}
-			}else{
-				LOGGER.debug("No VPC available in db");
-			}
-		} catch (ClassNotFoundException | IOException e) {
-			LOGGER.error("Error in getting the vpc detail from db using vpc name : "+vpcname);
-			throw new DataBaseOperationFailedException("Error in fetching the vpcid from db using vpc name : "+vpcname,e);
-		} catch(SQLException e) {
-			if(e.getErrorCode() == 1064) {
-				String message = "Error in getting the vpc detail from db using vpc name because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
-				throw new DataBaseOperationFailedException(message, e);
-			} else if(e.getErrorCode() == 1146) {
-				String message = "Error in getting the vpc detail from db using vpc name because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
-				throw new DataBaseOperationFailedException(message, e);
-			} else
-				throw new DataBaseOperationFailedException("Error in fetching the vpcid from db using vpc name : "+vpcname,e);
-		} finally{
-			DataBaseHelper.dbCleanup(connection, pstmt, result);
-		}
-		return vpcId;
-	}//end of method getAllVPC
+	
 	
 	/**
 	 * This method is used to get list of all the vpc store in db
@@ -345,6 +300,7 @@ public class NetworkDAO {
 			if(result !=null){
 				while(result.next()){
 					ACL acl = new ACL();
+					acl.setId(result.getInt("acl_id"));
 					acl.setAclName(result.getString("acl_name"));
 					acl.setDescription(result.getString("description"));
 					aclList.add(acl);
@@ -518,8 +474,8 @@ public class NetworkDAO {
 		LOGGER.debug(".addSubnet method in NetworkDAO");
 		LOGGER.info("indie addSubnetmethod with subnetName>>>>>>>>>>>>>>>>>>>>>>>." +subnet);
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
-		NetworkDAO networkDAO = new NetworkDAO();
 		EnvironmentDAO envDAO = new EnvironmentDAO();
+		VpcDAO vpcDap = new VpcDAO();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
 		try {
@@ -528,7 +484,7 @@ public class NetworkDAO {
 			pstmt.setString(1, subnet.getSubnetName());
 			pstmt.setString(2, subnet.getCidr());
 			pstmt.setInt(3, subnet.getTenantId());//
-			pstmt.setInt(4, networkDAO.getVPCIdByVPCNames(subnet.getVpcName(),subnet.getTenantId()));
+			pstmt.setInt(4, vpcDap.getVPCIdByVPCNames(subnet.getVpcName(),subnet.getTenantId()));
 			pstmt.setInt(5, envDAO.getEnvironmentIdByEnvName(subnet.getEnvironmentName(),subnet.getTenantId()));
 			pstmt.executeUpdate();
 			LOGGER.debug("Inserting subnet : "+subnet+" is successfull");
@@ -561,6 +517,8 @@ public class NetworkDAO {
 		Connection connection=null;
 		PreparedStatement stmt=null;
 		ResultSet result=null;
+		VpcDAO vpcDao = new VpcDAO();
+		EnvironmentDAO envDao = new EnvironmentDAO();
 		try {
 			connection=connectionFactory.getConnection("mysql");
 			stmt=connection.prepareStatement(GET_ALL_SUBNET_BY_TENANT_ID_QUERY);
@@ -569,13 +527,11 @@ public class NetworkDAO {
 			if(result != null){
 				while(result.next()){
 					Subnet subnet = new Subnet();
-					
-					int vpcId = result.getInt("vpc_id");
-					int empId = result.getInt("envirnoment_id");
+				 
 					subnet.setSubnetName(result.getString("subnet_name"));
 					subnet.setCidr(result.getString("cidr"));
-					subnet.setVpcName(getVPCNameByVpcIdAndTenantId(vpcId,id));
-					subnet.setEnvironmentName(getEnvironmentNameByEnvIdAndTenantId(empId,id));
+					subnet.setVpcName(vpcDao.getVPCNameByVpcIdAndTenantId(result.getInt("vpc_id"),id));
+					subnet.setEnvironmentName(envDao.getEnvironmentNameByEnvIdAndTenantId(result.getInt("envirnoment_id"),id));
 					subnetList.add(subnet);
 				}
 			}else{
@@ -715,108 +671,5 @@ public class NetworkDAO {
 		}
 	}
 	
-	
-	/**
-	 * This method is used to get vpc name by using vpcId and tenantId from db
-	 * @param vpcid
-	 * @param tenantId
-	 * @return
-	 * @throws DataBaseOperationFailedException
-	 */
-	public String getVPCNameByVpcIdAndTenantId(int vpcid,int tenantId)
-			throws DataBaseOperationFailedException {
-		LOGGER.debug(".getAllVPCRegionName method of NetworkDAO");
-		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
-		 
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		ResultSet result = null;
-		String vpcName=null;
-		
-		try {
-			connection = connectionFactory.getConnection("mysql");
-			stmt = (PreparedStatement)connection.prepareStatement(GET_VPC_NAME_USING_VPCID_TENANTID);
-			stmt.setInt(1, vpcid);
-			stmt.setInt(2, tenantId);
-			result = stmt.executeQuery( );
-			if (result != null && result.next()) {
-		    vpcName=result.getString("vpc_name");
-		    LOGGER.debug("comming vpc"+vpcName);
-		     
-			} else {
-				LOGGER.debug("No data available in vpc_region");
-			}
-		} catch (ClassNotFoundException | IOException e) {
-			LOGGER.error("Error in getting the vpc region names from db");
-			throw new DataBaseOperationFailedException(
-					"Unable to fetch vpc region names from db", e);
-		} catch (SQLException e) {
-			if (e.getErrorCode() == 1064) {
-				String message = "Error in getting the vpc region names because "
-						+ PAASErrorCodeExceptionHelper
-								.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
-				throw new DataBaseOperationFailedException(message, e);
-			} else if (e.getErrorCode() == 1146) {
-				String message = "Error in getting the vpc region names because: "
-						+ PAASErrorCodeExceptionHelper
-								.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
-				throw new DataBaseOperationFailedException(message, e);
-			} else
-				throw new DataBaseOperationFailedException(
-						"Unable to fetch vpc region names from db", e);
-		} finally {
-			DataBaseHelper.dbCleanup(connection, stmt, result);
-		}
-		return vpcName;
-	}// end of method getAllVPCRegionName
-
-	public String getEnvironmentNameByEnvIdAndTenantId(int envid,int tenantId)
-			throws DataBaseOperationFailedException {
-		LOGGER.debug(".getAllVPCRegionName method of NetworkDAO");
-		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
-		 
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		ResultSet result = null;
-		String empName=null;
-	
-		try {
-			connection = connectionFactory.getConnection("mysql");
-			stmt =(PreparedStatement)connection.prepareStatement(GET_ENVIRONMENT_NAME_USING_ID_AND_TENANTID);
-			stmt.setInt(1, envid);
-			stmt.setInt(2, tenantId);
-			result = stmt.executeQuery( );
-			if (result != null && result.next()) {
-				empName=result.getString("environment_name");
-			} else {
-				LOGGER.debug("No data available in vpc_region");
-			}
-		} catch (ClassNotFoundException | IOException e) {
-			LOGGER.error("Error in getting the vpc region names from db");
-			throw new DataBaseOperationFailedException(
-					"Unable to fetch vpc region names from db", e);
-		} catch (SQLException e) {
-			if (e.getErrorCode() == 1064) {
-				String message = "Error in getting the vpc region names because "
-						+ PAASErrorCodeExceptionHelper
-								.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
-				throw new DataBaseOperationFailedException(message, e);
-			} else if (e.getErrorCode() == 1146) {
-				String message = "Error in getting the vpc region names because: "
-						+ PAASErrorCodeExceptionHelper
-								.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
-				throw new DataBaseOperationFailedException(message, e);
-			} else
-				throw new DataBaseOperationFailedException(
-						"Unable to fetch vpc region names from db", e);
-		} finally {
-			DataBaseHelper.dbCleanup(connection, stmt, result);
-		}
-		return empName;
-	}
-	
-	public static void main(String[] args) throws DataBaseOperationFailedException {
-		LOGGER.debug("dd "+new NetworkDAO().getEnvironmentNameByEnvIdAndTenantId(5,7));
-	}
-	
+	 
 }

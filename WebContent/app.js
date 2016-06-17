@@ -125,7 +125,7 @@ angular.module('formApp', ['ngAnimate', 'ui.router'])
 	 /*================== END OF getAllRelatedContainerTypes ==================*/
 	 
 	    
-	    /*================== TO GET THE IMAGE REGISTRY NAME ==================*/
+	 /*================== TO GET THE IMAGE REGISTRY NAME ==================*/
 	    //NEED TO SHOW IN DROP-DOWN LIST OF IMAGE_REGISTRY_NAME FIELD IN THE IMAGERESISTRY.HTML PAGE 
 	 	 $scope.selectImageRegistry = function() {
 	 		 
@@ -144,13 +144,14 @@ angular.module('formApp', ['ngAnimate', 'ui.router'])
 	    /*================== To get the Dockerhub data ==================*/
 	    //NEED TO SHOW IN DROP-DOWN LIST OF TAGS FIELD IN THE IMAGERESISTRY.HTML PAGE
 	   	 $scope.selectSummary = function(reponame) {
+	   		 alert("   >>"+reponame);
 	  	 $scope.reponames;
 		//JSON.stringify(data);
-	   		$scope.isImg=true;
+	   		//$scope.isImg=true;
 	     	var response = $http.post('/paas-gui/rest/imageRegistry/getDockerHubRegistryTags',reponame);
 	     	
 	     	response.success(function(data){
-	     		$scope.isImg=false;
+	     		//$scope.isImg=false;
 	     		$scope.reponames = data;
 	     		console.log("selectRepo >>>> "+$scope.reponames);
 	     	});

@@ -203,7 +203,7 @@ public class ApplicationDAO {
 			pstmt.setInt(20, new SubnetDAO().getSubnetIdBySubnetName("subnetname1"));
 			
 			pstmt.setInt(21, service.getTenantId());
-			pstmt.setInt(22, new ImageRegistryDAO().getImageRegistryIdByName(service.getImageRegistry()));
+			pstmt.setInt(22, new ImageRegistryDAO().getImageRegistryIdByName(service.getImageRegistry(), 0));
 			pstmt.setInt(23, new ContainerTypesDAO().getContainerTypeIdByContainerName(service.getType()));
 			
 			pstmt.executeUpdate();
@@ -251,6 +251,8 @@ public class ApplicationDAO {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
+		
+		ImageRegistryDAO imgRegDAO = new ImageRegistryDAO();
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
 			pstmt = (PreparedStatement) connection.prepareStatement(GET_ALL_APPLICATION_SERVICE_BY_USER_ID_QUERY);
@@ -260,7 +262,7 @@ public class ApplicationDAO {
 				while (result.next()) {
 					Service service = new Service();
 					service.setServiceName(result.getString("service_name"));
-					service.setImageRegistry(result.getInt("registry_id")+"");
+					//service.setImageRegistry(imgRegDAO. result.getInt("registry_id")+"");
 					
 					service.setType(result.getString("type"));
 					service.setApplicantionName(result

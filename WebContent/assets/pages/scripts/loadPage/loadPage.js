@@ -3,9 +3,15 @@ function loadpage(text){
 	if (text === 'activity'){
 		$("#content").attr("src", "html/activity.html");
 	};
+	
 	if (text === 'dashboardsummary'){
 		$("#content").attr("src", "html/dashboardsummary.html");
 	};
+	
+	if (text === 'getStartedApplication'){
+		$("#content").attr("src", "html/getstarted_application.html");
+	};
+	
 	if (text === 'dashboardresources'){
 		 
 		(function() {

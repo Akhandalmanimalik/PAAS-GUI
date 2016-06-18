@@ -1,16 +1,18 @@
 function loadpage(text){
 	  
-	if (text === 'activity'){
-		$("#content").attr("src", "html/activity.html");
+	if (text === 'getStartedApplication'){
+		$("#content").attr("src", "html/getstarted_application.html");
 	};
 	
 	if (text === 'dashboardsummary'){
 		$("#content").attr("src", "html/dashboardsummary.html");
 	};
 	
-	if (text === 'getStartedApplication'){
-		$("#content").attr("src", "html/getstarted_application.html");
+	/* Application INSIDE Applications Tab */
+	if (text === 'applicationsummary'){
+		$("#content").attr("src", "html/applicantmain.html");
 	};
+	
 	
 	if (text === 'dashboardresources'){
 		 
@@ -42,12 +44,14 @@ function loadpage(text){
 	    .complete(function() { alert("complete"); });
 		
 	};
+	
+
+	if (text === 'activity'){
+		$("#content").attr("src", "html/activity.html");
+	};
+	
 	if (text === 'step1'){
 			$("#content").attr("src", "step-1.html");
-	};
-	/*this file should*/
-	if (text === 'applicationsummary'){
-		$("#content").attr("src", "html/applicantmain.html");
 	};
 	
 	/*this file should remove it is for testig purpose*/
@@ -55,6 +59,12 @@ function loadpage(text){
 		$("#content").attr("src", "applicationsummary.html");
 	};
 	*/
+	
+	/*Get Started INSIDE Applications Tab*/
+	if (text === 'applicationGetStarted'){
+		$("#content").attr("src", "html/applicationWizardGetStarted.html");
+	};
+	
 	if (text === 'applicationwebhooks'){
 		$("#content").attr("src", "html/applicationwebhooks.html");
 	};

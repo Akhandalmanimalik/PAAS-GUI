@@ -1,6 +1,7 @@
 package com.getusroi.paas.rest.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +15,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jettison.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,30 +30,35 @@ import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.marathon.service.IMarathonService;
 import com.getusroi.paas.marathon.service.MarathonServiceException;
 import com.getusroi.paas.marathon.service.impl.MarathonService;
+import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.ApplicationServiceException;
 import com.getusroi.paas.vo.ApplicantSummary;
 import com.getusroi.paas.vo.Service;
 import com.google.gson.Gson;
+import com.paas_gui.register.userDAO;
+import com.paas_gui.vpc.ApplicantUser;
 
 
 
 @Path("/applicationService")
 public class ApplicationService {
-	 static final Logger logger = LoggerFactory.getLogger(ApplicationService.class);
+	 static final Logger LOGGER = LoggerFactory.getLogger(ApplicationService.class);
 	 static final String TENANT="tenant";
-
+	 ApplicantUser app=null;
+	 userDAO userDAO =  null; 
+	 
 	@POST
 	@Path("/addApplicantSummary")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void addApplicationSummary(String appSummaryData) throws ApplicationServiceException, DataBaseOperationFailedException{
-		logger.debug(".addApplicationSummary method of ApplicationService ");
+		LOGGER.debug(".addApplicationSummary method of ApplicationService ");
 		ObjectMapper mapper = new ObjectMapper();
 		ApplicationDAO applicationDAO=new ApplicationDAO();
 		try {
 			ApplicantSummary applicantSummary=mapper.readValue(appSummaryData,ApplicantSummary.class);
 			applicationDAO.insertApplicationSummary(applicantSummary);
 		} catch (IOException e) {
-			logger.error("Error in reading data : "+appSummaryData+" using object mapper in addApplicationSummary");
+			LOGGER.error("Error in reading data : "+appSummaryData+" using object mapper in addApplicationSummary");
 			throw new ApplicationServiceException("Error in reading data : "+appSummaryData+" using object mapper in addApplicationSummary");
 		}
 	}//end of addApplicationSummary
@@ -56,7 +67,7 @@ public class ApplicationService {
 	@Path("/addService")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void addService(String applicationServiceData,@Context HttpServletRequest request  ) throws DataBaseOperationFailedException, MarathonServiceException, InterruptedException, ApplicationServiceException{
-		logger.debug(".addService method of ApplicationService ");
+		LOGGER.debug(".addService method of ApplicationService ");
 		ObjectMapper mapper = new ObjectMapper();
 		ApplicationDAO applicationDAO=new ApplicationDAO();
 		IMarathonService marathonService=new MarathonService();
@@ -67,15 +78,15 @@ public class ApplicationService {
 			
 			Service service = mapper.readValue(applicationServiceData,Service.class);
 			/*for(EnvironmentVariable env:service.getEnv()){
-				logger.debug("env key : "+env.getEnvkey()+"env value : "+env.getEnvvalue());
+				LOGGER.debug("env key : "+env.getEnvkey()+"env value : "+env.getEnvvalue());
 			}*/
-			logger.debug("service "+service);
+			LOGGER.debug("service "+service);
 			service.setTenantId(userId);
 			applicationDAO.addService(service);			
 			//create instance in marathon using service object
 		/*String appID=	marathonService.postRequestToMarathon(service);
 		
-		logger.debug("----------Before  ContianerScript  script  called------------------------");			
+		LOGGER.debug("----------Before  ContianerScript  script  called------------------------");			
 			Thread.sleep(60000);
 		List<MessosTaskInfo>  listOfMessosTask=	 ScriptService.runSCriptGetMessosTaskId(appID);
 		if(listOfMessosTask.isEmpty()){
@@ -88,9 +99,9 @@ public class ApplicationService {
 			MessosTaskInfo messosTaskInfo = (MessosTaskInfo) iterator.next();
 			new ScriptService().updateSubnetNetworkInMessos(messosTaskInfo, service.getSubnetName());
 		}*/
-			logger.debug("----------Network  script  called------------------------");
+			LOGGER.debug("----------Network  script  called------------------------");
 		} catch (IOException e) {
-			logger.error("Error in reading data "+applicationServiceData+" using object mapper in addService");
+			LOGGER.error("Error in reading data "+applicationServiceData+" using object mapper in addService");
 			throw new ApplicationServiceException("Error in reading data "+applicationServiceData+" using object mapper in addService");
 		}
 	}//end of method addService
@@ -99,7 +110,7 @@ public class ApplicationService {
 	@Path("/getAllApplicationService")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllApplicationService(@Context HttpServletRequest request) throws DataBaseOperationFailedException{
-		logger.debug(".getAllApplicationService method of ApplicationService ");
+		LOGGER.debug(".getAllApplicationService method of ApplicationService ");
 		
 		HttpSession session=request.getSession(false);
 		int userId=(int)session.getAttribute("id");
@@ -117,7 +128,7 @@ public class ApplicationService {
 	@Path("/getAllApplicationSummary")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllApplicationSummary() throws DataBaseOperationFailedException{
-		logger.debug(".getAllApplicationSummary method of ApplicationService ");
+		LOGGER.debug(".getAllApplicationSummary method of ApplicationService ");
 		ApplicationDAO applicationDAO=new ApplicationDAO();
 		List<ApplicantSummary> applicantSummaryList=applicationDAO.getAllApplicantSummary();
 		Gson gson = new Gson();
@@ -128,12 +139,12 @@ public class ApplicationService {
 	@GET
 	@Path("/deleteServiceByName/{serviceName}/{envirnoment}")
 	public void deleteServiceByName(@PathParam("serviceName") String serviceName,@PathParam("envirnoment") String envirnoment,@Context HttpServletRequest request) throws DataBaseOperationFailedException, MarathonServiceException{
-		logger.debug(".deleteServiceByName method of ApplicationService ");
-		logger.debug("ServiceNAme : "+serviceName  +" environement : "+envirnoment);
+		LOGGER.debug(".deleteServiceByName method of ApplicationService ");
+		LOGGER.debug("ServiceNAme : "+serviceName  +" environement : "+envirnoment);
 		ApplicationDAO applicationDAO=new ApplicationDAO();
 		HttpSession session=request.getSession(false);
 		int user_id=(int)session.getAttribute("id");
-		String appid=TENANT+user_id+"-"+envirnoment;
+		//String appid=TENANT+user_id+"-"+envirnoment;
 		//new MarathonService().deletInstanceformMarathan(appid);
 		
 		applicationDAO.deleteServiceByServiceName(serviceName,user_id);
@@ -143,11 +154,95 @@ public class ApplicationService {
 	@Path("/updateMarathonInstace")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String updateMarathonInstace(String data) throws MarathonServiceException{
-		logger.debug(".updateMarathonInstace method of ApplicationService ");
+		LOGGER.debug(".updateMarathonInstace method of ApplicationService ");
 		IMarathonService marathonService=new MarathonService();
 		marathonService.updateMarathonInsance(data);
 		return data;
 	}//end of method updateMarathonInstace
 	
+	/*All Below methods for the shake of Fectch.java i.e methods ass*/
 	
+	@GET
+	@Path("/selectApplicantName")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String selectApplicantName() {
+
+		LOGGER.info("Inside selectApplicantName (.) of ApplicationService ");
+		List<ApplicantUser> customers = new ArrayList<ApplicantUser>();
+		String customersList =null;
+		try {
+		userDAO customerDao = new userDAO();
+		customers = customerDao.selectApplicantName();
+		Gson gson = new Gson();
+		customersList = gson.toJson(customers);
+		//LOGGER.info("selectApplicantName : " + customersList);
+		}catch(Exception e){
+			LOGGER.error("Error when getting all data from Applications table");
+		}
+	return customersList;
+	}
+	
+	
+	@GET
+	@Path("/deleteData/{data}")
+	public void deleteData(@PathParam("data") String data) {
+		LOGGER.info("Inside (.) deleteData of ApplicationService"+data);
+		
+		userDAO customerDao = new userDAO();
+		try{
+		customerDao.deleteData(data);
+		}catch(Exception e){
+			LOGGER.error("Error when deleting application ");
+		}
+	}
+	
+	@POST
+	@Path("/storeApplicantUser")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response storeApplicantUser(String msg,@Context HttpServletRequest req) throws JSONException {
+		LOGGER.info("Inside storeApplicantUser (.) ApplicationService");
+		ObjectMapper mapper = new ObjectMapper();
+		ApplicantUser user = null;
+		try {
+			user = mapper.readValue(msg, ApplicantUser.class);
+			userDAO userDAO = new userDAO();
+			HttpSession session = req.getSession(true);
+			user.setTenant_id((int)session.getAttribute("id"));
+			userDAO.storeApplicant(user);
+			
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		LOGGER.info("-----Json is -------"+msg);
+		JSONObject  jobj=new JSONObject(msg);
+      		LOGGER.info("-----VPC with  VTN Created  using  SDN -------"+msg);
+ 		 
+		return null;
+	}
+	
+	@POST
+	@Path("/createApplicationByName")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response createApplicationByName(String msg,@Context HttpServletRequest req) throws JSONException {
+		LOGGER.info("Inside storeApplicantUser (.) ApplicationService"+msg);
+		userDAO = new userDAO();
+		
+		try {
+			app = new ApplicantUser();
+			app.setApplicantionName(msg);
+			HttpSession session = req.getSession(true);
+			app.setTenant_id((int)session.getAttribute("id"));
+			userDAO.storeApplicant(app);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		LOGGER.info("-----Json is -------"+msg);
+ 		 
+		return null;
+	}
 }

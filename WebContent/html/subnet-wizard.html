@@ -106,10 +106,11 @@
 							<div class="form-group"
 								ng-class="{ 'has-error' : subnetWizardForm. Subnet_Name.$invalid && !subnetWizardForm.Subnet_Name.$pristine }">
 
-
+								<label class="control-label col-md-4"> Subnet <span
+													class="required"> * </span>
+												</label>		
 								<div class="col-xs-4">
-									<labelfor="ex2">Subnet<span class="required">
-										* </span> </label> <input type="text" ng-model="field.subnetName"
+									 <input type="text" ng-model="field.subnetName"
 										id="subnet_Name" name="subnet_Name" data-required="1"
 										class="form-control placeholder-no-fix"
 										 placeholder="Subnet Name"  ng-minlength="2" ng-maxlength="20" required />

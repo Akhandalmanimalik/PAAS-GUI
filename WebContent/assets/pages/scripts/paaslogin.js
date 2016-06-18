@@ -34,7 +34,8 @@
 							document.location.href = '/paas-gui/application-listing.html';				
 							}else{
 								console.log("Login Error Please Enter Proper Details");
-								document.location.href = '/paas-gui/login3.html';				
+								document.location.href = 'http://localhost:8080/paas-gui/';
+								//document.location.href = '/paas-gui/login.html';				
 
 							}
 							

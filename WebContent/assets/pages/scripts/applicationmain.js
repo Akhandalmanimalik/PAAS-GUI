@@ -12,9 +12,10 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
       /*================VPC REGISTRATION===================*/
     
     $scope.storeApplicantUser = function() {
+    	alert("comming to storeApplicantUser ");
   	  console.log($scope.field);
   	  var userData = JSON.stringify($scope.field);
-  	  var res = $http.post('/paas-gui/rest/fetchData/storeApplicantUser', userData);
+  	  var res = $http.post('/paas-gui/rest/applicationService/storeApplicantUser', userData);
   	  console.log(userData);
   	  res.success(function(data, status, headers, config) {
   	    $scope.message = data;
@@ -30,10 +31,9 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
   	 
   	};
   	
-  	           /*POPULATE DATA TO TABLE*/
-  
+  	   /*POPULATE DATA TO TABLE*/
   	 $scope.selectApplicantName = function() {
-     	var response = $http.get('/paas-gui/rest/fetchData/selectApplicantName');
+     	var response = $http.get('/paas-gui/rest/applicationService/selectApplicantName');
      	response.success(function(data){
      		$scope.fields = data;
      		 
@@ -43,11 +43,10 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
          });
      };
      
-  	         /*DELETE POPULATED DATA*/
-
+     
+  	 /*DELETE POPULATED DATA*/
      $scope.deleteData = function(data) {
-    	 alert("comming  deleteData");
-     	var response = $http.get('/paas-gui/rest/fetchData/deleteData/'+data);
+     	var response = $http.get('/paas-gui/rest/applicationService/deleteData/'+data);
      	response.success(function(data){
      		$scope.select();
      	});

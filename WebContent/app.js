@@ -147,11 +147,11 @@ angular.module('formApp', ['ngAnimate', 'ui.router'])
 	   		 alert("   >>"+reponame);
 	  	 $scope.reponames;
 		//JSON.stringify(data);
-	   		//$scope.isImg=true;
+	   		$scope.isImg=true;
 	     	var response = $http.post('/paas-gui/rest/imageRegistry/getDockerHubRegistryTags',reponame);
 	     	
 	     	response.success(function(data){
-	     		//$scope.isImg=false;
+	     		$scope.isImg=false;
 	     		$scope.reponames = data;
 	     		console.log("selectRepo >>>> "+$scope.reponames);
 	     	});

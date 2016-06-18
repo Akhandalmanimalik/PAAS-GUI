@@ -30,18 +30,25 @@ import com.getusroi.paas.vo.Scale;
 import com.mysql.jdbc.PreparedStatement;
 
 public class ApplicationDAO {
-	static final Logger logger = LoggerFactory.getLogger(ApplicationDAO.class);
+	static final Logger LOGGER = LoggerFactory.getLogger(ApplicationDAO.class);
 
-	public static final String INSERT_APPLICATION_SUMMARY_QUERY = "insert into appsummary values(?,?,?,?,?)";
-	public static final String GET_ALL_APPLICATION_SUMMARY_QUERY = "select * from appsummary";
-	public static final String INSERT_APPLICATION_SERVICE_QUERY = "insert into application (service_name,registry_url,tag,run,host_name,host_port,container_port,protocol_type,port_index,path,interval_seconds,timeout_seconds,max_consecutive_failures,grace_period_seconds,ignore_http1xx,instance_count,host_path,container_path,volume,subnet_id,createdDTM,tenant_id,registry_id,container_id) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?)";
-	public static final String GET_ALL_APPLICATION_SERVICE_BY_USER_ID_QUERY = "select * from application where tenant_id=?";
-	public static final String DELET_SERVICE_BY_SERVICENAME_AND_USER_ID_QUERY = "delete from addService where serviceName=? and user_id=?";
-	public static final String GET_ENVIRONMENT_VARIABLE_BY_SERVICENAME = "select * from environment_variable where serviceName =?";
-	public static final String GET_ROUTE_BY_SERVICENAME = "select * from route where serviceName =?";
-	public static final String GET_NETWORK_POLICY_BY_SERVICENAME = "select * from network_policy where serviceName =?";
-	public static final String GET_SERVICE_BY_NAME_AND_USERID = "select * from application where service_name=? && tenant_id=?";
-
+	private static final String INSERT_APPLICATION_SUMMARY_QUERY = "insert into appsummary values(?,?,?,?,?)";
+	private static final String GET_ALL_APPLICATION_SUMMARY_QUERY = "select * from appsummary";
+	
+	private static final String INSERT_APPLICATION_SERVICE_QUERY = "insert into application (service_name,registry_url,tag,run,host_name,host_port,container_port,protocol_type,port_index,path,interval_seconds,timeout_seconds,max_consecutive_failures,grace_period_seconds,ignore_http1xx,instance_count,host_path,container_path,volume,subnet_id,createdDTM,tenant_id,registry_id,container_id,apps_id) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?)";
+	private static final String GET_SERVICE_BY_NAME_AND_USERID = "select * from application where service_name=? && tenant_id=?";	
+	private static final String GET_ALL_APPLICATION_SERVICE_BY_USER_ID_QUERY = "select * from application where tenant_id=?";
+	
+	private static final String GET_APPLICATION_ID_BY_NAME_AND_TENANT_ID = "select apps_id from applications where applications_name=? && tenant_id=?";
+	private static final String INSERT_ENVIRONMENT_VARIABLE_DETAILS__QUERY = "insert into application_variable (varible_name,varible_value,app_id,createdDTM) values (?,?,?,NOW())";
+	
+	private static final String DELET_SERVICE_BY_SERVICENAME_AND_USER_ID_QUERY = "delete from addService where serviceName=? and user_id=?";
+	private static final String GET_ENVIRONMENT_VARIABLE_BY_SERVICENAME = "select * from environment_variable where serviceName =?";
+	private static final String GET_ROUTE_BY_SERVICENAME = "select * from route where serviceName =?";
+	private static final String GET_NETWORK_POLICY_BY_SERVICENAME = "select * from network_policy where serviceName =?";
+	
+	DataBaseConnectionFactory connectionFactory = null;
+	
 	/**
 	 * This method is used to add application summary
 	 * 
@@ -53,7 +60,7 @@ public class ApplicationDAO {
 	 */
 	public void insertApplicationSummary(ApplicantSummary appSummary)
 			throws DataBaseOperationFailedException {
-		logger.debug(".insertApplicationSummary method of ApplicationDAO");
+		LOGGER.debug(".insertApplicationSummary method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -67,10 +74,10 @@ public class ApplicationDAO {
 			pstmt.setString(4, appSummary.getImageRepository());
 			pstmt.setString(5, appSummary.getTag());
 			pstmt.executeUpdate();
-			logger.debug("apps summary data : " + appSummary
+			LOGGER.debug("apps summary data : " + appSummary
 					+ " inserted successfully");
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to add applicant summary into db with data : "
+			LOGGER.error("Unable to add applicant summary into db with data : "
 					+ appSummary);
 			throw new DataBaseOperationFailedException(
 					"Unable to add applicant summary into db with data : "
@@ -105,7 +112,7 @@ public class ApplicationDAO {
 	 */
 	public List<ApplicantSummary> getAllApplicantSummary()
 			throws DataBaseOperationFailedException {
-		logger.debug(".getAllApplicantSummary method of ApplicationDAO");
+		LOGGER.debug(".getAllApplicantSummary method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		List<ApplicantSummary> applicantSummaryList = new LinkedList<ApplicantSummary>();
 		Connection connection = null;
@@ -131,10 +138,10 @@ public class ApplicationDAO {
 					applicantSummaryList.add(applicantSummary);
 				}
 			} else {
-				logger.debug("No data avilable in apps summary table");
+				LOGGER.debug("No data avilable in apps summary table");
 			}
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to fetch applicant summary into db ");
+			LOGGER.error("Unable to fetch applicant summary into db ");
 			throw new DataBaseOperationFailedException(
 					"Unable to fetch applicant summary ", e);
 		} catch (SQLException e) {
@@ -167,17 +174,19 @@ public class ApplicationDAO {
 	 */
 	public void addService(Service service)
 			throws DataBaseOperationFailedException {
-		logger.debug(".addService method of ApplicationDAO");
+		LOGGER.debug(".addService method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
+		PreparedStatement pstmt2 = null;
+		int last_inserted_id =0;
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
 
 		if(checkServiceNameExist(connection, service))
 		throw new DataBaseOperationFailedException("given service name exit so Unable to insert data for service into db with data :  "+ service);
 			pstmt = (PreparedStatement) connection
-					.prepareStatement(INSERT_APPLICATION_SERVICE_QUERY);
+					.prepareStatement(INSERT_APPLICATION_SERVICE_QUERY,Statement.RETURN_GENERATED_KEYS);
 			
 			pstmt.setString(1, service.getServiceName());
 			pstmt.setString(2, service.getImageRepository());
@@ -199,19 +208,36 @@ public class ApplicationDAO {
 			pstmt.setString(18, "contnrpath1");				//HARDCODE	
 			pstmt.setInt(19, service.getVolume());
 			
-//			pstmt.setInt(20, new SubnetDAO().getSubnetIdBySubnetName(service.getSubnetName()));
-			pstmt.setInt(20, new SubnetDAO().getSubnetIdBySubnetName("subnetname1"));
+			pstmt.setInt(20, new SubnetDAO().getSubnetIdBySubnetName(service.getSubnetName()));
 			
 			pstmt.setInt(21, service.getTenantId());
-			pstmt.setInt(22, new ImageRegistryDAO().getImageRegistryIdByName(service.getImageRegistry(), 0));
+			pstmt.setInt(22, new ImageRegistryDAO().getImageRegistryIdByName(service.getImageRegistry(), service.getTenantId()));
 			pstmt.setInt(23, new ContainerTypesDAO().getContainerTypeIdByContainerName(service.getType()));
-			
+			pstmt.setInt(24, getApplicationsIdByName(service.getApplicantionName(), service.getTenantId()));
 			pstmt.executeUpdate();
+			
+			ResultSet rs = pstmt.getGeneratedKeys();
+            if(rs.next()) {
+                 last_inserted_id = rs.getInt(1);
+                 LOGGER.debug("last_inserted_id "+last_inserted_id);
+            }
+            
+            pstmt2 = (PreparedStatement) connection
+					.prepareStatement(INSERT_ENVIRONMENT_VARIABLE_DETAILS__QUERY);
+            List<EnvironmentVariable> listOfEnvrnmtVar = service.getEnv(); 
+            LOGGER.debug("Number of environment variabl "+listOfEnvrnmtVar.size());
+            EnvironmentVariable env= null;
+            for(int i=0; i < listOfEnvrnmtVar.size(); i++){
+            	 env=listOfEnvrnmtVar.get(i);
+            	LOGGER.debug("Environmentvariable object  "+env);
+            	pstmt2.setString(1, env.getEnvkey());
+    			pstmt2.setString(2, env.getEnvvalue());
+    			pstmt2.setInt(3, last_inserted_id);
+    			pstmt2.executeUpdate();
+            }
+            pstmt2.close();
 		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-			logger.error(
-					"Unable to insert data for service into db with data : "
-							+ service, e);
+			LOGGER.error( "Unable to insert data for service into db with data : " + service, e);
 			throw new DataBaseOperationFailedException(
 					"Unable to insert data for service into db with data :  "
 							+ service, e);
@@ -245,7 +271,7 @@ public class ApplicationDAO {
 	 */
 	public List<Service> getAllServiceByUserId(int user_id)
 			throws DataBaseOperationFailedException {
-		logger.debug(".getAllService method of ApplicationDAO");
+		LOGGER.debug(".getAllService method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		List<Service> addServiceList = new LinkedList<Service>();
 		Connection connection = null;
@@ -292,10 +318,10 @@ public class ApplicationDAO {
 					addServiceList.add(service);
 				}
 			} else {
-				logger.debug("No data avilable in add service table");
+				LOGGER.debug("No data avilable in add service table");
 			}
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to fetch  data for service from db");
+			LOGGER.error("Unable to fetch  data for service from db");
 			throw new DataBaseOperationFailedException(
 					"Unable to fetch  data for service from db", e);
 		} catch (SQLException e) {
@@ -328,7 +354,7 @@ public class ApplicationDAO {
 	 */
 	public void deleteServiceByServiceName(String serviceName,int user_id)
 			throws DataBaseOperationFailedException {
-		logger.debug(".deleteServiceByServiceName method of ApplicationDAO");
+		LOGGER.debug(".deleteServiceByServiceName method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -341,7 +367,7 @@ public class ApplicationDAO {
 			pstmt.setInt(2, user_id);
 			pstmt.executeUpdate();
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to delete   data for service from db : "
+			LOGGER.error("Unable to delete   data for service from db : "
 					+ serviceName);
 			throw new DataBaseOperationFailedException(
 					"Unable to delete  data for service from db " + serviceName,
@@ -380,7 +406,7 @@ public class ApplicationDAO {
 	private List<EnvironmentVariable> getAllEnvironment(Connection connection,
 			String serviceName) throws DataBaseOperationFailedException,
 			SQLException {
-		logger.debug(".getAllEnvironment method of ApplicationDAO");
+		LOGGER.debug(".getAllEnvironment method of ApplicationDAO");
 		List<EnvironmentVariable> listOfEnvs = new ArrayList<>();
 		ResultSet envResultSet = null;
 		PreparedStatement envPreparedStatement = null;
@@ -397,11 +423,11 @@ public class ApplicationDAO {
 					listOfEnvs.add(envVar);
 				}
 			} else {
-				logger.debug("No data available for environment varible for service name : "
+				LOGGER.debug("No data available for environment varible for service name : "
 						+ serviceName);
 			}
 		} catch (SQLException e) {
-			logger.error("Unable to fetch  EnvironmentVariable for service"
+			LOGGER.error("Unable to fetch  EnvironmentVariable for service"
 					+ serviceName + " from db");
 			throw new DataBaseOperationFailedException(
 					"Unable to fetch  EnvironmentVariable for service"
@@ -429,7 +455,7 @@ public class ApplicationDAO {
 	private List<Route> getRouteByServiceName(Connection connection,
 			String serviceName) throws DataBaseOperationFailedException,
 			SQLException {
-		logger.debug(".getRouteByServiceName method of ApplicationDAO");
+		LOGGER.debug(".getRouteByServiceName method of ApplicationDAO");
 		List<Route> listOfRoute = new ArrayList<>();
 		ResultSet routeResultSet = null;
 		PreparedStatement routeReparedStatement = null;
@@ -448,11 +474,11 @@ public class ApplicationDAO {
 					listOfRoute.add(routeVar);
 				}
 			} else {
-				logger.debug("No route data availble for service name : "
+				LOGGER.debug("No route data availble for service name : "
 						+ serviceName);
 			}
 		} catch (SQLException e) {
-			logger.error("Unable to fetch  Route for service" + serviceName
+			LOGGER.error("Unable to fetch  Route for service" + serviceName
 					+ " from db");
 			throw new DataBaseOperationFailedException(
 					"Unable to fetch  Route for service" + serviceName
@@ -480,7 +506,7 @@ public class ApplicationDAO {
 	private List<Scale> getNetworkScale(Connection connection,
 			String serviceName) throws DataBaseOperationFailedException,
 			SQLException {
-		logger.debug(".getNetworkScale method of ApplicationDAO");
+		LOGGER.debug(".getNetworkScale method of ApplicationDAO");
 		List<Scale> listOfscale = new ArrayList<>();
 		PreparedStatement scalePreparedStatement = null;
 		ResultSet scaleResultSet = null;
@@ -499,11 +525,11 @@ public class ApplicationDAO {
 					listOfscale.add(scale);
 				}
 			} else {
-				logger.debug("No scale data availble for service name : "
+				LOGGER.debug("No scale data availble for service name : "
 						+ serviceName);
 			}
 		} catch (SQLException e) {
-			logger.error("Unable to fetch  Scale for service" + serviceName
+			LOGGER.error("Unable to fetch  Scale for service" + serviceName
 					+ " from db");
 			throw new DataBaseOperationFailedException(
 					"Unable to fetch  Scale for service" + serviceName
@@ -527,7 +553,7 @@ public class ApplicationDAO {
 	private boolean checkServiceNameExist(Connection connection,
 			Service addService) throws DataBaseOperationFailedException,
 			SQLException {
-		logger.debug(".checkServiceNameExist  method of ApplicationDAO with Service Deatsil : "+ addService);
+		LOGGER.debug(".checkServiceNameExist  method of ApplicationDAO with Service Deatsil : "+ addService);
 		boolean isServiceExist = false;
 
 		java.sql.PreparedStatement statement = null;
@@ -545,7 +571,7 @@ public class ApplicationDAO {
 				}
 			}
 		} catch (SQLException e) {
-			logger.error("Unable to fetch   service:"
+			LOGGER.error("Unable to fetch   service:"
 					+ addService.getServiceName() + "   from db with user_id="
 					+ addService.getTenantId());
 			throw new DataBaseOperationFailedException(
@@ -559,9 +585,52 @@ public class ApplicationDAO {
 		return isServiceExist;
 	}
 	
-	public static void main(String[] args) throws DataBaseOperationFailedException {
-		logger.debug(">>> "+new ApplicationDAO().getAllServiceByUserId(7));
+	/**
+	 * This method used for check servicename is exist for given userId or not 
+	 * @param connection
+	 * @param addService
+	 * @return Boolean
+	 * @throws DataBaseOperationFailedException
+	 * @throws SQLException
+	 */
+	private int getApplicationsIdByName(String applicationName, int tenantId) throws DataBaseOperationFailedException,
+			SQLException {
+		LOGGER.debug(".getApplicationsIdByName (.) of ApplicationDAO   : applicationName "+ applicationName+" tenantId  "+tenantId);
+		connectionFactory = new DataBaseConnectionFactory();
+		int apps_id = 0;
+		PreparedStatement pstmt = null;
+		ResultSet reSet = null;
+		Connection connection = null; 
+		try {
+			connection=connectionFactory.getConnection("mysql");
+			pstmt=(PreparedStatement) connection.prepareStatement(GET_APPLICATION_ID_BY_NAME_AND_TENANT_ID);
+			pstmt.setString(1, applicationName);
+			pstmt.setInt(2, tenantId);
+			reSet = pstmt.executeQuery();
+			if(reSet != null){
+				while (reSet.next()) {
+					apps_id =  reSet.getInt("apps_id");
+				}
+			}
+		}catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Error in getting the vpc detail from db");
+			throw new DataBaseOperationFailedException("Error in fetching the vpc from db",e);
+		} 
+		catch (SQLException e) {
+			LOGGER.error("Unable to fetch   applications details with:"
+					+ applicationName + "   from db with tenant_id="
+					+ tenantId);
+			throw new DataBaseOperationFailedException(
+					"Unable to fetch   applications id" + applicationName
+							+ " from db", e);
+		} finally {
+			if(reSet != null)
+			reSet.close();
+			pstmt.close();
+		}
+		return apps_id;
 	}
+	
 	
 	
 

@@ -8,17 +8,18 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Service {
 	
+	private int id;
 	//Service
-	private  String  serviceName;
-	private  String  type;
+	private  String  serviceName;		//SERVICE NAME	
+	private  String  type;				//CONTAINER TYPE
 	
 	//image resistry
-	private  String  imageRegistry;
-	private  String  imageRepository;
-	private  String  tag;
+	private  String  imageRegistry;		//IMAGE REGISTRY NAME
+	private  String  imageRepository;	//IMAGE REPOSITORY URL
+	private  String  tag;				//TAG
 	
 	//Run Setting
-	private  String  run;
+	private  String  run;			
 	private  String  hostName;
 	
 	//Network policy
@@ -44,35 +45,40 @@ public class Service {
 	//Foreign key ids
 	private String containerType;
 	private int tenantId;
-	private int subnetId;
-	private int environmentId;
-	private int registryId;
+	//private int subnetId;
+	//private int environmentId;
+	//private int registryId;
 	
 	//For Environment variables
 	private List<EnvironmentVariable> env = new ArrayList<>();
+	private String applicantionName;
 	
 	//unused fields
-	private String applicantionName;
 	private String protocal;
 	private String envirnament;
 	private String envtimeout;
 	private List<Scale> scales =new ArrayList<>();
 	private List<Route> route =new ArrayList<>();
 	
+	
+	private String applicationName; 		
+//	private int appsId;
+	
 	public Service() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Service(String serviceName, String type, String imageRegistry,
-			String imageRepository, String tag, String run, String hostName,
-			String portName, String portType, int hostPort, int containerPort,
-			String typeName, int envInterval, String envPath, int envThreshold,
-			int envIgnore, int volume, String subnetName, String cidr,
-			String containerType, int tenantId, int subnetId,
-			int environmentId, int registryId, List<EnvironmentVariable> env,
-			String applicantionName, String protocal, String envirnament,
-			String envtimeout, List<Scale> scales, List<Route> route) {
+	public Service(int id, String serviceName, String type,
+			String imageRegistry, String imageRepository, String tag,
+			String run, String hostName, String portName, String portType,
+			int hostPort, int containerPort, String typeName, int envInterval,
+			String envPath, int envThreshold, int envIgnore, int volume,
+			String subnetName, String cidr, String containerType, int tenantId,
+			List<EnvironmentVariable> env, String applicantionName,
+			String protocal, String envirnament, String envtimeout,
+			List<Scale> scales, List<Route> route, String applicationName) {
 		super();
+		this.id = id;
 		this.serviceName = serviceName;
 		this.type = type;
 		this.imageRegistry = imageRegistry;
@@ -94,9 +100,6 @@ public class Service {
 		this.cidr = cidr;
 		this.containerType = containerType;
 		this.tenantId = tenantId;
-		this.subnetId = subnetId;
-		this.environmentId = environmentId;
-		this.registryId = registryId;
 		this.env = env;
 		this.applicantionName = applicantionName;
 		this.protocal = protocal;
@@ -104,26 +107,34 @@ public class Service {
 		this.envtimeout = envtimeout;
 		this.scales = scales;
 		this.route = route;
+		this.applicationName = applicationName;
 	}
 
 	@Override
 	public String toString() {
-		return "Service [serviceName=" + serviceName + ", type=" + type
-				+ ", imageRegistry=" + imageRegistry + ", imageRepository="
-				+ imageRepository + ", tag=" + tag + ", run=" + run
-				+ ", hostName=" + hostName + ", portName=" + portName
-				+ ", portType=" + portType + ", hostPort=" + hostPort
-				+ ", containerPort=" + containerPort + ", typeName=" + typeName
-				+ ", envInterval=" + envInterval + ", envPath=" + envPath
-				+ ", envThreshold=" + envThreshold + ", envIgnore=" + envIgnore
-				+ ", volume=" + volume + ", subnetName=" + subnetName
-				+ ", cidr=" + cidr + ", containerType=" + containerType
-				+ ", tenantId=" + tenantId + ", subnetId=" + subnetId
-				+ ", environmentId=" + environmentId + ", registryId="
-				+ registryId + ", env=" + env + ", applicantionName="
-				+ applicantionName + ", protocal=" + protocal
-				+ ", envirnament=" + envirnament + ", envtimeout=" + envtimeout
-				+ ", scales=" + scales + ", route=" + route + "]";
+		return "Service [id=" + id + ", serviceName=" + serviceName + ", type="
+				+ type + ", imageRegistry=" + imageRegistry
+				+ ", imageRepository=" + imageRepository + ", tag=" + tag
+				+ ", run=" + run + ", hostName=" + hostName + ", portName="
+				+ portName + ", portType=" + portType + ", hostPort="
+				+ hostPort + ", containerPort=" + containerPort + ", typeName="
+				+ typeName + ", envInterval=" + envInterval + ", envPath="
+				+ envPath + ", envThreshold=" + envThreshold + ", envIgnore="
+				+ envIgnore + ", volume=" + volume + ", subnetName="
+				+ subnetName + ", cidr=" + cidr + ", containerType="
+				+ containerType + ", tenantId=" + tenantId + ", env=" + env
+				+ ", applicantionName=" + applicantionName + ", protocal="
+				+ protocal + ", envirnament=" + envirnament + ", envtimeout="
+				+ envtimeout + ", scales=" + scales + ", route=" + route
+				+ ", applicationName=" + applicationName + "]";
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getServiceName() {
@@ -294,30 +305,6 @@ public class Service {
 		this.tenantId = tenantId;
 	}
 
-	public int getSubnetId() {
-		return subnetId;
-	}
-
-	public void setSubnetId(int subnetId) {
-		this.subnetId = subnetId;
-	}
-
-	public int getEnvironmentId() {
-		return environmentId;
-	}
-
-	public void setEnvironmentId(int environmentId) {
-		this.environmentId = environmentId;
-	}
-
-	public int getRegistryId() {
-		return registryId;
-	}
-
-	public void setRegistryId(int registryId) {
-		this.registryId = registryId;
-	}
-
 	public List<EnvironmentVariable> getEnv() {
 		return env;
 	}
@@ -373,6 +360,16 @@ public class Service {
 	public void setRoute(List<Route> route) {
 		this.route = route;
 	}
+
+	public String getApplicationName() {
+		return applicationName;
+	}
+
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
+
+	
 	
 	
 }

@@ -88,7 +88,7 @@ public class VpcDAO {
 	public int getVPCIdByVPCNames(String vpcname,int tenant_id) throws DataBaseOperationFailedException{
 		LOGGER.debug(".getVPCIdByVPCNames method of NetworkDAO vpcName: "+vpcname+" tenant_id : "+tenant_id);
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
-		Integer vpcId=null;
+		int vpcId=0;
 		Connection connection=null;
 		PreparedStatement pstmt=null;
 		ResultSet result=null;
@@ -125,6 +125,6 @@ public class VpcDAO {
 		}
 		return vpcId;
 	}//end of method getAllVPC
-	
+
 	
 }

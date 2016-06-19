@@ -116,10 +116,10 @@
 									<h3>Step: Configure NetWork</h3>
 									<br>
 
-									<form action="#" id="step-1" class="form-horizontal">
+									<form action="#" id="step-1" class="form-horizontal" name="vpcForm">
 
 										<div class="form-body">
-											<div class="form-group">
+											<div class="form-group" data-ng-class="{ 'has-error' : vpcForm.vpc_name.$invalid && !vpcForm.vpc_name.$pristine }">
 												<label class="control-label col-md-3">Vpc Name <span
 													class="required"> * </span>
 												</label>
@@ -128,7 +128,7 @@
 														aria-required="true" aria-describedby="select-error"
 														class="form-control"
 														data-ng-init="selectVpc()"
-														data-ng-options="choice.vpc_name as choice.vpc_name  for choice in vpcObject">
+														data-ng-options="choice.vpc_name as choice.vpc_name  for choice in vpcObject" required>
 													</select> <span class="help-block"> Select vpc</span>
 												</div>
 
@@ -141,8 +141,8 @@
 													<select name="type" id="type" data-ng-model="service.subnetName"
 														aria-required="true" aria-describedby="select-error"
 														class="form-control"
-														data-ng-blur="selectSubnetnew()"
-														data-ng-options="choice.subnetName as choice.subnetName  for choice in subnetObject">
+														data-ng-click="selectSubnetnew()"
+														data-ng-options="choice.subnetName as choice.subnetName  for choice in subnetObject" required>
 													</select>
 													 <span class="help-block"> Select subnet</span>
 												</div>
@@ -153,7 +153,7 @@
 									<button type="button"
 										class="btn grey-salsa btn-outline pull-left"
 										data-dismiss="modal">Cancel</button>
-									<a class="btn green continue pull-right">Next</a> <a
+									<a class="btn green continue pull-right" data-ng-disabled="vpcForm.$invalid">Next</a> <a
 										class="btn green back pull-right">Previous</a>
 
 								</div>
@@ -188,7 +188,7 @@
 									<br><br><br><br>
 									<h3>Step: Configure Image Registory</h3>
 									<br>
-									<form action="#" id="step-1" class="form-horizontal">
+									<form action="#" id="step-1" class="form-horizontal" name="registryForm">
 										<div class="form-body">
 											<div class="form-group">
 												<label class="control-label col-md-3">Select Image <span
@@ -199,7 +199,7 @@
 														aria-required="true" aria-describedby="select-error"
 														class="form-control"
 														data-ng-init="selectImageRegistry()"
-														data-ng-options="choice.name as choice.name  for choice in imageRegObject">
+														data-ng-options="choice.name as choice.name  for choice in imageRegObject" required>
 													</select> <span class="help-block"> Select Image</span>
 												</div>
 											</div>
@@ -208,7 +208,7 @@
 									<button type="button"
 										class="btn grey-salsa btn-outline pull-left"
 										data-dismiss="modal">Cancel</button>
-									<a class="btn green continue pull-right">Next</a> <a
+									<a class="btn green continue pull-right" data-ng-disabled="registryForm.$invalid">Next</a> <a
 										class="btn green back pull-right">Previous</a>
 
 
@@ -243,17 +243,28 @@
 									<br><br><br><br>
 									<h3>Step: Configure Application</h3>
 									<br>
-									<form action="#" id="step-1" class="form-horizontal">
+									<form action="#" id="step-1" class="form-horizontal"
+										name="apcWizardForm">
 										<div class="form-body">
-											<div class="form-group">
+											<div class="form-group"
+												data-ng-class="{ 'has-error' : apcWizardForm.applicantionName.$invalid && !apcWizardForm.applicantionName.$pristine }">
 												<label class="control-label col-md-3">Application
 													Name <span class="required"> * </span>
 												</label>
 												<div class="col-md-4">
-												
-												<input type="text" id="applicantionName" 
-												name="applicantionName" data-ng-model="service.applicantionName" 
-												class="form-control" data-ng-blur="createApplicationByName()"/>
+													<input type="text" id="applicantionName"
+														name="applicantionName"
+														data-ng-model="service.applicantionName"
+														class="form-control"
+														data-ng-blur="createApplicationByName()" ng-maxlength="20"
+														ng-minlength="2" required />
+														<span class="error"
+														data-ng-show="apcWizardForm.applicantionName.$error.maxlength"
+														class="help-block" style="color: red;">Application
+														name Shouldn't exceed 20 chars</span> <span
+														data-ng-show="apcWizardForm.applicantionName.$error.minlength"
+														class="help-block" style="color: red;">Application
+														name Shouldn't below 2 chars</span>
 												</div>
 											</div>
 
@@ -262,7 +273,7 @@
 									<button type="button"
 										class="btn grey-salsa btn-outline pull-left"
 										data-dismiss="modal">Cancel</button>
-									<a class="btn green continue pull-right">Next</a> <a
+									<a class="btn green continue pull-right" data-ng-disabled="apcWizardForm.$invalid" >Next</a> <a
 										class="btn green back pull-right">Previous</a>
 
 								</div>

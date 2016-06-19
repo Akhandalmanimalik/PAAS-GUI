@@ -384,7 +384,7 @@ public class EnvironmentDAO {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
-		Integer envId=null;
+		int envId=0;
 
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);

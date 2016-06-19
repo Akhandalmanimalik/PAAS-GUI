@@ -223,4 +223,31 @@ public class EnvironmentTypeService {
         return result.toString();
 	}//end of method getHttpResponse
 	
+	/**
+	 * To check environment name exist
+	 * @param envName
+	 * @param req
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 */
+	@GET
+	@Path("/checknvironmentType/{envName}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String environmentValidation(@PathParam("envName") String envName,
+			@Context HttpServletRequest req)
+			throws DataBaseOperationFailedException {
+		LOGGER.debug(" coming to check environment of pass network");
+
+		HttpSession session = req.getSession(true);
+		LOGGER.debug("hhhhhh " + (int) session.getAttribute("id"));
+		EnvironmentDAO networkDAO = new EnvironmentDAO();
+		int id = networkDAO.getEnvironmentIdByEnvName(envName,
+				(int) session.getAttribute("id"));
+
+		if (id > 0)
+			return "success";
+		else
+			return "failure";
+	}// end of method environment
+
 }

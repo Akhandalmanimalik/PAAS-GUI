@@ -1,8 +1,5 @@
 package com.getusroi.paas.vo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,15 +10,14 @@ public class Subnet {
 	private String environmentName;
 	private String vpcName;
     private int tenantId;
-	private List<String> aclList =new ArrayList<String>();
-	
-	public Subnet() {
+    private String aclName;
+    
+    public Subnet() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public Subnet(int id, String subnetName, String cidr,
-			String environmentName, String vpcName, int tenantId,
-			List<String> aclList) {
+			String environmentName, String vpcName, int tenantId, String aclName) {
 		super();
 		this.id = id;
 		this.subnetName = subnetName;
@@ -29,14 +25,14 @@ public class Subnet {
 		this.environmentName = environmentName;
 		this.vpcName = vpcName;
 		this.tenantId = tenantId;
-		this.aclList = aclList;
+		this.aclName = aclName;
 	}
 
 	@Override
 	public String toString() {
 		return "Subnet [id=" + id + ", subnetName=" + subnetName + ", cidr="
 				+ cidr + ", environmentName=" + environmentName + ", vpcName="
-				+ vpcName + ", tenantId=" + tenantId + ", aclList=" + aclList
+				+ vpcName + ", tenantId=" + tenantId + ", aclName=" + aclName
 				+ "]";
 	}
 
@@ -88,15 +84,13 @@ public class Subnet {
 		this.tenantId = tenantId;
 	}
 
-	public List<String> getAclList() {
-		return aclList;
+	public String getAclName() {
+		return aclName;
 	}
 
-	public void setAclList(List<String> aclList) {
-		this.aclList = aclList;
+	public void setAclName(String aclName) {
+		this.aclName = aclName;
 	}
-	
-	
-	
-	 
+    
+    
 }

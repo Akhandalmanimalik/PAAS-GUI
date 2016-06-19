@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.dao.NetworkDAO;
+import com.getusroi.paas.dao.SubnetDAO;
 import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.PAASNetworkServiceException;
 import com.getusroi.paas.sdn.service.impl.SDNServiceImplException;
@@ -46,6 +47,7 @@ public class PAASNetworkService {
 			
 			VPC vpc=mapper.readValue(vpcData,VPC.class);
 			if (vpc != null) {
+				LOGGER.debug("VPC "+vpc);
 			HttpSession session = req.getSession(true);
 			vpc.setTenant_id(restServiceHelper.convertStringToInteger( session.getAttribute("id")+""));
 			//vpc.setVpcId(PAASGenericHelper.getCustomUUID(PAASConstant.VPC_PREFIX));
@@ -246,4 +248,82 @@ public class PAASNetworkService {
 			return "acl with name : " + aclName + " is delete successfully";
 		}// end 
 	 
+	 	/**
+	 	 * To check vpc name exist or not in database.
+	 	 * @param vpcName
+	 	 * @param req
+	 	 * @return
+	 	 * @throws DataBaseOperationFailedException
+	 	 */
+		@GET
+		@Path("/checkVPC/{vpcName}")
+		@Produces(MediaType.TEXT_PLAIN)
+		public String test(@PathParam("vpcName") String vpcName,
+				@Context HttpServletRequest req)
+				throws DataBaseOperationFailedException {
+			LOGGER.debug(" coming to check vpc of pass network");
+	
+			HttpSession session = req.getSession(true);
+			LOGGER.debug("FFFFFFF " + (int) session.getAttribute("id"));
+			NetworkDAO networkDAO = new NetworkDAO();
+			int id = networkDAO.getVPCIdByVPCNames(vpcName,
+					(int) session.getAttribute("id"));
+				LOGGER.debug("RETURN ID "+id);
+	
+			if (id > 0)
+				return "success";
+			else
+				return "failure";
+		}// end of method checkVPCByName validation
+		
+		/**
+		 * To chckAcl name exist or not
+		 * @param aclName
+		 * @param req
+		 * @return
+		 * @throws DataBaseOperationFailedException
+		 */
+		@GET
+		@Path("/checkAcl/{aclName}")
+		@Produces(MediaType.TEXT_PLAIN)
+		public String aclValidation(@PathParam("aclName") String aclName,
+				@Context HttpServletRequest req)
+				throws DataBaseOperationFailedException {
+			LOGGER.debug(" coming to check acl of pass network");
+	
+			HttpSession session = req.getSession(true);
+	
+			NetworkDAO networkDAO = new NetworkDAO();
+			int id = networkDAO.getACLIdByACLNames(aclName,
+					(int) session.getAttribute("id"));
+	
+			if (id > 0)
+				return "success";
+			else
+				return "failure";
+		}// end of method aClByName validation
+		
+		/**
+		 * To check subnet name exist or not
+		 * @param subName
+		 * @param req
+		 * @return
+		 * @throws DataBaseOperationFailedException
+		 */
+		@GET
+		@Path("/checkSubnet/{subName}")
+		@Produces(MediaType.TEXT_PLAIN)
+		public String subnetValidation(@PathParam("subName") String subName,
+				@Context HttpServletRequest req)
+				throws DataBaseOperationFailedException {
+			LOGGER.debug(" coming to check acl of pass network");
+			HttpSession session = req.getSession(true);
+			SubnetDAO networkDAO = new SubnetDAO();
+			int id = networkDAO.getSubnetIdBySubnetName(subName,
+					(int) session.getAttribute("id"));
+			if (id > 0)
+				return "success";
+			else
+				return "failure";
+		}// end of method aClByName
 }

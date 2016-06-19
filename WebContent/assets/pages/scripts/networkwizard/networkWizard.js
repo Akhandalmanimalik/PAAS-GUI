@@ -90,9 +90,111 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 	/*===============END Add SUBNET details==============*/
     
 		  	
+		  	 /*===============Add vpc validation details==============*/
 		  	
+		  	 $scope.vpcValidation = function(vpc) {
+		     	
+		     	  console.log("vpc "+vpc);
+		     	  var res = $http.get('/paas-gui/rest/networkservice/checkVPC/'+vpc);
+		     	  res.success(function(data, status, headers, config) {
+		   
+		     	    	
+		     		  if(data == 'success'){
+		     	    	document.getElementById('errfn').innerHTML="data exist enter different name";
+		     	    	document.getElementById("myvpcbtn").disabled = true;
+		     	    	
+		     		  }
+		     		  else{
+		     			 document.getElementById('errfn').innerHTML="";
+		     			document.getElementById("myvpcbtn").disabled =false;
+		     		  }
+		     	    
+		     	  });
+		     	  res.error(function(data, status, headers, config) {
+		     		 
+		     	    alert("failure message: " + JSON.stringify({
+		     	      data : data
+		     	    }));
+		     	  });
+		     };
+		     /*===============END of VPC validation==============*/	  	
 		  	
-		  	
+		     /*===============Add Environments validation==============*/
+			    $scope.environmentTypesValidation = function(environment) {
+			    	var res = $http.get('/paas-gui/rest/environmentTypeService/checknvironmentType/'+environment);
+			    	res.success(function(data, status, headers, config) {
+			   		  if(data == 'success'){
+			   	    	document.getElementById('environmenterr').innerHTML="data exist enter different name";
+			   	    	document.getElementById("myenvbtn").disabled = true;
+			   		  }
+			   		else{
+			   			document.getElementById("myenvbtn").disabled =false;
+			   			document.getElementById('environmenterr').innerHTML="";
+			   			}
+			    	});
+			    	res.error(function(data, status, headers, config) {
+			    		alert("failure message: " + JSON.stringify({
+			    			data : data
+			    		}));
+			    	});
+			    }; //end of validation
+			    
+			    /*===============ACL validation==============*/
+			    $scope.aclValidation = function(acl) {
+			    	
+			    	 
+				  	  console.log("acl "+acl);
+				  	  var res = $http.get('/paas-gui/rest/networkservice/checkAcl/'+acl);
+				  	  res.success(function(data, status, headers, config) {
+				  		  
+				  		if(data == 'success'){
+				   	    	document.getElementById('aclerr').innerHTML="data exist enter different name";
+				   	    	document.getElementById("myaclbtn").disabled = true;
+				   	    	
+				   		  }
+				   		  else{
+				   			 document.getElementById('aclerr').innerHTML="";
+				   			 document.getElementById("myaclbtn").disabled =false;
+				   		  }
+			 	  		 
+				  	  });
+				  	  res.error(function(data, status, headers, config) {
+				  	    alert("failure message: " + JSON.stringify({
+				  	      data : data
+				  	    }));
+				  	  });
+				  	 
+				  	};
+				    /*===============END Add ACL validation==============*/
+				  
+				  	
+				  	/*=============== Add SUBNET validation==============*/
+				  	$scope.subnetValidation = function(subnet) {
+					  	  console.log("subnet "+subnet);
+					  	  var res = $http.get('/paas-gui/rest/networkservice/checkSubnet/'+subnet);
+					  	  res.success(function(data, status, headers, config) {
+					  		  
+					  		if(data == 'success'){
+					   	    	document.getElementById('suberr').innerHTML="data exist enter different name";
+					   	    	document.getElementById("mysubnetbtn").disabled = true;
+					   	    	
+					   		  }
+					  		else{
+					  			document.getElementById('suberr').innerHTML="";
+					  			document.getElementById("mysubnetbtn").disabled =false;
+					  			}
+					  			
+					  	  });
+					  	  res.error(function(data, status, headers, config) {
+					  	    alert("failure message: " + JSON.stringify({
+					  	      data : data
+					  	    }));
+					  	  });
+					  	 
+					  	};
+				/*===============END Add SUBNET validation==============*/
+					  	
+					  	
 		  	
   });  /*================end of controller======================*/
 

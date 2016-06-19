@@ -22,8 +22,8 @@ import com.getusroi.paas.vo.Subnet;
  *
  */
 public class SubnetDAO {
-	 static final Logger LOGGER = LoggerFactory.getLogger(NetworkDAO.class);
-	 private final String GET_SUBNET_ID_BY_SUBNET_NAME_ID_QUERY = "select subnet_id from subnet where subnet_name=?";
+	 static final Logger LOGGER = LoggerFactory.getLogger(SubnetDAO.class);
+	 private final String GET_SUBNET_ID_BY_SUBNET_NAME_ID_QUERY = "select subnet_id from subnet where subnet_name=? and tenant_id=?";
 	 private final String  GET_ALL_SUBNET_BY_VPC_ID_TENANT_ID_QUERY = "select subnet_name from subnet where vpc_id = ? and tenant_id = ?";
 	 
 	 private Subnet subnet = null;
@@ -33,17 +33,18 @@ public class SubnetDAO {
 	 * @return List<Subnet> : List of all subnet Object contain details of subnet
 	 * @throws DataBaseOperationFailedException : Error in fetching all subnet data from db
 	 */
-	public Integer getSubnetIdBySubnetName(String subnetName) throws DataBaseOperationFailedException{
+	public int getSubnetIdBySubnetName(String subnetName,int tenantId) throws DataBaseOperationFailedException{
 		LOGGER.debug(".getSubnetIdBySubnetName method in SubnetDAO");
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		Connection connection=null;
 		PreparedStatement stmt=null;
 		ResultSet result=null;
-		Integer subnetId=null;
+		int subnetId=0;
 		try {
 			connection=connectionFactory.getConnection("mysql");
 			stmt=connection.prepareStatement(GET_SUBNET_ID_BY_SUBNET_NAME_ID_QUERY);
 			stmt.setString(1, subnetName);
+			stmt.setInt(2,tenantId);
 			result = stmt.executeQuery();
 			
 			if(result != null){

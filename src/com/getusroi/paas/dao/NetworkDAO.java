@@ -30,11 +30,12 @@ import com.getusroi.paas.vo.VPCRegion;
  */
 public class NetworkDAO {
 	 static final Logger LOGGER = LoggerFactory.getLogger(SubnetDAO.class);
-	 private final String REGISTER_VPC_QUERY="insert into vpc(vpc_name,tenant_id,createdDTM,acl) values(?,?,NOW(),?)";
+	 private final String REGISTER_VPC_QUERY="insert into vpc(vpc_name,tenant_id,createdDTM,acl_id) values(?,?,NOW(),?)";
 	 private final String GET_ALL_VPC_QUERY="select * from vpc where tenant_id=?";
 	 private final String DELETE_VPC_BY_NAME_QUERY="delete from vpc where vpc_name=?";
 	 private final String UPDATE_VPC_BY_NAME_AND_VPCID_QUERY="update vpc set vpc_region=? , cidr=?, acl=? where vpcId=? AND vpc_name=?";
-	 
+	 private final String GET_VPCID_BY_VPCNAME_AND_TENANT_ID_QUERY="select vpc_id from vpc where vpc_name=? and tenant_id=?";
+
 	 
 	 private final String INSERT_VPC_REGION_QUERY="insert into vpc_region (region) values(?)";
 	 private final String GET_VPC_REGION_NAME_QUERY="select region from vpc_region";
@@ -43,10 +44,13 @@ public class NetworkDAO {
 	 private final String INSERT_ACL_QUERY="insert into acl (acl_name,description,tenant_id,createdDTM) values(?,?,?,NOW())";
 	 private final String GEL_ALL_ACL_NAMES_QUERY = "select aclname from acl";
 	 private final String GEL_ALL_ACL_QUERY="select * from acl where tenant_id=?";
+	 private final String GET_ACL_ID_BY_ACLNAME_TENANT_ID="select acl_id from acl where acl_name=? and tenant_id=?";
 	 private final String UPDATE_ACL_BY_NAME_QUERY="update acl set action=?, sourceip=?, destip=? where name=?";
 	 private final String DELETE_ACL_BY_NAME_QUERY_Using_TenantId = "delete from acl where acl_name=? and tenant_id=?";
+	 private final String GET_ACL_NAME_BY_ACL_ID_AND_TENANT_ID="select acl_name from acl where acl_id=? and tenant_id=?";
 	 
-	 private final String INSERT_SUBNET_QUERY = "insert into subnet(subnet_name,cidr,tenant_id,vpc_id ,envirnoment_id,createdDTM) values(?,?,?,?,?,now())";
+	 
+	 private final String INSERT_SUBNET_QUERY = "insert into subnet(subnet_name,cidr,tenant_id,vpc_id ,envirnoment_id,createdDTM,acl_id) values(?,?,?,?,?,now(),?)";
 	 
 	 private final String GET_ALL_SUBNET_BY_TENANT_ID_QUERY="select subnet_name,cidr,vpc_id, envirnoment_id from subnet where tenant_id=?";
 	 private final String DELETE_SUBNET_BY_SUBNET_NAME_QUERY="delete from subnet where subnet_name=?";
@@ -59,17 +63,17 @@ public class NetworkDAO {
 	 * @throws DataBaseOperationFailedException : Unable to register vpc with db
 	 */
 	public void registerVPC(VPC vpc) throws DataBaseOperationFailedException{
-		LOGGER.debug(".registerVPC method of NetworkDAO");
+		LOGGER.debug(".registerVPC method of NetworkDAO vpc"+vpc);
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
+		 
 		try {
 			connection=connectionFactory.getConnection("mysql");
 			pstmt=(PreparedStatement) connection.prepareStatement(REGISTER_VPC_QUERY);
 			pstmt.setString(1, vpc.getVpc_name());
 			pstmt.setInt(2, vpc.getTenant_id());
-			pstmt.setString(3, vpc.getAcl());
-			
+			pstmt.setInt(3, getACLIdByACLNames(vpc.getAclName(), vpc.getTenant_id()));
 			pstmt.executeUpdate();
 			LOGGER.debug("VPC registerd successfully with data : "+vpc);
 		} catch (ClassNotFoundException | IOException e) {
@@ -89,8 +93,7 @@ public class NetworkDAO {
 		}
 	}//end of method registerVPC
 	
-	
-	
+	 
 	/**
 	 * This method is used to get list of all the vpc store in db
 	 * @return List<VPC> : list of VPC object containg vpc information
@@ -99,7 +102,7 @@ public class NetworkDAO {
 	public List<VPC> getAllVPC(int tenant_id) throws DataBaseOperationFailedException{
 		LOGGER.debug(".getAllVPC method of NetworkDAO");
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
-		List<VPC> vpcList=new ArrayList<>();
+		List<VPC> vpcList=new ArrayList<VPC>();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
 		ResultSet result=null;
@@ -110,11 +113,10 @@ public class NetworkDAO {
 			result=pstmt.executeQuery();
 			if(result !=null){
 				while(result.next()){
-					String vpc_name=result.getString("vpc_name");
-					String acl=result.getString("acl");
-					String vpcId=result.getString("vpc_id");
-					LOGGER.debug("vpc name : "+vpc_name+", acl : "+acl+", vpcId : "+vpcId);
-					VPC vpc = new VPC(vpcId, vpc_name, acl);
+					VPC vpc = new VPC();
+					vpc.setVpc_name(result.getString("vpc_name"));
+					vpc.setAclName(getACLNameByAclIdAndTenantId(result.getInt("acl_id"), tenant_id));
+					vpc.setVpcId(result.getString("vpc_id"));
 					vpcList.add(vpc);
 				}
 			}else{
@@ -185,7 +187,7 @@ public class NetworkDAO {
 			connection=connectionFactory.getConnection("mysql");
 			pstmt=(PreparedStatement) connection.prepareStatement(UPDATE_VPC_BY_NAME_AND_VPCID_QUERY);
 			
-			pstmt.setString(3, vpc.getAcl());
+			pstmt.setString(3, vpc.getAclName());
 			pstmt.setString(4,vpc.getVpcId());
 			pstmt.setString(5,vpc.getVpc_name());
 			LOGGER.debug("VPC update with data : "+vpc+" successfully");
@@ -212,7 +214,7 @@ public class NetworkDAO {
 	 * @throws DataBaseOperationFailedException : Unable to insert ACL in db
 	 */
 	public void insertACL(ACL acl) throws DataBaseOperationFailedException{
-		LOGGER.debug(".insertACL method of NetworkDAO");
+		LOGGER.debug(".insertACL method of NetworkDAO"+acl);
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
@@ -475,7 +477,7 @@ public class NetworkDAO {
 		LOGGER.info("indie addSubnetmethod with subnetName>>>>>>>>>>>>>>>>>>>>>>>." +subnet);
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		EnvironmentDAO envDAO = new EnvironmentDAO();
-		VpcDAO vpcDap = new VpcDAO();
+		VpcDAO vpcDao = new VpcDAO();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
 		try {
@@ -483,9 +485,11 @@ public class NetworkDAO {
 			pstmt=(PreparedStatement) connection.prepareStatement(INSERT_SUBNET_QUERY);
 			pstmt.setString(1, subnet.getSubnetName());
 			pstmt.setString(2, subnet.getCidr());
-			pstmt.setInt(3, subnet.getTenantId());//
-			pstmt.setInt(4, vpcDap.getVPCIdByVPCNames(subnet.getVpcName(),subnet.getTenantId()));
+			pstmt.setInt(3, subnet.getTenantId());
+			LOGGER.debug("vpc id for subnet "+vpcDao.getVPCIdByVPCNames(subnet.getVpcName(),subnet.getTenantId()));
+			pstmt.setInt(4, vpcDao.getVPCIdByVPCNames(subnet.getVpcName(),subnet.getTenantId()));
 			pstmt.setInt(5, envDAO.getEnvironmentIdByEnvName(subnet.getEnvironmentName(),subnet.getTenantId()));
+			pstmt.setInt(6,getACLIdByACLNames(subnet.getAclName(), subnet.getTenantId()));
 			pstmt.executeUpdate();
 			LOGGER.debug("Inserting subnet : "+subnet+" is successfull");
 		} catch (ClassNotFoundException | IOException e) {
@@ -670,6 +674,139 @@ public class NetworkDAO {
 			DataBaseHelper.dbCleanUp(connection, pstmt);
 		}
 	}
+	
+	
+	/**
+	 * This method is used to get vpc id using vpc name
+	 * @return String : VPC Id in string
+	 * @throws DataBaseOperationFailedException : Unable to get vpc id using vpc name
+	 */
+	public int getVPCIdByVPCNames(String vpcname,int tenant_id) throws DataBaseOperationFailedException{
+		LOGGER.debug(".getVPCIdByVPCNames method of NetworkDAO vpcName: "+vpcname+" tenant_id : "+tenant_id);
+		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+		
+		int vpcId=0;
+		Connection connection=null;
+		PreparedStatement pstmt=null;
+		ResultSet result=null;
+		try {
+			connection=connectionFactory.getConnection("mysql");
+			pstmt=(PreparedStatement) connection.prepareStatement(GET_VPCID_BY_VPCNAME_AND_TENANT_ID_QUERY);
+			 
+			pstmt.setString(1, vpcname);
+			pstmt.setInt(2, tenant_id);
+			result=pstmt.executeQuery();
+			
+			if(result !=null){
+				while(result.next()){
+					 vpcId=result.getInt("vpc_id");
+					LOGGER.debug(" vpcId : "+vpcId);					
+				}
+			}else{
+				LOGGER.debug("No VPC available in db");
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Error in getting the vpc detail from db using vpc name : "+vpcname);
+			throw new DataBaseOperationFailedException("Error in fetching the vpcid from db using vpc name : "+vpcname,e);
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Error in getting the vpc detail from db using vpc name because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Error in getting the vpc detail from db using vpc name because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException("Error in fetching the vpcid from db using vpc name : "+vpcname,e);
+		} finally{
+			DataBaseHelper.dbCleanup(connection, pstmt, result);
+		}
+		return vpcId;
+	}//end of method getAllVPC
+	 
+	public int getACLIdByACLNames(String aclname,int tenant_id) throws DataBaseOperationFailedException{
+		LOGGER.debug(".getaClIdByVPCNames method of NetworkDAO aclname: "+aclname+" tenant_id : "+tenant_id);
+		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+		
+		int aclId=0;
+		Connection connection=null;
+		PreparedStatement pstmt=null;
+		ResultSet result=null;
+		try {
+			connection=connectionFactory.getConnection("mysql");
+			pstmt=(PreparedStatement) connection.prepareStatement(GET_ACL_ID_BY_ACLNAME_TENANT_ID);
+			 
+			pstmt.setString(1, aclname);
+			pstmt.setInt(2, tenant_id);
+			result=pstmt.executeQuery();
+			
+			if(result !=null){
+				while(result.next()){
+					 aclId=result.getInt("acl_id");
+					LOGGER.debug(" aclId : "+aclId);					
+				}
+			}else{
+				LOGGER.debug("No aCl available in db");
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Error in getting the acl detail from db using vpc name : "+aclname);
+			throw new DataBaseOperationFailedException("Error in fetching the aclid from db using acl name : "+aclname,e);
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Error in getting the acl detail from db using acl name because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Error in getting the acl detail from db using acl name because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException("Error in fetching the aclid from db using vpc name : "+aclname,e);
+		} finally{
+			DataBaseHelper.dbCleanup(connection, pstmt, result);
+		}
+		return aclId;
+	}//end of method acl validation
+	
+	public String getACLNameByAclIdAndTenantId(int aclId,int tenant_id) throws DataBaseOperationFailedException{
+		LOGGER.debug(".getACLNameByAclIdAndTenantId method of NetworkDAO aclId>>>>>>>>>>>>>>>>: "+aclId+" tenant_id : "+tenant_id);
+		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+		
+		String aclName=null;
+		Connection connection=null;
+		PreparedStatement pstmt=null;
+		ResultSet result=null;
+		try {
+			connection=connectionFactory.getConnection("mysql");
+			pstmt=(PreparedStatement) connection.prepareStatement(GET_ACL_NAME_BY_ACL_ID_AND_TENANT_ID);
+			 
+			pstmt.setInt(1, aclId);
+			pstmt.setInt(2, tenant_id);
+			result=pstmt.executeQuery();
+			
+			if(result !=null){
+				while(result.next()){
+					aclName = result.getString("acl_name");
+					LOGGER.debug(" aclName : "+aclName);					
+				}
+			}else{
+				LOGGER.debug("No aCl available in db");
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Error in getting the acl detail from db using vpc name : "+aclId);
+			throw new DataBaseOperationFailedException("Error in fetching the aclid from db using acl name : "+aclId,e);
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Error in getting the acl detail from db using acl name because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Error in getting the acl detail from db using acl name because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException("Error in fetching the aclid from db using vpc name : "+aclId,e);
+		} finally{
+			DataBaseHelper.dbCleanup(connection, pstmt, result);
+		}
+		return aclName;
+	}//end of method acl validation
+	
 	
 	 
 }

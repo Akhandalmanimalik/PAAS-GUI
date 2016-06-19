@@ -20,8 +20,6 @@ import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
 import com.getusroi.paas.vo.ApplicantSummary;
 import com.getusroi.paas.vo.EnvironmentVariable;
-import com.getusroi.paas.vo.Route;
-import com.getusroi.paas.vo.Scale;
 import com.getusroi.paas.vo.Service;
 import com.mysql.jdbc.PreparedStatement;
 
@@ -202,9 +200,7 @@ public class ApplicationDAO {
 			pstmt.setString(17, "hostpath1");				//HARDCODE
 			pstmt.setString(18, "contnrpath1");				//HARDCODE	
 			pstmt.setInt(19, service.getVolume());
-			
-			pstmt.setInt(20, new SubnetDAO().getSubnetIdBySubnetName(service.getSubnetName()));
-			
+			pstmt.setInt(20, new SubnetDAO().getSubnetIdBySubnetName(service.getSubnetName(),service.getTenantId()));
 			pstmt.setInt(21, service.getTenantId());
 			pstmt.setInt(22, new ImageRegistryDAO().getImageRegistryIdByName(service.getImageRegistry(), service.getTenantId()));
 			pstmt.setInt(23, new ContainerTypesDAO().getContainerTypeIdByContainerName(service.getType()));

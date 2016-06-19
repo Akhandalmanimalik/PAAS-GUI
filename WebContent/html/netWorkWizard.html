@@ -26,13 +26,13 @@
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
 <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
-<!-- <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" /> -->
 <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
 <link href="../assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
 <link href="../assets/pages/css/layout.min.css" rel="stylesheet" type="text/css" />
 <link href="../assets/pages/css/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
 <link href="../assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css" rel="stylesheet" type="text/css">
 <link rel="shortcut icon" href="favicon.ico" />
+
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <link rel="stylesheet" href="../css/table/table.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -57,8 +57,7 @@
 		<!-- END PAGE HEAD-->
 		<hr>
 		<!-- BEGIN PAGE BASE CONTENT -->
- <!-- data-ng-app="networkwizardApp" data-ng-controller="networkwizardController" -->
-		<div ng-app="networkwizardApp" ng-controller="MainCtrl" ng-submit="addNetworkDet()">
+		<div ng-app="networkwizardApp" ng-controller="MainCtrl">
 
 			<div id="spacer"></div>
 			<div id="progress-bar">
@@ -99,37 +98,41 @@
 								</div>
 							</div>
 							<br>
-							
 							<h3>Step: Virtual Private Cloud (VPC)</h3>
 							<br>
-							<form action="#" id="step-1" class="form-horizontal" name="userForm" >
+							<form action="#" id="step-1" class="form-horizontal"
+								name="userForm">
 								<div class="form-body">
-									<div class="form-group" data-ng-class="{ 'has-error' : userForm.vpc_name.$invalid && !userForm.vpc_name.$pristine }">
-										
-										
+									<div class="form-group"
+										data-ng-class="{ 'has-error' : userForm.vpc_name.$invalid && !userForm.vpc_name.$pristine }">
+
+
 										<div class="col-xs-4">
-										<label for="ex2">Vpc Name <span
-											class="required"> * </span></label>
-											<input type="text" id="username" name="vpc_name" data-ng-model="network.vpc.vpc_name" class="form-control"
-												 value="tomcatApplication" ng-minlength="2" ng-maxlength="10" required/>
-												 <span class="error" ng-show=" userForm.vpc_name.$error.minlength"
-										class="help-block" style="color: red;">VPC name
-										Shouldn't below 2 chars.</span>
-										
-										<span class="error" ng-show=" userForm.vpc_name.$error.maxlength"
-										class="help-block" style="color: red;">VPC name
-										Shouldn't above 20 chars.</span>
+											<label for="ex2">Vpc Name <span class="required">
+													* </span></label>
+											<input type="text" id="vpc_name" name="vpc_name"
+												data-ng-model="network.vpc.vpc_name" class="form-control"
+												value="" ng-minlength="2" ng-maxlength="20"
+												required data-ng-change="vpcValidation(network.vpc.vpc_name)" /><span
+												class="error" ng-show=" userForm.vpc_name.$error.minlength"
+												class="help-block" style="color: red;">VPC name
+												Shouldn't below 2 chars.</span> <span class="error"
+												ng-show=" userForm.vpc_name.$error.maxlength"
+												class="help-block" style="color: red;">VPC name
+												Shouldn't above 20 chars.</span> <span id="errfn"
+												style="color: red;"></span>
 										</div>
 									</div>
 
 								</div>
+								{{isExist}}
 
 
 							</form>
-							<button type="button"
-								class="btn grey-salsa btn-outline pull-left"
+							<button type="button" class="btn grey-salsa btn-outline pull-left"
 								data-dismiss="modal">Cancel</button>
-							<button type="button" class="btn green continue pull-right" data-ng-disabled="userForm.$invalid">Next</button>
+							<button type="button" class="btn green continue pull-right" id="myvpcbtn" 
+							data-ng-disabled="userForm.$invalid">Next</button>
 
 
 						</div>
@@ -158,46 +161,45 @@
 							<h3>Step: Environment</h3>
 							<br>
 
-						<form action="#" id="step-1" class="form-horizontal"  name="environmentForm">
+							<form action="#" id="step-1" class="form-horizontal"
+								name="environmentForm">
 
 								<div class="form-body">
-									<div class="form-group" data-ng-class="{ 'has-error' :environmentForm.name.$invalid && !userForm.name.$pristine }">
+									<div class="form-group"
+										data-ng-class="{ 'has-error' :environmentForm.name.$invalid && !userForm.name.$pristine }">
 										<label class="control-label col-md-3">Environment Name
 											<span class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<input type="text" id="username" name="name" data-ng-model="network.environment.name" class="form-control"
-												 value=""  ng-minlength="2" ng-maxlength="10" required/>
-												 
-												 
-												 <span class="error" ng-show="environmentForm.name.$error.minlength"
-										class="help-block" style="color: red;">Environment name
-										Shouldn't below 2 chars.</span>
-										
-										<span class="error" ng-show="environmentForm.name.$error.maxlength"
-										class="help-block" style="color: red;">Environment name
-										Shouldn't above 10 chars.</span> 
- 
+											<input type="text" id="name" name="name"
+												data-ng-model="network.environment.name"
+												class="form-control" value="" ng-minlength="2"
+												ng-maxlength="20" data-ng-change="environmentTypesValidation(network.environment.name);" required /><span class="error"
+												ng-show="environmentForm.name.$error.minlength"
+												class="help-block" style="color: red;">Environment
+												name Shouldn't below 2 chars.</span> <span class="error"
+												ng-show="environmentForm.name.$error.maxlength"
+												class="help-block" style="color: red;">Environment
+												name Shouldn't above 20 chars.</span> <span id="environmenterr"
+												style="color: red;"></span> 
 										</div>
 									</div>
+									 
 									<div class="form-group">
-										<label class="control-label col-md-3">
-											Description <span class="required"> * </span>
+										<label class="control-label col-md-3"> Description <span
+											class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<textarea rows="4" data-ng-model="network.environment.description" cols="40" required></textarea>
+											<textarea rows="4"
+												data-ng-model="network.environment.description" cols="40"
+												id="envdescription"></textarea>
 										</div>
 									</div>
-
-								</div>
-
+								</div>	
 							</form>
-							<button type="button"
-								class="btn grey-salsa btn-outline pull-left"
-								data-dismiss="modal">Cancel</button>
-							<button type="button" class="btn green continue pull-right" data-ng-disabled="environmentForm.$invalid">Next</button><button class="btn green back pull-right">
-								Previous</button>
-
+							<button type="button" class="btn grey-salsa btn-outline pull-left" data-dismiss="modal">Cancel</button>
+							<button type="button" class="btn green continue pull-right" data-ng-disabled="environmentForm.$invalid" id="myenvbtn">Next</button>
+							<button class="btn green back pull-right">Previous</button>
 						</div>
 
 						<div class="tab-pane fade" id="tab_6_3">
@@ -225,55 +227,76 @@
 							<br>
 							<h3>Step: Acl</h3>
 							<br>
-							<form action="#" id="step-1" class="form-horizontal" name='aclForm'>
+							<form action="#" id="step-1" class="form-horizontal"
+								name='aclForm'>
 								<div class="form-body">
-									<div class="form-group" data-ng-class="{ 'has-error' :aclForm.aclName.$invalid && !aclForm.aclName.$pristine }">
+								<!-- Acl Name -->
+									<div class="form-group"
+										data-ng-class="{ 'has-error' :aclForm.aclName.$invalid && !aclForm.aclName.$pristine }">
 										<label class="control-label col-md-3"> Acl Name <span
 											class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<input type="text" id="aclName" name="aclName" data-ng-model="network.acl.aclName"  class="form-control" value="" ng-minlength="2" ng-maxlength="10" required />
-											
-											 <span class="error" ng-show=" aclForm.aclName.$error.minlength"
-										class="help-block" style="color: red;">ACL name
-										Shouldn't below 2 chars.</span>
-										
-										<span class="error" ng-show="aclForm.aclName.$error.maxlength"
-										class="help-block" style="color: red;">ACL name
-										Shouldn't above 10 chars.</span> 
-											
-											
+											<input type="text" id="aclName" name="aclName"
+												data-ng-model="network.acl.aclName" class="form-control"
+												value="" ng-minlength="2" ng-maxlength="20" data-ng-blur="aclValidation(network.acl.aclName);" required/> 
+												<span class="error"
+												ng-show=" aclForm.aclName.$error.minlength"
+												class="help-block" style="color: red;">ACL name
+												Shouldn't below 2 chars.</span> <span class="error"
+												ng-show="aclForm.aclName.$error.maxlength"
+												class="help-block" style="color: red;">ACL name
+												Shouldn't above 20 chars.</span> <span id="aclerr"
+												style="color: red;"></span>
 										</div>
 									</div>
-									<div class="form-group" data-ng-class="{ 'has-error' :aclForm.sourceIp.$invalid && !aclForm.sourceIp.$pristine }">
-										<label class="control-label col-md-3">Source Ip <span
+									
+									<!-- Description -->
+									<div class="form-group">
+										<label class="control-label col-md-3"> Description <span
 											class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<input type="text" id="sourceIp" name="sourceIp"  data-ng-model="network.acl.sourceIp" class="form-control" value="" ng-minlength="11" ng-maxlength="17" required />
-											
-											 <span class="error" ng-show=" aclForm.sourceIp.$error.minlength"
-										class="help-block" style="color: red;">Source IP
-										must be of 11 length .</span>
-										
-										<span class="error" ng-show="aclForm.sourceIp.$error.maxlength"
-										class="help-block" style="color: red;">Source IP should not exceed of 17 length</span> 
+											<textarea rows="4"
+												data-ng-model="network.acl.description" cols="40"
+												id="description"></textarea>
 										</div>
 									</div>
-									<div class="form-group" data-ng-class="{ 'has-error' :aclForm.sourceIp.$invalid && !aclForm.sourceIp.$pristine }">
+									
+									<!-- <div class="form-group"
+										data-ng-class="{ 'has-error' :aclForm.sourceIp.$invalid && !aclForm.sourceIp.$pristine }">
+										<label class="control-label col-md-3"> Description <span
+											class="required"> * </span>
+										</label>
+										<div class="col-md-4">
+											<input type="text" id="description" name="description"
+												data-ng-model="network.acl.description" class="form-control"
+												value="" ng-minlength="11" ng-maxlength="17" required /> <span
+												class="error" ng-show=" aclForm.sourceIp.$error.minlength"
+												class="help-block" style="color: red;">Source IP must
+												be of 11 length .</span> <span class="error"
+												ng-show="aclForm.sourceIp.$error.maxlength"
+												class="help-block" style="color: red;">Source IP
+												should not exceed of 17 length</span>
+										</div>
+									</div>
+									<div class="form-group"
+										data-ng-class="{ 'has-error' :aclForm.sourceIp.$invalid && !aclForm.sourceIp.$pristine }">
 										<label class="control-label col-md-3">Destintaion Ip <span
 											class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<input type="text" id="destinationIp" name="destinationIp" data-ng-model="network.acl.destinationIp" class="form-control"  value="" ng-minlength="11" ng-maxlength="17" required />
-										
-										 <span class="error" ng-show=" aclForm.destinationIp.$error.minlength"
-										class="help-block" style="color: red;">Destination IP
-										must be of 11 length .</span>
-										
-										<span class="error" ng-show="aclForm.destinationIp.$error.maxlength"
-										class="help-block" style="color: red;">Destination IP should not exceed of 17 length</span> 
-											
+											<input type="text" id="destinationIp" name="destinationIp"
+												data-ng-model="network.acl.destinationIp"
+												class="form-control" value="" ng-minlength="11"
+												ng-maxlength="17" required /> <span class="error"
+												ng-show=" aclForm.destinationIp.$error.minlength"
+												class="help-block" style="color: red;">Destination IP
+												must be of 11 length .</span> <span class="error"
+												ng-show="aclForm.destinationIp.$error.maxlength"
+												class="help-block" style="color: red;">Destination IP
+												should not exceed of 17 length</span>
+
 										</div>
 									</div>
 									<div class="form-group">
@@ -281,27 +304,31 @@
 											class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<input type="text" id="port" name="port" data-ng-model="network.acl.port" class="form-control" required/>
+											<input type="text" id="port" name="port"
+												data-ng-model="network.acl.port" class="form-control"
+												required />
 										</div>
-									</div>
+									</div> 
 									<div class="form-group">
 										<label class="control-label col-md-3">Action <span
 											class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<select id="action" name="action"  aria-required="true" data-ng-model="network.acl.action"
-												aria-describedby="select-error" class="form-control" required>
+											<select id="action" name="action" aria-required="true"
+												data-ng-model="network.acl.action"
+												aria-describedby="select-error" class="form-control"
+												required>
 												<option value="1.0">allow</option>
 												<option value="2.0">deny</option>
 											</select> <span class="help-block"> Select vpc</span>
 										</div>
-									</div>
+									</div> -->
 								</div>
 							</form>
 							<button type="button"
 								class="btn grey-salsa btn-outline pull-left"
 								data-dismiss="modal">Cancel</button>
-							<button type="button" class="btn green continue pull-right" data-ng-disabled="aclForm.$invalid">Next</button>
+							<button type="button" class="btn green continue pull-right" data-ng-disabled="aclForm.$invalid" id="myaclbtn">Next</button>
 							<button type="button" class="btn green back pull-right">Previous</button> 
 								</div>
 						<div class="tab-pane fade" id="tab_6_4">
@@ -336,15 +363,19 @@
 											class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<input type="text" id="subnetName" name="subnetName" data-ng-model="network.subnet.subnetName" class="form-control" value="" ng-maxlength="20" ng-minlength="2" required/>
-										
-										 <span class="error" ng-show=" subnetForm.subnetName.$error.minlength"
-										class="help-block" style="color: red;">Subnet name shouldn't below 2 char
-										</span>
-										
-										<span class="error" ng-show="subnetForm.subnetName.$error.maxlength"
-										class="help-block" style="color: red;">Subnet name shouldn't above 10 char</span> 
-											
+											<input type="text" id="subnetName" name="subnetName"
+												data-ng-model="network.subnet.subnetName"
+												class="form-control" value="" ng-maxlength="20"
+												ng-minlength="2"
+												data-ng-change="subnetValidation(network.subnet.subnetName);"
+												required /> <span class="error"
+												ng-show=" subnetForm.subnetName.$error.minlength"
+												class="help-block" style="color: red;">Subnet name
+												shouldn't below 2 char </span> <span class="error"
+												ng-show="subnetForm.subnetName.$error.maxlength"
+												class="help-block" style="color: red;">Subnet name
+												shouldn't above 10 char</span> <span id="suberr"
+												style="color: red;"></span>
 											
 										</div>
 									</div>
@@ -377,7 +408,7 @@
 											class="required"> * </span>
 										</label>
 										<div class="col-md-4">
-											<select id="acl" name="acl" data-ng-model="network.environment.acl" aria-required="true"
+											<select id="acl" name="aclName" data-ng-model="network.subnet.aclName" aria-required="true"
 												aria-describedby="select-error" class="form-control" required>
 												<option value="{{network.acl.aclName}}">{{network.acl.aclName}}</option>
 											</select> 
@@ -389,9 +420,10 @@
 							<button type="button"
 								class="btn grey-salsa btn-outline pull-left"
 								data-dismiss="modal">Cancel</button>
-							<button type="button" class="btn green continue pull-right" data-ng-disabled="subnetForm.$invalid">Finish</button>
-							<a class="btn green continue pull-right"  >Next</a> <a
-								class="btn green back pull-right">Previous</a>
+							<button type="button" ng-click="addNetworkDet();"
+								class="btn green continue pull-right"
+								data-ng-disabled="subnetForm.$invalid" id="mysubnetbtn">Finish</button>
+							 <a class="btn green back pull-right">Previous</a>
 
 						</div>
 

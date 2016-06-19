@@ -24,8 +24,6 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
      
      /*======================= To get all Subnet details with current user  =========================*/
     $scope.selectSubnetnew = function() {
-   
-     
     var vpcName = $scope.service.vpc_name;
     console.log("vpcName "+vpcName);
     var response = $http.post('/paas-gui/rest/subnetService/getSubnetNameByVpc',vpcName); 

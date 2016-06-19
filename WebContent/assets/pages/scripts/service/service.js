@@ -14,7 +14,7 @@ mysubnet.controller('serviceCtrl', function ($scope,$http) {
     
     /*============ To get all vpc with current user ======================*/
     $scope.getAllVpc = function() {
-    							alert("comming getAllVpc");  
+    							 
     	var response = $http.get('/paas-gui/rest/networkservice/getAllVPC');
     	
     	response.success(function(data){

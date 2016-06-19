@@ -72,10 +72,8 @@ public class ApplicationService {
 		ApplicationDAO applicationDAO=new ApplicationDAO();
 		IMarathonService marathonService=new MarathonService();
 		try {
-			
 			HttpSession session=request.getSession(false);
 			int userId=(int)session.getAttribute("id");
-			
 			Service service = mapper.readValue(applicationServiceData,Service.class);
 			/*for(EnvironmentVariable env:service.getEnv()){
 				LOGGER.debug("env key : "+env.getEnvkey()+"env value : "+env.getEnvvalue());
@@ -116,7 +114,8 @@ public class ApplicationService {
 		int userId=(int)session.getAttribute("id");
 	
 		ApplicationDAO applicationDAO=new ApplicationDAO();
-		List<Service> addServiceList=applicationDAO.getAllServiceByUserId(userId);
+		List<Service> addServiceList = applicationDAO.getAllServiceByUserId(userId);
+		 
 		Gson gson = new Gson();
 		String addServiceInJsonString=gson.toJson(addServiceList);
 		return addServiceInJsonString;
@@ -135,19 +134,39 @@ public class ApplicationService {
 		String applicantSummaryInJsonString=gson.toJson(applicantSummaryList);
 		return applicantSummaryInJsonString;
 	}//end of method getAllApplicationSummary
-	
-	@GET
-	@Path("/deleteServiceByName/{serviceName}/{envirnoment}")
-	public void deleteServiceByName(@PathParam("serviceName") String serviceName,@PathParam("envirnoment") String envirnoment,@Context HttpServletRequest request) throws DataBaseOperationFailedException, MarathonServiceException{
+
+	/*@GET
+	@Path("/deleteServiceByName/{serviceName}/{appsid}")
+	public void deleteServiceByName(@PathParam("serviceName") String serviceName,@PathParam("appsid") String appsid,@Context HttpServletRequest request) throws DataBaseOperationFailedException, MarathonServiceException{
 		LOGGER.debug(".deleteServiceByName method of ApplicationService ");
-		LOGGER.debug("ServiceNAme : "+serviceName  +" environement : "+envirnoment);
+		LOGGER.debug("ServiceNAme : "+serviceName  +" apps_id : "+appsid);
 		ApplicationDAO applicationDAO=new ApplicationDAO();
 		HttpSession session=request.getSession(false);
-		int user_id=(int)session.getAttribute("id");
 		//String appid=TENANT+user_id+"-"+envirnoment;
 		//new MarathonService().deletInstanceformMarathan(appid);
-		
-		applicationDAO.deleteServiceByServiceName(serviceName,user_id);
+		Service service = new Service();
+		service.setServiceName(serviceName);
+		service.setTenantId((int)session.getAttribute("id"));
+		service.setAppsId(new RestServiceHelper().convertStringToInteger(appsid));
+		applicationDAO.deleteServiceByServiceName(service);
+	}//end of method deleteServiceByName
+*/	
+	
+	@GET
+	@Path("/deleteServiceByName/{serviceName}")
+	public void deleteServiceByName(@PathParam("serviceName") String serviceName,@Context HttpServletRequest request) throws DataBaseOperationFailedException, MarathonServiceException{
+		LOGGER.debug(".deleteServiceByName method of ApplicationService ");
+		String appsid="25";
+		LOGGER.debug("ServiceNAme : "+serviceName  +" apps_id : "+appsid);
+		ApplicationDAO applicationDAO=new ApplicationDAO();
+		HttpSession session=request.getSession(false);
+		//String appid=TENANT+user_id+"-"+envirnoment;
+		//new MarathonService().deletInstanceformMarathan(appid);
+		Service service = new Service();
+		service.setServiceName(serviceName);
+		service.setTenantId((int)session.getAttribute("id"));
+		service.setAppsId(new RestServiceHelper().convertStringToInteger(appsid));
+		applicationDAO.deleteServiceByServiceName(service);
 	}//end of method deleteServiceByName
 	
 	@PUT

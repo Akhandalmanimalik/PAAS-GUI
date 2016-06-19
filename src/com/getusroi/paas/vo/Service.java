@@ -62,7 +62,7 @@ public class Service {
 	
 	
 	private String applicationName; 		
-//	private int appsId;
+	private int appsId;
 	
 	public Service() {
 		// TODO Auto-generated constructor stub
@@ -76,7 +76,7 @@ public class Service {
 			String subnetName, String cidr, String containerType, int tenantId,
 			List<EnvironmentVariable> env, String applicantionName,
 			String protocal, String envirnament, String envtimeout,
-			List<Scale> scales, List<Route> route, String applicationName) {
+			List<Scale> scales, List<Route> route, String applicationName,int appsId) {
 		super();
 		this.id = id;
 		this.serviceName = serviceName;
@@ -108,6 +108,7 @@ public class Service {
 		this.scales = scales;
 		this.route = route;
 		this.applicationName = applicationName;
+		this.appsId=appsId;
 	}
 
 	@Override
@@ -126,7 +127,7 @@ public class Service {
 				+ ", applicantionName=" + applicantionName + ", protocal="
 				+ protocal + ", envirnament=" + envirnament + ", envtimeout="
 				+ envtimeout + ", scales=" + scales + ", route=" + route
-				+ ", applicationName=" + applicationName + "]";
+				+ ", applicationName=" + applicationName +", appsId="+appsId+ "]";
 	}
 
 	public int getId() {
@@ -367,6 +368,14 @@ public class Service {
 
 	public void setApplicationName(String applicationName) {
 		this.applicationName = applicationName;
+	}
+
+	public int getAppsId() {
+		return appsId;
+	}
+
+	public void setAppsId(int appsId) {
+		this.appsId = appsId;
 	}
 
 	

@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Context;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +18,11 @@ import com.getusroi.paas.db.helper.DataBaseConnectionFactory;
 import com.getusroi.paas.db.helper.DataBaseHelper;
 import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
-import com.getusroi.paas.vo.Service;
 import com.getusroi.paas.vo.ApplicantSummary;
 import com.getusroi.paas.vo.EnvironmentVariable;
 import com.getusroi.paas.vo.Route;
 import com.getusroi.paas.vo.Scale;
+import com.getusroi.paas.vo.Service;
 import com.mysql.jdbc.PreparedStatement;
 
 public class ApplicationDAO {
@@ -37,15 +33,14 @@ public class ApplicationDAO {
 	
 	private static final String INSERT_APPLICATION_SERVICE_QUERY = "insert into application (service_name,registry_url,tag,run,host_name,host_port,container_port,protocol_type,port_index,path,interval_seconds,timeout_seconds,max_consecutive_failures,grace_period_seconds,ignore_http1xx,instance_count,host_path,container_path,volume,subnet_id,createdDTM,tenant_id,registry_id,container_id,apps_id) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?)";
 	private static final String GET_SERVICE_BY_NAME_AND_USERID = "select * from application where service_name=? && tenant_id=?";	
-	private static final String GET_ALL_APPLICATION_SERVICE_BY_USER_ID_QUERY = "select * from application where tenant_id=?";
+	private static final String GET_ALL_APPLICATION_SERVICE_BY_TENANT_ID_QUERY_ = "select app_id,service_name,registry_id,tag,container_id from application where tenant_id=? and apps_id=?";
+	private static final String DELETE_SERVICE_BY_SERVICENAME_USER_ID_AND_APPS_ID_QUERY = "delete from application where service_name=? and tenant_id=?";	/*and apps_id=?*/
 	
 	private static final String GET_APPLICATION_ID_BY_NAME_AND_TENANT_ID = "select apps_id from applications where applications_name=? && tenant_id=?";
 	private static final String INSERT_ENVIRONMENT_VARIABLE_DETAILS__QUERY = "insert into application_variable (varible_name,varible_value,app_id,createdDTM) values (?,?,?,NOW())";
 	
-	private static final String DELET_SERVICE_BY_SERVICENAME_AND_USER_ID_QUERY = "delete from addService where serviceName=? and user_id=?";
+	
 	private static final String GET_ENVIRONMENT_VARIABLE_BY_SERVICENAME = "select * from environment_variable where serviceName =?";
-	private static final String GET_ROUTE_BY_SERVICENAME = "select * from route where serviceName =?";
-	private static final String GET_NETWORK_POLICY_BY_SERVICENAME = "select * from network_policy where serviceName =?";
 	
 	DataBaseConnectionFactory connectionFactory = null;
 	
@@ -278,43 +273,20 @@ public class ApplicationDAO {
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
 		
-		ImageRegistryDAO imgRegDAO = new ImageRegistryDAO();
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
-			pstmt = (PreparedStatement) connection.prepareStatement(GET_ALL_APPLICATION_SERVICE_BY_USER_ID_QUERY);
+			pstmt = (PreparedStatement) connection.prepareStatement(GET_ALL_APPLICATION_SERVICE_BY_TENANT_ID_QUERY_);
 			pstmt.setInt(1, user_id);
+			pstmt.setInt(2, 26);//apps_id name is not available so hardcoded
 			result = pstmt.executeQuery();
 			if (result != null) {
 				while (result.next()) {
 					Service service = new Service();
+					service.setId(result.getInt("app_id"));
 					service.setServiceName(result.getString("service_name"));
-					//service.setImageRegistry(imgRegDAO. result.getInt("registry_id")+"");
-					
-					service.setType(result.getString("type"));
-					service.setApplicantionName(result
-							.getString("applicantionName"));
-					
-					service.setImageRegistry(result
-							.getString("imageRepository"));
+					service.setImageRegistry(new ImageRegistryDAO().getImageRegistryNameById(result.getInt("registry_id"), user_id));
 					service.setTag(result.getString("tag"));
-					service.setRun(result.getString("run"));
-					service.setHostName(result.getString("hostname"));
-					service.setTypeName(result.getString("typename"));
-					service.setEnvirnament(result.getString("envirnament"));
-					service.setEnvPath(result.getString("envpath"));
-					service.setEnvInterval(result.getInt("envinterval"));
-					service.setEnvtimeout(result.getString("envtimeout"));
-					service.setEnvThreshold(result.getInt("envthresold"));
-					service.setEnvIgnore(result.getInt("envignore"));
-					List<EnvironmentVariable> listOfEnvs = getAllEnvironment(
-							connection, result.getString("serviceName"));
-					List<Route> listOfRoute = getRouteByServiceName(connection,
-							result.getString("serviceName"));
-					List<Scale> listOfscale = getNetworkScale(connection,
-							result.getString("serviceName"));
-					service.setEnv(listOfEnvs);
-					service.setRoute(listOfRoute);
-					service.setScales(listOfscale);
+					service.setType(new PoliciesDAO().getContainerTypeNameById(result.getInt("container_id"), 7));					
 					addServiceList.add(service);
 				}
 			} else {
@@ -352,25 +324,25 @@ public class ApplicationDAO {
 	 * @throws DataBaseOperationFailedException
 	 *             : Unable to delete service from db using service name
 	 */
-	public void deleteServiceByServiceName(String serviceName,int user_id)
+	public void deleteServiceByServiceName(Service service)
 			throws DataBaseOperationFailedException {
 		LOGGER.debug(".deleteServiceByServiceName method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		try {
-			
 			connection = connectionFactory.getConnection(MYSQL_DB);
-			pstmt = (PreparedStatement) connection
-					.prepareStatement(DELET_SERVICE_BY_SERVICENAME_AND_USER_ID_QUERY);
-			pstmt.setString(1, serviceName);
-			pstmt.setInt(2, user_id);
+			// "delete from application where service_name=? and tenant_id=? and apps_id=?";
+			pstmt = (PreparedStatement) connection.prepareStatement(DELETE_SERVICE_BY_SERVICENAME_USER_ID_AND_APPS_ID_QUERY);
+			pstmt.setString(1, service.getServiceName());
+			pstmt.setInt(2, service.getTenantId());
+			//pstmt.setInt(3, service.getAppsId());
 			pstmt.executeUpdate();
 		} catch (ClassNotFoundException | IOException e) {
 			LOGGER.error("Unable to delete   data for service from db : "
-					+ serviceName);
+					+ service.getServiceName());
 			throw new DataBaseOperationFailedException(
-					"Unable to delete  data for service from db " + serviceName,
+					"Unable to delete  data for service from db " + service.getServiceName(),
 					e);
 		} catch (SQLException e) {
 			if (e.getErrorCode() == 1064) {
@@ -386,7 +358,7 @@ public class ApplicationDAO {
 			} else
 				throw new DataBaseOperationFailedException(
 						"Unable to delete  data for service from db "
-								+ serviceName, e);
+								+ service.getServiceName(), e);
 		}
 	}// end of method deleteServiceByServiceName
 
@@ -403,6 +375,7 @@ public class ApplicationDAO {
 	 * @throws SQLException
 	 *             : Unable to close the resources
 	 */
+	@SuppressWarnings("unused")
 	private List<EnvironmentVariable> getAllEnvironment(Connection connection,
 			String serviceName) throws DataBaseOperationFailedException,
 			SQLException {
@@ -439,107 +412,7 @@ public class ApplicationDAO {
 		return listOfEnvs;
 	}// end of method getAllEnvironment
 
-	/**
-	 * This method is used to get route based on service name
-	 * 
-	 * @param connection
-	 *            : Connection Object
-	 * @param serviceName
-	 *            : service name in String
-	 * @return List<Route> : List of Route
-	 * @throws DataBaseOperationFailedException
-	 *             : Unable to get route by service name
-	 * @throws SQLException
-	 *             : error in closing resources
-	 */
-	private List<Route> getRouteByServiceName(Connection connection,
-			String serviceName) throws DataBaseOperationFailedException,
-			SQLException {
-		LOGGER.debug(".getRouteByServiceName method of ApplicationDAO");
-		List<Route> listOfRoute = new ArrayList<>();
-		ResultSet routeResultSet = null;
-		PreparedStatement routeReparedStatement = null;
-		try {
-			routeReparedStatement = (PreparedStatement) connection
-					.prepareStatement(GET_ROUTE_BY_SERVICENAME);
-			routeReparedStatement.setString(1, serviceName);
-			routeResultSet = routeReparedStatement.executeQuery();
-			if (routeResultSet != null) {
-				while (routeResultSet.next()) {
-					Route routeVar = new Route();
-					routeVar.setType(routeResultSet.getString("typename"));
-					routeVar.setPort(routeResultSet.getString("portname"));
-					routeVar.setRoutetype(routeResultSet.getString("routetype"));
-					routeVar.setTarget(routeResultSet.getString("target"));
-					listOfRoute.add(routeVar);
-				}
-			} else {
-				LOGGER.debug("No route data availble for service name : "
-						+ serviceName);
-			}
-		} catch (SQLException e) {
-			LOGGER.error("Unable to fetch  Route for service" + serviceName
-					+ " from db");
-			throw new DataBaseOperationFailedException(
-					"Unable to fetch  Route for service" + serviceName
-							+ " from db", e);
-		} finally {
-			routeResultSet.close();
-			routeReparedStatement.close();
-		}
-		return listOfRoute;
-	}// end of method getRouteByServiceName
-
-	/**
-	 * This method is used to get network scale by service name
-	 * 
-	 * @param connection
-	 *            : Connection Object
-	 * @param serviceName
-	 *            : service name in String
-	 * @return List<Scale> : List of scale Object
-	 * @throws DataBaseOperationFailedException
-	 *             : Unable to fetch Scale from db by service name
-	 * @throws SQLException
-	 *             : Unable to close the resources
-	 */
-	private List<Scale> getNetworkScale(Connection connection,
-			String serviceName) throws DataBaseOperationFailedException,
-			SQLException {
-		LOGGER.debug(".getNetworkScale method of ApplicationDAO");
-		List<Scale> listOfscale = new ArrayList<>();
-		PreparedStatement scalePreparedStatement = null;
-		ResultSet scaleResultSet = null;
-		try {
-			scalePreparedStatement = (PreparedStatement) connection
-					.prepareStatement(GET_NETWORK_POLICY_BY_SERVICENAME);
-			scalePreparedStatement.setString(1, serviceName);
-			scaleResultSet = scalePreparedStatement.executeQuery();
-			if (scaleResultSet != null) {
-				while (scaleResultSet.next()) {
-					Scale scale = new Scale();
-					scale.setPortname(scaleResultSet.getString(1));
-					scale.setPorttype(scaleResultSet.getString(2));
-					scale.setHostport(scaleResultSet.getString(3));
-					scale.setContainerport(scaleResultSet.getString(4));
-					listOfscale.add(scale);
-				}
-			} else {
-				LOGGER.debug("No scale data availble for service name : "
-						+ serviceName);
-			}
-		} catch (SQLException e) {
-			LOGGER.error("Unable to fetch  Scale for service" + serviceName
-					+ " from db");
-			throw new DataBaseOperationFailedException(
-					"Unable to fetch  Scale for service" + serviceName
-							+ " from db", e);
-		} finally {
-			scaleResultSet.close();
-			scalePreparedStatement.close();
-		}
-		return listOfscale;
-	}// end of method getNetworkScale
+	
 
 	
 	/**
@@ -631,7 +504,9 @@ public class ApplicationDAO {
 		return apps_id;
 	}
 	
-	
+	public static void main(String[] args) throws DataBaseOperationFailedException {
+		LOGGER.debug(">>>>>>> "+new ApplicationDAO().getAllServiceByUserId(7));
+	}
 	
 
 }

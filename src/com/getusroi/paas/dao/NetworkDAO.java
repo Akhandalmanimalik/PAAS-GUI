@@ -41,7 +41,7 @@ public class NetworkDAO {
 	 private final String DELETE_VPC_REGION_QUERY="delete from vpc_region where region=?";
 	 
 	 private final String INSERT_ACL_QUERY="insert into acl (acl_name,description,tenant_id,createdDTM) values(?,?,?,NOW())";
-	 private final String GEL_ALL_ACL_NAMES_QUERY="select aclname from acl";
+	 private final String GEL_ALL_ACL_NAMES_QUERY = "select aclname from acl";
 	 private final String GEL_ALL_ACL_QUERY="select * from acl where tenant_id=?";
 	 private final String UPDATE_ACL_BY_NAME_QUERY="update acl set action=?, sourceip=?, destip=? where name=?";
 	 private final String DELETE_ACL_BY_NAME_QUERY_Using_TenantId = "delete from acl where acl_name=? and tenant_id=?";

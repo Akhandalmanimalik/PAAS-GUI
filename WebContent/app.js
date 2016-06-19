@@ -174,6 +174,12 @@ angular.module('formApp', ['ngAnimate', 'ui.router'])
 		        });
 		    };
 		 /*================== End of getAllServiceDetails() ==================*/
+		    
+		    /*delete this method*/
+		    $scope.selectImageRegistry2 = function() {
+		    	 alert("comming to dddd"); 	
+		    	 };   
+		    
     
 });
 

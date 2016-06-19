@@ -31,22 +31,24 @@ import com.mysql.jdbc.PreparedStatement;
 public class PoliciesDAO {
 
 	private static final Logger logger = LoggerFactory.getLogger(PoliciesDAO.class);
-	public static final String INSERT_SACALING_AND_RECOVERY_QUERY = "INSERT INTO scaling_and_recovery VALUES(?,?,?,?,?)";
-	public static final String SELECT_ALL_DATA_FROM_SCALING_AND_RECOVERY = "SELECT * FROM scaling_and_recovery";
-	public static final String DELETE_SCALING_AND_RECOVERY_BY_APPLICATION = "DELETE FROM scaling_and_recovery WHERE application = ?";
-	public static final String INSERT_HOST_SCALING_POLICY = "INSERT INTO host_scaling_policy VALUES(?,?)";
-	public static final String SELECT_ALL_HOST_SCALING_POLICY_QUERY = "SELECT * FROM host_scaling_policy";
-	public static final String REMOVE_HOST_SCALING_POLICY_BY_NAME = "DELETE FROM host_scaling_policy WHERE name = ?";
-	public static final String INSERT_SERVICE_AFFINITIES_QUERY = "INSERT INTO service_affinities VALUES(?,?,?,?)";
-	public static final String GET_ALL_SERVICE_AFFINITIES_QUERY = "SELECT * FROM service_affinities";
-	public static final String REMOVE_SERVICE_AFFINITIES_BY_APPLICATION = "DELETE FROM service_affinities WHERE application = ?";
-	public static final String INSERT_RESOURCE_SELECTION_QUERY  = "INSERT INTO resource_selection VALUES(?,?,?,?,?,?,?)";
-	public static final String SELECT_ALL_RESOURCE_SELECTION = "SELECT * FROM resource_selection";
-	public static final String DELETE_RESOURCE_SELECTION_BY_RANK = "DELETE from resource_selection WHERE rank = ?";
-	public static final String INSERT_CONTAINER_TYPES_QUERY = "INSERT INTO container_type (container_type,memory,description,tenan_id,createdDTM) VALUES(?,?,?,?,NOW())";
-	public static final String SELECT_ALL_CONTAINER_TYPE_QUERY = "SELECT * FROM container_type";
-	public static final String GET_CONTAINER_TYPE_BY_TENANT_ID_QUERY = "SELECT * FROM container_type where tenan_id=?";
-	public static final String REMOVE_CONTAINER_TYPES_BY_NAME = "DELETE FROM container_type WHERE container_type = ?";
+	private static final String INSERT_SACALING_AND_RECOVERY_QUERY = "INSERT INTO scaling_and_recovery VALUES(?,?,?,?,?)";
+	private static final String SELECT_ALL_DATA_FROM_SCALING_AND_RECOVERY = "SELECT * FROM scaling_and_recovery";
+	private static final String DELETE_SCALING_AND_RECOVERY_BY_APPLICATION = "DELETE FROM scaling_and_recovery WHERE application = ?";
+	private static final String INSERT_HOST_SCALING_POLICY = "INSERT INTO host_scaling_policy VALUES(?,?)";
+	private static final String SELECT_ALL_HOST_SCALING_POLICY_QUERY = "SELECT * FROM host_scaling_policy";
+	private static final String REMOVE_HOST_SCALING_POLICY_BY_NAME = "DELETE FROM host_scaling_policy WHERE name = ?";
+	private static final String INSERT_SERVICE_AFFINITIES_QUERY = "INSERT INTO service_affinities VALUES(?,?,?,?)";
+	private static final String GET_ALL_SERVICE_AFFINITIES_QUERY = "SELECT * FROM service_affinities";
+	private static final String REMOVE_SERVICE_AFFINITIES_BY_APPLICATION = "DELETE FROM service_affinities WHERE application = ?";
+	private static final String INSERT_RESOURCE_SELECTION_QUERY  = "INSERT INTO resource_selection VALUES(?,?,?,?,?,?,?)";
+	private static final String SELECT_ALL_RESOURCE_SELECTION = "SELECT * FROM resource_selection";
+	private static final String DELETE_RESOURCE_SELECTION_BY_RANK = "DELETE from resource_selection WHERE rank = ?";
+	
+	private static final String INSERT_CONTAINER_TYPES_QUERY = "INSERT INTO container_type (container_type,memory,description,tenan_id,createdDTM) VALUES(?,?,?,?,NOW())";
+	private static final String SELECT_ALL_CONTAINER_TYPE_QUERY = "SELECT * FROM container_type";
+	private static final String GET_CONTAINER_TYPE_BY_TENANT_ID_QUERY = "SELECT * FROM container_type where tenan_id=?";
+	private static final String REMOVE_CONTAINER_TYPES_BY_NAME = "DELETE FROM container_type WHERE container_type = ?";
+	private static final String GET_CONTAINER_TYPE_NAME_BY_ID_AND_TENANT_ID_QUERY = "SELECT container_type FROM container_type where id=? and tenan_id=?";
 	
 	/**
 	 * this method is used to insert all values of scaling and recovery
@@ -700,6 +702,52 @@ public class PoliciesDAO {
 		}
 		
 	} // end of removeContainerTypesByName
+	
+	
+	
+//	 = "SELECT  FROM container_type where id=? and tenan_id=?";
+	/**
+	 * this method is used to get all data from container_type table
+	 * @return : it return list of data from container_table
+	 * @throws DataBaseOperationFailedException : Unable to fetch data from db
+	 */
+	public String getContainerTypeNameById(int contnrID,int tenantId) throws DataBaseOperationFailedException {
+		logger.debug(".getAllContainerTypesByTenantId (.) of PoliciesDAO");
+		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		String containerTypeName=null;
+		try {
+			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
+			preparedStatement = (PreparedStatement) connection.prepareStatement(GET_CONTAINER_TYPE_NAME_BY_ID_AND_TENANT_ID_QUERY);
+			preparedStatement.setInt(1, contnrID);
+			preparedStatement.setInt(2, tenantId);
+			resultSet = preparedStatement.executeQuery();
+			
+			while (resultSet != null && resultSet.next()) {
+				containerTypeName=resultSet.getString("container_type");
+			}
+		
+		} catch (ClassNotFoundException | IOException e) {
+			logger.error("Unable to get container types from db ");
+			throw new DataBaseOperationFailedException("Unable to get container types from db",e);
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else {
+				throw new DataBaseOperationFailedException("Unable to get container types from db ", e);
+			}
+		} finally {
+			DataBaseHelper.dbCleanup(connection, preparedStatement, resultSet);
+		}
+
+		return containerTypeName;
+	} // end of getAllContainerTypesData
 	
 }
 

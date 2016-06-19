@@ -253,7 +253,7 @@
 												
 												<input type="text" id="applicantionName" 
 												name="applicantionName" data-ng-model="service.applicantionName" 
-												class="form-control"  data-ng-blur="storeApplicantUser()"/>
+												class="form-control" data-ng-blur="createApplicationByName()"/>
 												</div>
 											</div>
 
@@ -898,10 +898,8 @@
 									<button type="button"
 										class="btn grey-salsa btn-outline pull-left"
 										data-dismiss="modal">Cancel</button>
-								<button class="btn green pull-right ">Finish</button>
-										
-									<a class="btn green continue pull-right">Next</a> <a
-										class="btn green back pull-right">Previous</a>
+								<button class="btn green pull-right " ng-click="processForm()">Finish</button>	
+									<a class="btn green back pull-right">Previous</a>
 
 								</div>
 									

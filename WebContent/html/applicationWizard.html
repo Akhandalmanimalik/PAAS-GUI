@@ -33,13 +33,16 @@
       <script src="../assets/global/scripts/angular.min.js" type="text/javascript"></script>
    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.min.js"></script>
-    <script src="../app.js"></script> 
+     <!-- <script src="../app.js"></script>   -->
+    <script src="../assets/pages/scripts/application/applicationWizard.js" type="text/javascript"></script> 
+   
         
       
         </head>
     <!-- END HEAD -->
-<!-- ng-app="serviceApp" ng-controller="serviceCtrl" data-ng-init="getAllVpc()" -->
-    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo" >
+<!--  -->
+    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo" ng-app="applicationWizards" ng-controller="MainCtrl" data-ng-init="getAllApplicationByByService()">
+   
       <div class="page-content">
                     <!-- BEGIN PAGE HEAD-->
                     <div class="page-head">
@@ -54,10 +57,8 @@
                     <hr>
                     <a href="../ServiceWizards.html" class="btn green"> Add Service </a>
                     <hr>
-                    <input type="text" data-ng-model="testt">
-                    testt:{{testt}}
-                    <button type="button"  data-ng-click="selectImageRegistry1();">select</button>
-                    <button type="button"  data-ng-click="selectImageRegistry1()">ss</button>
+                    
+                    
                     <br>
                     <!-- BEGIN PAGE BASE CONTENT -->
                              <!-- BORDERED TABLE PORTLET-->
@@ -76,17 +77,19 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                               
-                                                <tr>
-                                                    <td> TomcatApplication 1</td>
-                                                    <td> Imagename1 </td>
-                                                    <td> Tag1 </td>
-                                                    <td> Type1 </td>
-                                                    <td> allow </td>
-                                                    <td align="center"><i class="fa fa-remove"></i></td>
-                                                    <td align="center"><i class="fa fa-undo"></i></td>
+                                                <tr data-ng-repeat="sevc in field">
+                                                    <td> {{sevc.serviceName}}</td>
+                                                    <td> {{sevc.imageRegistry}} </td>
+                                                    <td> {{sevc.tag}} </td>
+                                                    <td> {{sevc.type}} </td>
+                                                    <td> NOT NOW </td>
+                                                   <td align="center"><button data-ng-click="deleteApplicationByApplName(sevc.serviceName)"
+															class="btn btn-danger"><i class="fa fa-remove"></i></button></td>
+													<td align="center"><button data-ng-click="update(field.vpc_name)"
+															class="btn btn-primary"><i class="fa fa-undo"></i></button></td>
                                                 </tr>
                                             </tbody>
+                                            
                                         </table>
                                     </div>
                               <!-- END BORDERED TABLE PORTLET-->

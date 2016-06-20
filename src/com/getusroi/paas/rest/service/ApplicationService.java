@@ -264,4 +264,26 @@ public class ApplicationService {
  		 
 		return null;
 	}
+	
+	@GET
+	@Path("/checkingApplication/{applicationName}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String checkApplicationExistByNameAndTenantId(@PathParam("applicationName") String applicationName,@Context HttpServletRequest request) throws DataBaseOperationFailedException{
+		LOGGER.debug(".getAllApplicationService method of ApplicationService ");
+	int availability;
+	HttpSession session=request.getSession(false);
+	int userId=(int)session.getAttribute("id");
+
+	ApplicationDAO applicationDAO=new ApplicationDAO();
+	try{
+	availability=applicationDAO.checkApplicationExistByNameAndTenantId(applicationName,userId);
+	if (availability > 0)
+		return "success";
+		
+	}catch(Exception e){
+		e.printStackTrace();
+	}
+	return "failure";
+	}
+	
 }

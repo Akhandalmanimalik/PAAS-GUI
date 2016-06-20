@@ -33,12 +33,13 @@ public class ApplicationDAO {
 	private static final String GET_SERVICE_BY_NAME_AND_USERID = "select * from application where service_name=? && tenant_id=?";	
 	private static final String GET_ALL_APPLICATION_SERVICE_BY_TENANT_ID_QUERY_ = "select app_id,service_name,registry_id,tag,container_id from application where tenant_id=? and apps_id=?";
 	private static final String DELETE_SERVICE_BY_SERVICENAME_USER_ID_AND_APPS_ID_QUERY = "delete from application where service_name=? and tenant_id=?";	/*and apps_id=?*/
-	private static final String CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME="select apps_id from applications where applications_name=? and tenant_id=?";
+	//can be remove after verify
+	//private static final String CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME="select apps_id from applications where applications_name=? and tenant_id=?";
 	
 	private static final String GET_APPLICATION_ID_BY_NAME_AND_TENANT_ID = "select apps_id from applications where applications_name=? && tenant_id=?";
 	private static final String INSERT_ENVIRONMENT_VARIABLE_DETAILS__QUERY = "insert into application_variable (varible_name,varible_value,app_id,createdDTM) values (?,?,?,NOW())";
 	
-	
+	private static final String CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME="select apps_id from applications where applications_name=? and tenant_id=?";
 	private static final String GET_ENVIRONMENT_VARIABLE_BY_SERVICENAME = "select * from environment_variable where serviceName =?";
 	
 	DataBaseConnectionFactory connectionFactory = null;
@@ -509,7 +510,7 @@ public class ApplicationDAO {
 	 * @throws DataBaseOperationFailedException
 	 * @throws SQLException
 	 */
-	private boolean checkApplicationExistByNameAndTenantId(String applicationsName, int tenant_id) throws DataBaseOperationFailedException,
+	/*private boolean checkApplicationExistByNameAndTenantId(String applicationsName, int tenant_id) throws DataBaseOperationFailedException,
 		SQLException {
 		LOGGER.debug(".checkApplicationExistByNameAndTenantId Exist (.) method of ApplicationDAO with Applicationname "+applicationsName+" tenant id :"+tenant_id);
 		boolean isServiceExist = false;
@@ -546,10 +547,58 @@ public class ApplicationDAO {
 			statement.close();
 		}
 		return isServiceExist;
-	}
+	}*/
 	
-	public static void main(String[] args) throws DataBaseOperationFailedException, SQLException {
-		LOGGER.debug(">>>>>>> "+new ApplicationDAO().checkApplicationExistByNameAndTenantId("tomcat",7323));
+	/**
+	* This method used for check servicename is exist for given userId or not
+	* @param connection
+	* @param addService
+	* @return Boolean
+	* @throws DataBaseOperationFailedException
+	* @throws SQLException
+	*/
+	public int checkApplicationExistByNameAndTenantId(String applicationsName,
+	int tenant_id) throws DataBaseOperationFailedException,
+	SQLException {
+	LOGGER.debug(".checkApplicationExistByNameAndTenantId Exist (.) method of ApplicationDAO with Applicationname "
+	+ applicationsName + " tenant id :" + tenant_id);
+	int isServiceExist = 0;
+	PreparedStatement statement = null;
+	ResultSet reSet = null;
+	DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+	Connection connection = null;
+	try {
+	connection = connectionFactory.getConnection("mysql");
+	statement = (PreparedStatement) connection
+	.prepareStatement(CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME);
+	LOGGER.debug("statement ////////" + statement);
+	statement.setString(1, applicationsName);
+	statement.setInt(2, tenant_id);
+	reSet = statement.executeQuery();
+	LOGGER.debug("reSet >>>>>>>>>>>>>." + reSet);
+	if (reSet != null) {
+	while (reSet.next()) {
+
+	isServiceExist = reSet.getInt("apps_id");
+
+	}
+	}
+	} catch (ClassNotFoundException | IOException e) {
+		LOGGER.error("Error in getting the aplication detail from db");
+	throw new DataBaseOperationFailedException(
+	"Error in fetching the aplication from db", e);
+	} catch (SQLException e) {
+		LOGGER.error("Unable to fetch application :" + applicationsName
+	+ " from db with tenant_id=" + tenant_id);
+	throw new DataBaseOperationFailedException(
+	"Unable to fetch application" + applicationsName
+	+ " from db", e);
+	} finally {
+	if (reSet != null)
+	reSet.close();
+	statement.close();
+	}
+	return isServiceExist;
 	}
 	
 

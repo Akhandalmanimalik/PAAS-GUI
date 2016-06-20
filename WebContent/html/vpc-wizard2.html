@@ -68,12 +68,9 @@
 												<!-- "vpcValidation(field.vpc_name)"  -->
 												<div class="col-md-4">
 													<input type="text" data-ng-model="field.vpc_name" id="VPC_Name"
-														name="vpcname" class="form-control placeholder-no-fix" data-ng-minlength="6" data-ng-maxlength="20" data-ng-change="vpcValidation(field.vpc_name)"  required />
-														
-														
+														name="vpcname" class="form-control placeholder-no-fix" data-ng-minlength="6" data-ng-maxlength="20" data-ng-change="vpcValidation(field.vpc_name)"  required />																										
 								   <span class="errfn" data-ng-show="vpcWizardForm.vpcname.$error.maxlength" class="help-block" style="color: red;" >VPC name Shouldn't exceed 20 chars</span>
-													 	
-													 	
+														 	
 									<span data-ng-show="vpcWizardForm.vpcname.$error.minlength" class="help-block" style="color: red;" >VPC name Shouldn't below 6 chars</span>
 									<span id="errfn" style="color: red;" ></span>
 													 	
@@ -84,11 +81,9 @@
 								 
                                           	 
                                             <div class="form-group" data-ng-class="{ 'has-error' : vpcWizardForm.acl.$invalid && !vpcWizardForm.acl.$pristine }">
-                                                <label class="control-label col-md-3">ACL
-                                                    <span class="required"> * </span>
-                                                </label>
+                                                <label class="control-label col-md-3">ACL </label>
                                                 <div class="col-md-4">
-                                                    <input id="ACL" data-ng-model="field.acl" name="acl" type="text" class="form-control" data-ng-minlength="2" data-ng-maxlength="20" data-ng-change="aclValidation(field.acl)" required  />
+                                                    <input id="ACL" data-ng-model="field.acl" name="acl" type="text" class="form-control"/>
                                                     
                                                     <span class="error" data-ng-show="vpcWizardForm.acl.$error.maxlength" class="help-block" style="color: red;" >ACL name Shouldn't exceed 20 chars</span>
 													 	

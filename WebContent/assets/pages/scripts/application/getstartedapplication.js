@@ -140,11 +140,270 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 		      	  });
 		            
 		      };
+		      
+		      //check vpcname exist or not
+		      $scope.vpcValidation = function(vpc) {
+
+		    	  var res = $http.get('/paas-gui/rest/networkservice/checkVPC/'+vpc);
+		    	  res.success(function(data, status, headers, config) {
+
+
+		    	  if(data == 'success'){
+		    	  document.getElementById('errfn').innerHTML="data exist enter different name";
+
+		    	  document.getElementById("myvpcbtn").disabled = true;
+
+		    	  }
+		    	  else{
+		    	  document.getElementById('errfn').innerHTML="";
+		    	  /*
+		    	  if(document.getElementById('aclerr').innerHTML =="")
+		    	  document.getElementById("myvpcbtn").disabled = true;
+
+		    	  else
+		    	  document.getElementById("myvpcbtn").disabled =false;
+
+		    	  if(document.getElementById('errfn').innerHtml && document.getElementById('aclerr').innerHtml =="")*/
+
+		    	  document.getElementById("myvpcbtn").disabled =false;
+
+		    	  }
+
+		    	  });
+		    	  res.error(function(data, status, headers, config) {
+
+		    	  alert("failure message: " + JSON.stringify({
+		    	  data : data
+		    	  }));
+		    	  });
+		    	  };
+		    	  /*===============END of VPC validation==============*/
     
+		    	  
+		    	  /*=============== Add SUBNET validation==============*/
+
+		    	  $scope.subnetValidation = function(subnet) {
+		    	  console.log("subnet "+subnet);
+		    	  var res = $http.get('/paas-gui/rest/networkservice/checkSubnet/'+subnet);
+		    	  res.success(function(data, status, headers, config) {
+
+		    	  if(data == 'success'){
+		    	  document.getElementById('suberr').innerHTML="data exist enter different name";
+		    	  document.getElementById("mysubnetbtn").disabled = true;
+
+		    	  }
+		    	  else{
+		    	  document.getElementById('suberr').innerHTML="";
+
+		    	  if(document.getElementById('vpc').value && document.getElementById('environment_id').value !='?')
+		    	  document.getElementById("mysubnetbtn").disabled =false;
+		    	  }
+ 		    	  });
+		    	  res.error(function(data, status, headers, config) {
+		    	  alert("failure message: " + JSON.stringify({
+		    	  data : data
+		    	  }));
+		    	  });
+
+		    	  };
+		    	  /*===============END Add SUBNET validation==============*/
+ 	  
+		    	  
+		    	  /*======================== TO GET ALL ENVIRONMENT NAME WITH THE CURRENT USER ====================*/
+
+		    	  $scope.selectEnvironment_name = function() {
+		    	  var response = $http.get('/paas-gui/rest/environmentTypeService/getAllEnvironmentType');
+
+		    	  //var response = $http.get('/PAAS-GUI/rest/fetchData/selectSubnet');
+
+
+		    	  response.success(function(data){
+
+		    	  $scope.environment = data;
+		    	  console.log(">>>>>>> >>> "+$scope.environment);
+		    	  });
+		    	  response.error(function(data, status, headers, config) {
+		    	  alert("Error in Fetching environment Data"+data);
+		    	  });
+		    	  };
+		    	  /*======================= END OF selectEnvironment_name =========================*/
+		    	  
+		    	  
+		    	  /*===================== TO GET ALL ACL NAME WITH CURRENT USER ============================*/
+		    	  $scope.selectACL_name = function() {
+		    	  var response = $http.get('/paas-gui/rest/networkservice/getAllACL');
+
+		    	  //var response = $http.get('/PAAS-GUI/rest/fetchData/selectSubnet');
+
+
+		    	  response.success(function(data){
+
+		    	  $scope.acl = data;
+		    	  console.log(">>>>>>> >>> "+$scope.acl);
+		    	  });
+		    	  response.error(function(data, status, headers, config) {
+		    	  alert("Error in Fetching environment Data"+data);
+		    	  });
+		    	  };
+		    	  /*======================= END OF selectACL_name =========================*/	  
+		    	  
+		    	  /*===================== To add subnet details into db =========================*/
+		    	    $scope.regSubnet = function() {
+		    	    	console.log($scope.field);
+		    	    	//var userData = JSON.stringify($scope.field);
+		    	    	var userData = angular.toJson($scope.field);
+		    	    	var res = $http.post('/paas-gui/rest/networkservice/addSubnet', userData);
+		    	    	console.log(userData);
+		    	    	
+		    	    	res.success(function(data, status, headers, config) {
+		    	    		 $scope.selectSubnetnew();
+		    	    		window.location.href="/paas-gui/html/subnet-interface.html";
+		    	    		
+		    	    	});
+		    	    	res.error(function(data, status, headers, config) {
+		    	    		alert("Error in registering subnet  " +data );
+		    	    	});
+		    	    }; 
+		    	    /*===================== END OF regSubnet =========================*/	  
+		    	  
+
+
+		    	    /* ===============================Image validation=====================*/
+		    	    					  	
+		    	    					    $scope.registryValidation = function(name) {
+		    	    					    	
+		    	    					    	
+		    	    						  	 console.log("<<<<<< acl validation >>>>>>>>>" +name);
+		    	    						  	  var res = $http.get('/paas-gui/rest/imageRegistry/checkimageRegistry/'+name);
+		    	    						  	  res.success(function(data, status, headers, config) {
+		    	    						  		  
+		    	    						  		if(data == 'success'){
+		    	    						   	    	document.getElementById('registryerror').innerHTML="data exist enter different name";
+		    	    						   	    	document.getElementById("registrybtn").disabled = true;
+		    	    						   	    	
+		    	    						   		  }
+		    	    						   		  else{
+		    	    						   			 document.getElementById('registryerror').innerHTML="";
+		    	    						   			 
+		    	    						   			 if(document.getElementById('location').value && document.getElementById('userNameerror').value !=''){
+		    	    						   				
+		    	    						   				 
+		    	    						   			document.getElementById("registrybtn").disabled =false;
+		    	    						   			 }
+		    	    						   		  }
+		    	    					 	  		 
+		    	    						  	  });
+		    	    						  	  res.error(function(data, status, headers, config) {
+		    	    						  	    console.log("failure message: " + JSON.stringify({
+		    	    						  	      data : data
+		    	    						  	    }));
+		    	    						  	  });
+		    	    						  	 
+		    	    						  	};
+		    	    						    /*===============END Image registry validation==============*/
+		    	  
+		    	    /* ================User name validation====================*/
+		    	    						  	
+		    	    						  	 $scope.registUsernameValidation = function(userName) {
+		    	    							    	
+		    	    							    	
+		    	    							  	 console.log("<<<<<< acl validation >>>>>>>>>" +name);
+		    	    							  	  var res = $http.get('/paas-gui/rest/imageRegistry/checkingUserName/'+userName);
+		    	    							  	  res.success(function(data, status, headers, config) {
+		    	    							  		  
+		    	    							  		if(data == 'success'){
+		    	    							   	    	document.getElementById('userNameerror').innerHTML="data exist enter different name";
+		    	    							   	    	document.getElementById("registrybtn").disabled = true;
+		    	    							   	    	
+		    	    							   		  }
+		    	    							   		  else{
+		    	    							   			 document.getElementById('userNameerror').innerHTML="";
+		    	    							   			 if(document.getElementById('registryerror').value ==''){
+		    	    							   				 
+		    	    							   			document.getElementById("registrybtn").disabled =false;
+		    	    							   			 }
+		    	    							   		  }
+		    	    						 	  		 
+		    	    							  	  });
+		    	    							  	  res.error(function(data, status, headers, config) {
+		    	    							  	    alert("failure message: " + JSON.stringify({
+		    	    							  	      data : data
+		    	    							  	    }));
+		    	    							  	  });
+		    	    							  	 
+		    	    							  	};
+		    	    							    /*===============END of user validation==============*/
+		    	    							  	
+		    	    							  	
+		    	    							  	/*============ ImageRegistry REG=============*/
+
+		    	    							  	$scope.regImageRegistry = function() {
+
+		    	    							  		console.log($scope.field);
+		    	    							  		var userData = JSON.stringify($scope.field);
+		    	    							  		var response = $http.post('/paas-gui/rest/imageRegistry/addImageRegistry', userData);
+		    	    							  		
+		    	    							  		JSON.stringify(response);
+		    	    							  		
+		    	    							  		 
+
+		    	    							  		console.log(userData);
+
+		    	    							  		response.success(function(data, status) {
+		    	    							  			alert("coming to success");
+		    	    							  			$scope.message = data;
+		    	    							  		
+		    	    							  			window.location.href="/html/imageregistry.html";
+		    	    							  			/*window.location.href='http://localhost:8080/paas-gui/html/imageregistry.html';*/
+		    	    							  		});
+		    	    							  		response.error(function(data, status, headers, config) {
+		    	    							  			alert("failure message: " + JSON.stringify({
+		    	    							  				data : data
+		    	    							  			}));
+		    	    							  		});
+		    	    							  	}; 
+		   
+		    	    							  	
+		    	    							  	
+		    	    							  	$scope.applicationValidation = function(userName) {
+
+		    	    							  		var res = $http.get('/paas-gui/rest/applicationService/checkingApplication/'+userName);
+
+
+
+		    	    							  		res.success(function(data, status, headers, config) {
+
+
+		    	    							  		if(data == 'success'){
+		    	    							  		document.getElementById('apperror').innerHTML="data exist enter different name";
+		    	    							  		document.getElementById("appbtn").disabled = true;
+
+		    	    							  		}
+		    	    							  		else{
+		    	    							  		document.getElementById('apperror').innerHTML="";
+
+
+		    	    							  		document.getElementById("appbtn").disabled =false;
+
+		    	    							  		}
+
+		    	    							  		});
+		    	    							  		res.error(function(data, status, headers, config) {
+		    	    							  		alert("failure message: " + JSON.stringify({
+		    	    							  		data : data
+		    	    							  		}));
+		    	    							  		});
+
+		    	    							  		};							  	
+		    	    							  	
+		    	    
   });  /*================end of controller======================*/
 
 
 
+
+
+/*==================POPULATE DATA TO TABLE===================*/
 
 
 /*=============directive starts============*/

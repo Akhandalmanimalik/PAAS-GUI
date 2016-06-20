@@ -129,7 +129,6 @@
 														aria-required="true" aria-describedby="select-error"
 														class="form-control"
 														data-ng-init="selectVpc()"
-														data-ng-selected="selectSubnetnew()"
 														data-ng-options="choice.vpc_name as choice.vpc_name  for choice in vpcObject" required>
 													</select> 
 													<span class="help-block"> Select vpc </span>
@@ -191,6 +190,7 @@
 													<select name="type" id="type" data-ng-model="service.subnetName"
 														aria-required="true" aria-describedby="select-error"
 														class="form-control"
+														data-ng-click="selectSubnetnew()"
 														data-ng-options="choice.subnetName as choice.subnetName  for choice in subnetObject" required>
 													</select>  <span class="help-block"> Select subnet</span>
 												</div>
@@ -318,8 +318,8 @@
 												</label>
 												<div class="col-md-4">
 													<input type="text" id="applicantionName" 
-													name="applicantionName" data-ng-model="service.applicantionName"  ng-maxlength="40" ng-minlength="2"
-													class="form-control"    required/>
+													name="applicantionName" data-ng-model="service.applicantionName" ng-minlength="2" ng-maxlength="40" 
+													class="form-control" data-ng-change="applicationValidation(service.applicationName)" required/>
 												<!-- class="form-control"  data-ng-blur="createApplicationByName()" data-ng-pattern="/[a-zA-Z0-9^ ]/" required/> -->
 													<!-- <input name="applicationName" type="text" data-ng-model="service.applicationName" class="form-control"
 														id="applicationName" value="" /> -->

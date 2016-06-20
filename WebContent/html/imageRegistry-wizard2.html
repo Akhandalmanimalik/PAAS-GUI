@@ -70,7 +70,7 @@
 								</label>
 									<input type="name" name="name" id="name" data-required="1"
 										 class="form-control"
-										ng-model="field.name" ng-minlength="2" ng-maxlength="30" /> <span
+										ng-model="field.name" ng-minlength="2" ng-maxlength="30" data-ng-change="registryValidation(field.name)" /> <span
 										class="help-block"> Name of the Docker registry</span>
 										
 										<p ng-show="userForm.name.$error.maxlength"
@@ -80,6 +80,7 @@
 										<p ng-show="userForm.name.$error.minlength"
 										class="help-block" style="color: red;">Registry name
 										Shouldn't below 2 chars.</p>
+										<span id="registryerror" style="color: red;" ></span>
 								</div>
 
 							</div>
@@ -120,8 +121,19 @@
 									class="required"> * </span>
 								</label>
 									<input type="username" name="username" class="form-control"
-										data-required="1" id="username" ng-model="field.user_name" />
+										data-required="1" id="username" ng-model="field.user_name" ng-minlength="2" data-ng-change="registUsernameValidation(field.user_name)" />
 									<span class="help-block"> Enter Username</span>
+									
+									<p ng-show="userForm.username.$error.minlength"
+										class="help-block" style="color: red;">User name
+										Shouldn't below 2 chars.</p>
+										
+										<p ng-show="userForm.username.$error.maxlength"
+										class="help-block" style="color: red;">User name
+										Shouldn't exceed 30 chars.</p>	
+										
+										<span id="userNameerror" style="color: red;"></span>
+									
 								</div>
 							</div>
 							<div class="form-group"
@@ -141,7 +153,7 @@
 						<div class="form-actions">
 							<div class="row">
 								<div class="col-md-offset-3 col-md-9">
-									<button type="submit" class="btn green btn-success"
+									<button type="submit" class="btn green btn-success" id="registrybtn"
 										ng-disabled="userForm.$invalid" ng-click="regImageRegistry();">Submit</button>
 									<!-- <button type="button" class="btn grey-salsa btn-outline">Cancel -->
 									<a

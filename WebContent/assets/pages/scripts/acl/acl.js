@@ -155,6 +155,33 @@ $scope.regRule = function($scope, $rootScope) {
 	};
 
 
+	/*===============ACL validation==============*/
+    $scope.aclValidation = function(acl) {
+    	
+    	
+	  	 console.log("<<<<<< acl validation >>>>>>>>>" +acl);
+	  	  var res = $http.get('/paas-gui/rest/networkservice/checkAcl/'+acl);
+	  	  res.success(function(data, status, headers, config) {
+	  		  
+	  		if(data == 'success'){
+	   	    	document.getElementById('aclerror').innerHTML="data exist enter different name";
+	   	    	document.getElementById("myaclbtn").disabled = true;
+	   	    	
+	   		  }
+	   		  else{
+	   			 document.getElementById('aclerror').innerHTML="";
+	   			document.getElementById("myaclbtn").disabled =false;
+	   		  }
+ 	  		 
+	  	  });
+	  	  res.error(function(data, status, headers, config) {
+	  	    alert("failure message: " + JSON.stringify({
+	  	      data : data
+	  	    }));
+	  	  });
+	  	 
+	  	};
+	    /*===============END Add ACL validation==============*/
 
 
 

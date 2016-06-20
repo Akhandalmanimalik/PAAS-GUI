@@ -67,7 +67,8 @@ myimageregistry.controller('MainCtrl', function ($scope,$http) {
          });
      	
      };
-    
+     
+     
      /*===============Image registry validation==============*/
 	    $scope.registryValidation = function(name) {
 	    	
@@ -99,9 +100,11 @@ myimageregistry.controller('MainCtrl', function ($scope,$http) {
 		  	 
 		  	};
 		    /*===============END Image registry validation==============*/
-    
-    
-		  	$scope.registUsernameValidation = function(userName) {
+     
+     
+		   
+		  	
+		    $scope.registUsernameValidation = function(userName) {
 		    	
 		    	
 			  	 console.log("<<<<<< acl validation >>>>>>>>>" +name);
@@ -130,7 +133,17 @@ myimageregistry.controller('MainCtrl', function ($scope,$http) {
 			  	 
 			  	};
 			    /*===============END Image registry validation==============*/
-		  	
+     
+     
+     
+     
+     
+     
+     
+    
+    
+    
+    
     
   });   /*================end of controllers===================*/
 

@@ -32,7 +32,7 @@ public class ImageRegistryDAO {
 	 private final String DELETE_IMAGEREGISTRY_BY_IMAGENAME_AND_USERNAME_QUERY="delete from image_registry where registory_name=? AND user_name=?";
 	 private final String GET_IMAGE_REGISTRY_ID_BY_NAME = "select id from image_registry where registory_name=?";
 	 private final String GET_IMAGE_REGISTRY_NAME_BY_ID_AND_TENANT_ID = "select registory_name from image_registry where tenant_id=? and id=?";
-	 
+	 private final String GET_IMAGE_REGISTRY_ID_BY_UserNAME = "select id from image_registry where  user_name=? and tenant_id=?";
 	 /**
 	  * This method is used to store imageRegistry in db
 	  * @param imageRegistryVO : ImageRegistryVO 
@@ -224,14 +224,14 @@ public class ImageRegistryDAO {
 	 * @return ImageRegistry : image registry from db based on name
 	 * @throws DataBaseOperationFailedException : unable to fetch image regsitry from db
 	 */
-	public Integer getImageRegistryIdByName(String imageRegistryName, int tenant_id) throws DataBaseOperationFailedException{
+	public int getImageRegistryIdByName(String imageRegistryName, int tenant_id) throws DataBaseOperationFailedException{
 		LOGGER.debug(".getImageRegistryIdByName method of ImageRegistryDAO");
 		
 		Connection connection=null;
 		PreparedStatement pstmt=null;
 		ResultSet result=null;
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
-		Integer imageRegistryId=null;
+		int imageRegistryId=0;
 		try {
 			connection=connectionFactory.getConnection(MYSQL_DB);
 			pstmt=connection.prepareStatement(GET_IMAGE_REGISTRY_ID_BY_NAME);
@@ -312,5 +312,47 @@ public class ImageRegistryDAO {
 		}
 		return imageRegistryName;
 	}//end of method getAllImageRegistry
+	
+public int getImgRegistryIdByUser_NameandTenant_Id(String userName, int tenant_id) throws DataBaseOperationFailedException{
+		
+	LOGGER.debug(".getImageRegistryIdByName method of ImageRegistryDAO");
+		
+		Connection connection=null;
+		java.sql.PreparedStatement pstmt=null;
+		ResultSet result=null;
+		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+		Integer imageRegistryId=0;
+		try {
+			connection=connectionFactory.getConnection(MYSQL_DB);
+			pstmt=connection.prepareStatement(GET_IMAGE_REGISTRY_ID_BY_UserNAME);
+			pstmt.setString(1,userName);
+			pstmt.setInt(2,tenant_id);
+			result=pstmt.executeQuery();
+			if(result !=null){
+				while(result.next()){
+					imageRegistryId = result.getInt("id");
+				}//end of while
+				
+			}else{
+				LOGGER.debug("No data available in image_registry table");
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Unable to fetch the data from image_registry");
+			throw new DataBaseOperationFailedException("Error in getting all data from image_registry ",e);
+		}catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Error in getting all data from image_registry: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Error in getting all data from image_registry because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException("Error in getting all data from image_registry ",e);
+		} finally{
+			DataBaseHelper.dbCleanup(connection, pstmt, result);
+		}
+	
+		return imageRegistryId;
+	}//end of method getAllId by using userName
 
 }

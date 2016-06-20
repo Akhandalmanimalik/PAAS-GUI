@@ -49,6 +49,7 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
     /*======================= To get all Subnet details with current user  =========================*/
     $scope.selectSubnetnew = function() {
     
+  	//var response = $http.get('/PAAS-GUI/rest/fetchData/selectVpc');
   	var response = $http.get('/paas-gui/rest/networkservice/getAllSubnet');
   	response.success(function(data){
   	
@@ -81,6 +82,7 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
  /*======================= END OF selectEnvironment_name =========================*/
  
 /*===================== TO GET ALL ACL NAME WITH CURRENT USER ============================*/
+ 
  $scope.selectACL_name = function() {
 	var response = $http.get('/paas-gui/rest/networkservice/getAllACL');
 	
@@ -114,6 +116,45 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
      /*======================= END OF deleteSubnet =========================*/     
     
     
+     
+
+	  	/*=============== Add SUBNET validation==============*/
+	  	$scope.subnetValidation = function(subnet) {
+		  	  console.log("subnet "+subnet);
+		  	  var res = $http.get('/paas-gui/rest/networkservice/checkSubnet/'+subnet);
+		  	  res.success(function(data, status, headers, config) {
+		  		  
+		  		if(data == 'success'){
+		   	    	document.getElementById('subneterror').innerHTML="data exist enter different name";
+		   	    	document.getElementById("mysubnetbtn").disabled = true;
+		   	    	
+		   		  }
+		   		  else{
+		   			 document.getElementById('subneterror').innerHTML="";
+		   			 if(document.getElementById('cidr').value !=''){
+		   			document.getElementById("mysubnetbtn").disabled =false;
+		   		  }
+		   		  }
+	 	  		 
+		  		  
+	 	  		 
+		  	  });
+		  	  res.error(function(data, status, headers, config) {
+		  	    alert("failure message: " + JSON.stringify({
+		  	      data : data
+		  	    }));
+		  	  });
+		  	 
+		  	};
+	/*===============END Add SUBNET validation==============*/
+		  	
+		  	
+		  	
+     
+     
+     
+     
+     
     
     
   });

@@ -61,39 +61,44 @@
 								Your form validation is successful!
 							</div>
 
-							<div class="form-group"
-								ng-class="{ 'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
-								
+							<div class="form-group" ng-class="{ 'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
+								<label class="control-label col-md-3">Name <span
+										class="required"> * </span>
+									</label>
 								<div class="col-xs-4">
-								<label for="ex3">Name <span
-									class="required"> * </span>
-								</label>
-									<input type="name" name="name" id="name" data-required="1"
-										pattern="[a-z]{1,15}" class="form-control"
-										ng-model="field.name" maxlength="30" /> <span
-										class="help-block"> Name of the Docker registry</span>
+								 
+									<input type="text" name="name" id="name" data-required="1"
+										 class="form-control" ng-model="field.name" ng-maxlength="20" ng-minlength="2" data-ng-change="registryValidation(field.name)" /> 
+										<span class="help-block"> Name of the Docker registry</span>
+										<span id="registryerror" style="color: red;"></span>
+										<p ng-show="userForm.name.$error.minlength"
+										class="help-block" style="color: red;">
+										Shouldn't below 2 chars.</p>
+										
+										<p ng-show="userForm.name.$error.maxlength"
+										class="help-block" style="color: red;">
+										Shouldn't exceed 30 chars.</p>	
 								</div>
-
 							</div>
+							
 							<div class="form-group"
 								ng-class="{ 'has-error' : userForm.location.$invalid && !userForm.location.$pristine }">
-								
+								<label class="control-label col-md-3"> Location <span
+										class="required"> * </span>
+									</label>
 								<div  class="col-xs-4">
-								<label for="ex3">Location <span
-									class="required"> * </span>
-								</label>
+								
 									<input type="location" id="location" class="form-control"
-										data-required="1" ng-model="field.location" /> <span
+										data-required="1" ng-model="field.location" required /> <span
 										class="help-block">URL of the Docker registry (eg
 										registry.roi)</span>
 								</div>
 							</div>
 							<div class="form-group">
-								
+								<label class="control-label col-md-3"> Version <span
+										class="required"> * </span>
+									</label>
 								<div class="col-xs-4">
-								<label for="ex3">Version <span
-									class="required"> * </span>
-								</label>
 									<select name="version" id="version" aria-required="true"
 										aria-describedby="select-error" class="form-control"
 										ng-model="field.version">
@@ -106,24 +111,34 @@
 
 							<div class="form-group"
 								ng-class="{ 'has-error' : userForm.username.$invalid && !userForm.username.$pristine }">
-								
+								<label class="control-label col-md-3"> Username <span
+										class="required"> * </span>
+									</label>
 								<div  class="col-xs-4">
-								<label for="ex3">Username <span
-									class="required"> * </span>
-								</label>
 									<input type="username" name="username" class="form-control"
-										data-required="1" id="username" ng-model="field.user_name" />
+										data-required="1" id="username" ng-model="field.user_name" ng-minlength="2" data-ng-change="registUsernameValidation(field.user_name)" />
 									<span class="help-block"> Enter Username</span>
+									
+									<p ng-show="userForm.username.$error.minlength"
+										class="help-block" style="color: red;">User name
+										Shouldn't below 2 chars.</p>
+										
+										<p ng-show="userForm.username.$error.maxlength"
+										class="help-block" style="color: red;">User name
+										Shouldn't exceed 30 chars.</p>	
+										
+										<span id="userNameerror" style="color: red;"></span>
+										
+									
 								</div>
 							</div>
 							<div class="form-group"
 								ng-class="{ 'has-error' : userForm.password.$invalid && !userForm.password.$pristine }">
-								
+								<label class="control-label col-md-3"> Password&nbsp;&nbsp; <span
+										class="required"> * </span>
+									</label>
 
 								<div  class="col-xs-4">
-								<label for="ex3">Password&nbsp;&nbsp;
-									<span class="required"> * </span>
-								</label>
 									<input type="password" name="password" class="form-control"
 										data-required="1" id="password" ng-model="field.password" />
 									<span class="help-block">myimageregistrys Enter Password </span>
@@ -133,11 +148,11 @@
 						<div class="form-actions">
 							<div class="row">
 								<div class="col-md-offset-3 col-md-9">
-									<button type="submit" class="btn green btn-success"
+									<button type="submit" class="btn green btn-success" id="registrybtn"
 										ng-disabled="userForm.$invalid" ng-click="regImageRegistry();">Submit</button>
 									<!-- <button type="button" class="btn grey-salsa btn-outline">Cancel -->
 									<a
-										href="http://localhost:8080/paas-gui/html/imageregistry.html"
+										href="/paas-gui/html/imageregistry.html"
 										class="btn grey-salsa btn-outline">Cancel</a>
 								</div>
 							</div>

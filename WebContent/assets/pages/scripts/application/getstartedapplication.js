@@ -70,7 +70,7 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 	 /*================== END OF getAllRelatedContainerTypes ==================*/
   
 	 
-	     /*================== To get the Dockerhub data ==================*/
+	 /*================== To get the Dockerhub data ==================*/
 		    //NEED TO SHOW IN DROP-DOWN LIST OF TAGS FIELD IN THE IMAGERESISTRY.HTML PAGE
 		   	 $scope.selectSummary = function(reponame) {
 		  	 $scope.reponames;
@@ -100,9 +100,9 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 		     };
 	      
 		     $scope.createApplicationByName = function() {
-		     if(angular.isUndefined($scope.service.applicantionName && $scope.service.applicantionName == '')){
+		     /*if(angular.isUndefined($scope.service.applicantionName && $scope.service.applicantionName == '')){
 		    	 alert("Please Enter valid Application name.");
-		     }else{
+		     }else{*/
 
 			   	  var res = $http.post('/paas-gui/rest/applicationService/createApplicationByName', $scope.service.applicantionName);
 			   	  console.log(userData);
@@ -117,13 +117,12 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 			   	    }));
 			   	  });
 			   	  
-		     }//END OF ELSE
+		     /*}*///END OF ELSE
 		   	};
 		   	
 		     
 		  // function to process the form
 		     $scope.processForm = function() {
-		    	alert(" comming to process form ");
 		          
 		    	angular.forEach($scope.env,function(value){
 		     		 $scope.service.env.push(value);            

@@ -91,8 +91,7 @@
 				<div class="col-md-4">
 					<!-- BEGIN FORM-->
 					<form action="#" id="subnetWizardForm" class="form-horizontal"
-						name="subnetWizardForm" ng-submit="regSubnet()" method="post"
-						novalidate>
+						name="subnetWizardForm" ng-submit="regSubnet()" method="post" >
 						<div class="form-body">
 							<div class="alert alert-danger display-hide">
 								<button class="close" data-close="alert"></button>
@@ -105,70 +104,88 @@
 
 							<div class="form-group"
 								ng-class="{ 'has-error' : subnetWizardForm. Subnet_Name.$invalid && !subnetWizardForm.Subnet_Name.$pristine }">
+                 <label class="control-label col-md-3">Subnet<span class="required">
+										* </span> </label>
 
-								<label class="control-label col-md-4"> Subnet <span
-													class="required"> * </span>
-												</label>		
-								<div class="col-xs-4">
+								<div class="col-md-9">
 									 <input type="text" ng-model="field.subnetName"
 										id="subnet_Name" name="subnet_Name" data-required="1"
 										class="form-control placeholder-no-fix"
-										 placeholder="Subnet Name"  ng-minlength="2" ng-maxlength="20" required />
+										 placeholder="Subnet Name"  ng-minlength="2" ng-maxlength="20" data-ng-change="subnetValidation(field.subnetName)" required />
 
 									<p ng-show="subnetWizardForm.subnet_Name.$error.minlength"
 										class="help-block" style="color: red;">Subnet name
+										Shouldn't below 20 chars.</p>
+										
+										<p ng-show="subnetWizardForm.subnet_Name.$error.maxlength"
+										class="help-block" style="color: red;">Subnet name
 										Shouldn't exceed 20 chars.</p>
+										<span id="subneterror" style="color: red;"></span>
 								</div>
 							</div>
 
 							<div class="form-group"
-								ng-class="{ 'has-error' : subnetWizardForm. VPC_Name.$invalid && !subnetWizardForm.VPC_Name.$pristine }">
+								ng-class="{ 'has-error' : subnetWizardForm.VPC_Name.$invalid && !subnetWizardForm.VPC_Name.$pristine }">
 								<!-- ie8, ie9 does not support html5 placeholder, so we just show field	title for that -->
-
-								<div class="col-xs-4">
-									<label for="ex2">VPC<span class="required"> * </span>
-									</label> <select class="form-control" id="vpc"
-										ng-model="field.vpcName"
-										ng-options="choice.vpc_name as choice.vpc_name  for choice in fields">
-									</select>
-								</div>
-
-
-							</div>
-							<div class="form-group">
-
-								<div class="col-xs-4">
-									<label for="ex2"
-										ng-class="{ 'has-error' : subnetWizardForm. VPC_Name.$invalid && ! subnetWizardForm.VPC_Name.$pristine }">
-										CIDR <span class="required"> * </span>
-									</label> <input type="text" ng-model="field.cidr" id="cidr" name="CIDR"
-										data-required="1" class="form-control placeholder-no-fix"
-										required placeholder="Enter CIDR" /> <span class="help-block">
-										Classless Inter-Domain Routing</span>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<div class="col-xs-4">
-
-
-									<label for="ex2">Environment Name <span class="required">
-											* </span>
-									</label> <select class="form-control" id="environment_id"
-										ng-model="field.environmentName" 
-										ng-options="choice.name as choice.name for choice in environment">
-									</select>
-
-								</div>
-							</div>
-
-							<div class="form-group">
-
-								<div class="col-xs-4">
-									<label for="ex2">ACL <span class="required"> * </span>
+                           <label  class="control-label col-md-3">VPC<span class="required"> * </span>
 									</label>
-									<select class="form-control" id="ACL" ng-model="field.aclList"
-											ng-options="choice.aclName as choice.aclName for choice in acl"  multiple="multiple" >
+								<div class="col-md-9">
+									 <select class="form-control" id="vpc"
+										ng-model="field.vpcName"
+										ng-options="choice.vpc_name as choice.vpc_name  for choice in fields" required>
+									</select>
+								</div>
+
+
+							</div>
+							<div class="form-group" ng-class="{ 'has-error' : subnetWizardForm.CIDR.$invalid && ! subnetWizardForm.CIDR.$pristine }">
+                <label class="control-label col-md-3">
+										CIDR <span class="required"> * </span>
+									</label>
+									
+								<div class="col-md-9">
+									 <input type="text" ng-model="field.cidr" id="cidr" name="CIDR"
+										data-required="1" class="form-control placeholder-no-fix"
+										required placeholder="Enter CIDR"  ng-minlength="2" ng-maxlength="20" required /> <span class="help-block">
+										Classless Inter-Domain Routing</span>
+										
+										<p ng-show="subnetWizardForm.CIDR.$error.minlength"
+										class="help-block" style="color: red;">CIDR name
+										Shouldn't below 20 chars.</p>
+										
+										<p ng-show="subnetWizardForm.CIDR.$error.maxlength"
+										class="help-block" style="color: red;">CIDR name
+										Shouldn't exceed 20 chars.</p>
+										
+										<span id="ciderror" style="color: red;"></span>
+										
+								</div>
+							</div>
+
+							<div class="form-group">
+							<label class="control-label col-md-3">Environment Name <span class="required">
+											* </span>
+									</label>
+								<div class="col-md-9">
+
+
+									 <select class="form-control" id="environment_id"
+										ng-model="field.environmentName" 
+										ng-options="choice.name as choice.name for choice in environment" required>
+									</select>
+
+								</div>
+							</div>
+
+							 <div class="form-group">
+							 
+                 <label class="control-label col-md-3">ACL <span class="required"> * </span>
+									</label>
+									
+								<div class="col-md-9">
+									
+									<select class="form-control" id="ACL" ng-model="field.aclName"
+											ng-options="choice.aclName as choice.aclName for choice in acl" required>
 										
 									</select>
 								
@@ -176,7 +193,7 @@
 										List)</span>
 								</div>
 							</div>
- {{field}}
+
 
 						</div>
 
@@ -186,8 +203,8 @@
 						<div class="form-actions">
 							<div class="row">
 								<div class="col-md-offset-3 col-md-9">
-									<button type="submit" class="btn green" id="btn-login"
-										ng-disabled="vpcWizardForm.$invalid">Submit</button>
+									<button type="submit" class="btn green" id="mysubnetbtn"
+										ng-disabled="subnetWizardForm.$invalid">Submit</button>
 									<!-- <button type="button" class="btn grey-salsa btn-outline">Cancel</button> -->
 									<a href="subnet-interface.html"
 										class="btn grey-salsa btn-outline">Cancel</a>

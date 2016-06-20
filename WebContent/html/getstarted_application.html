@@ -117,10 +117,10 @@
 									<br> <br> <br> <br> <br>
 									<h3>Step : Vpc Configuration</h3>
 									<br>
-									<form action="#" id="step-1" class="form-horizontal">
+									<form action="#" id="step-1" class="form-horizontal" name="getvpcStartedWizardForm">
 										<div class="form-body">
 
-											<div class="form-group">
+											<div class="form-group" data-ng-class="{ 'has-error' : getvpcStartedWizardForm.vpc_name.$invalid && !getvpcStartedWizardForm.vpc_name.$pristine }">
 												<label class="control-label col-md-3">Vpc Name <span
 													class="required"> * </span>
 												</label>
@@ -129,11 +129,12 @@
 														aria-required="true" aria-describedby="select-error"
 														class="form-control"
 														data-ng-init="selectVpc()"
-														data-ng-options="choice.vpc_name as choice.vpc_name  for choice in vpcObject">
+														data-ng-selected="selectSubnetnew()"
+														data-ng-options="choice.vpc_name as choice.vpc_name  for choice in vpcObject" required>
 													</select> 
 													<span class="help-block"> Select vpc </span>
 												</div>
-												<a class="btn green ">Create Vpc</a>
+												<a class="btn green"  href='vpc-wizard2.html'>Create Vpc</a>
 											</div>
 
 										</div>
@@ -142,7 +143,7 @@
 									<button type="button"
 										class="btn grey-salsa btn-outline pull-left"
 										data-dismiss="modal">Cancel</button>
-									<a class="btn green continue pull-right">Next</a>
+									<button class="btn green continue pull-right" data-ng-disabled="getvpcStartedWizardForm.$invalid">Next</button>
 
 
 								</div>
@@ -178,11 +179,11 @@
 									<h3>Step: Configure Subnet</h3>
 									<br>
 
-									<form action="#" id="step-1" class="form-horizontal">
+									<form action="#" id="step-1" class="form-horizontal" name="subnetForm">
 
 										<div class="form-body">
 										
-											<div class="form-group">
+											<div class="form-group" data-ng-class="{ 'has-error' : subnetForm.subnet.$invalid && !subnetForm.subnet.$pristine }">
 												<label class="control-label col-md-3">Subnet Name<span
 													class="required"> * </span>
 												</label>
@@ -190,23 +191,24 @@
 													<select name="type" id="type" data-ng-model="service.subnetName"
 														aria-required="true" aria-describedby="select-error"
 														class="form-control"
-														data-ng-blur="selectSubnetnew()"
-														data-ng-options="choice.subnetName as choice.subnetName  for choice in subnetObject">
+														data-ng-options="choice.subnetName as choice.subnetName  for choice in subnetObject" required>
 													</select>  <span class="help-block"> Select subnet</span>
 												</div>
-												<a class="btn green ">Create Subnet</a>
+												<a class="btn green" href='subnet-wizard2.html'>Create Subnet</a>
 											</div>
 										</div>
+										
 									</form>
 									<button type="button"
 										class="btn grey-salsa btn-outline pull-left"
 										data-dismiss="modal">Cancel</button>
-									<a class="btn green continue pull-right">Next</a> <a
+										<button class="btn green continue pull-right" data-ng-disabled="subnetForm.$invalid">Next</button> <a
 										class="btn green back pull-right">Previous</a>
 
 								</div>
+								
 
-								<div class="tab-pane fade" id="tab_6_3">
+									<div class="tab-pane fade" id="tab_6_3">
 
 									<div id="progress-bar" style="width: 100%">
 										<div class="step">
@@ -240,11 +242,11 @@
 									<br>
 									<br>
 									<br>
-									<h3>Step: Configuration Image Registory</h3>
+									
 									<br>
-									<form action="#" id="step-1" class="form-horizontal">
+									<form action="#" id="step-1" class="form-horizontal" name="imageForm">
 										<div class="form-body">
-											<div class="form-group">
+											<div class="form-group" data-ng-class="{ 'has-error' : imageForm.type.$invalid && !imageForm.type.$pristine }">
 												<label class="control-label col-md-3">Select Image <span
 													class="required"> * </span>
 												</label>
@@ -253,17 +255,18 @@
 														aria-required="true" aria-describedby="select-error"
 														class="form-control"
 														data-ng-init="selectImageRegistry()"
-														data-ng-options="choice.name as choice.name  for choice in imageRegObject">
+														data-ng-options="choice.name as choice.name  for choice in imageRegObject" required >
 													</select> <span class="help-block"> Select Image</span>
 												</div>
-												<a class="btn green ">Create Image</a>
+												<a class="btn green " href="imageRegistry-wizard2.html">Create Image</a>
 											</div>
 										</div>
+									
 									</form>
 									<button type="button"
 										class="btn grey-salsa btn-outline pull-left"
 										data-dismiss="modal">Cancel</button>
-									<a class="btn green continue pull-right">Next</a> <a
+									<button class="btn green continue pull-right" data-ng-disabled="imageForm.$invalid">Next</button> <a
 										class="btn green back pull-right">Previous</a>
 
 
@@ -303,9 +306,11 @@
 									<br>
 									<br>
 									<br>
-									<h3>Step: Create Application</h3>
+									
+									
+								 	<h3>Step: Create Application</h3>
 									<br>
-									<form action="#" id="step-1" class="form-horizontal">
+									<form action="#" id="step-1" class="form-horizontal" name="application">
 										<div class="form-body">
 											<div class="form-group">
 												<label class="control-label col-md-3">Application
@@ -313,22 +318,30 @@
 												</label>
 												<div class="col-md-4">
 													<input type="text" id="applicantionName" 
-													name="applicantionName" data-ng-model="service.applicantionName" 
-													class="form-control"  data-ng-blur="createApplicationByName()" data-ng-pattern="/[a-zA-Z0-9^ ]/" required/>
-												
+													name="applicantionName" data-ng-model="service.applicantionName"  ng-maxlength="40" ng-minlength="2"
+													class="form-control"    required/>
+												<!-- class="form-control"  data-ng-blur="createApplicationByName()" data-ng-pattern="/[a-zA-Z0-9^ ]/" required/> -->
 													<!-- <input name="applicationName" type="text" data-ng-model="service.applicationName" class="form-control"
 														id="applicationName" value="" /> -->
+									<p ng-show="application.applicationName.$error.maxlength"
+										class="help-block" style="color: red;">Name
+										Shouldn't exceed 40 chars.</p>
+										
+										<p ng-show="application.applicationName.$error.minlength"
+										class="help-block" style="color: red;">Name
+										Shouldn't below 2 chars.</p>
 
+									<span id="apperror" style="color: red;"></span>
 												</div>
 											</div>
 
 
 										</div>
 									</form>
-									<button type="button"
+									 <button type="button"
 										class="btn grey-salsa btn-outline pull-left"
 										data-dismiss="modal">Cancel</button>
-									<a class="btn green continue pull-right">Next</a> <a
+									<button class="btn green continue pull-right" data-ng-disabled="application.$invalid" id="appbtn" data-ng-click="createApplicationByName()">Next</button> <a
 										class="btn green back pull-right">Previous</a>
 								</div>
 
@@ -522,7 +535,7 @@
 																	</div> -->
 																	
 																	<!-- Environment Variables -->
-																	<div class="form-group">
+																	<!-- <div class="form-group">
 																		<label for="envirnament" class="control-label col-md-4">Environmental
 																			VARS <span class="required"> * </span>
 																		</label>
@@ -542,6 +555,44 @@
 																		</div>
 																		<div class="row">
 																			<div class="col-sm4">
+																				<div class="col-sm-3">
+																					<a class="btn green" data-ng-click="addNewEnvirnament()"><i class="fa fa-plus"></i></a>
+																				</div>
+																			</div>
+																		</div>
+																		 
+																	</div> -->
+																	
+																	<!-- Environment Variables -->
+																	<div class="form-group">
+																		<label for="envirnament" class="control-label col-md-0">Environmental
+																			VARS <span class="required"> * </span>
+																		</label>
+																		<br><br>
+																	
+																		<div data-ng-repeat="field in env">
+																				<div class="row">
+																				<div class="col-md-2">
+																				<input type="hidden" class="form-control" 	
+																					>
+																					
+																			</div>
+																			<div class="col-md-3">
+																				<input type="text" class="form-control" data-ng-model="field.envkey"	
+																					name="envkey">
+																					 <span class="help-block"> Sample VAR </span>
+																			</div>
+																			<div class="col-md-3">
+																				<input type="text" class="form-control"
+																					data-ng-model="field.envvalue" name="envvalue">
+																			</div>
+																			<div class="col-md-2">
+																				<button data-ng-click="removeEnvirnament($index)" class="btn btn-icon-only green"><i class="fa fa-minus"></i></button>
+																			</div>
+																		</div>
+																		</div>
+																		<div class="row">
+																			<div class="col-sm-4">
 																				<div class="col-sm-3">
 																					<a class="btn green" data-ng-click="addNewEnvirnament()"><i class="fa fa-plus"></i></a>
 																				</div>

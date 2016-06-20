@@ -174,4 +174,47 @@ public class ImageRegistryService {
         return result.toString();
 	}//end of method getHttpResponse
 	 
+	 @GET
+	 @Path("/checkimageRegistry/{registryName}")
+	 @Produces(MediaType.TEXT_PLAIN)
+	public String imgRegistryValidation(@PathParam("registryName") String registryName,@Context HttpServletRequest req) throws DataBaseOperationFailedException {
+		 logger.debug(" coming to check Image Registry of pass network");
+		 HttpSession session = req.getSession(true);
+		 ImageRegistryDAO registryDAO=new ImageRegistryDAO();
+		 int id = registryDAO.getImageRegistryIdByName(registryName,(int)session.getAttribute("id"));
+		
+		if(id>0)
+			return "success";
+		else
+		 return "failure" ;
+	 }//end of method aClByName validation
+	
+	 /**
+	  * to check image registry username exist or not
+	  * @param userName
+	  * @param req
+	  * @return
+	  * @throws DataBaseOperationFailedException
+	  */
+	 
+	@GET
+	@Path("/checkingUserName/{userName}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String userValidation(@PathParam("userName") String userName,
+			@Context HttpServletRequest req)
+			throws DataBaseOperationFailedException {
+		logger.debug(" coming to check Image Registry of pass network");
+
+		HttpSession session = req.getSession(true);
+
+		ImageRegistryDAO registryDAO = new ImageRegistryDAO();
+		int id = registryDAO.getImgRegistryIdByUser_NameandTenant_Id(userName,
+				(int) session.getAttribute("id"));
+
+		if (id > 0)
+			return "success";
+		else
+			return "failure";
+	}// end of method aClByName validation
+	 
 }

@@ -179,6 +179,31 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
        });
    };
  
+   
+ /*===============Add Environments validation==============*/
+   
+   $scope.environmentTypesValidation = function(environment) {
+   	
+   	var res = $http.get('/paas-gui/rest/environmentTypeService/checknvironmentType/'+environment);
+
+   	res.success(function(data, status, headers, config) {
+   		
+  		  if(data == 'success'){
+  	    	document.getElementById('environmenterr').innerHTML="data exist enter different name";
+  	    	document.getElementById("myenvbtn").disabled = true;
+  		  }
+  		  else{
+  			 document.getElementById('environmenterr').innerHTML="";
+  			document.getElementById("myenvbtn").disabled =false;
+  		  }
+   	});
+   	res.error(function(data, status, headers, config) {
+   		alert("failure message: " + JSON.stringify({
+   			data : data
+   		}));
+   	});
+   }; //end of validation
+   
 
 });      /*===============end of controllers=======================*/
 

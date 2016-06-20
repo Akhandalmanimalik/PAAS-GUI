@@ -236,7 +236,7 @@ public class EnvironmentTypeService {
 	public String environmentValidation(@PathParam("envName") String envName,
 			@Context HttpServletRequest req)
 			throws DataBaseOperationFailedException {
-		LOGGER.debug(" coming to check environment of pass network");
+		LOGGER.debug(" coming to check environment of pass network"+envName);
 
 		HttpSession session = req.getSession(true);
 		LOGGER.debug("hhhhhh " + (int) session.getAttribute("id"));

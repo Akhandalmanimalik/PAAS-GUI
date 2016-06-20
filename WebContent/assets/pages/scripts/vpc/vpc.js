@@ -32,7 +32,8 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
     }
   	};
   	
-  	  /*POPULATE DATA TO TABLE*/
+  	           /*POPULATE DATA TO TABLE*/
+  
   	 $scope.selectVpc = function() {
      	var response = $http.get('/paas-gui/rest/networkservice/getAllVPC');
      	response.success(function(data){
@@ -86,7 +87,70 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
      };
      
      
-    
+     
+
+	 /*===============Add vpc validation details==============*/
+  	
+  	 $scope.vpcValidation = function(vpc) {
+  		 
+     	
+     	  console.log("vpc "+vpc);
+     	  var res = $http.get('/paas-gui/rest/networkservice/checkVPC/'+vpc);
+     	  res.success(function(data, status, headers, config) {
+   
+     	    	
+     		  if(data == 'success'){
+     	    	document.getElementById('errfn').innerHTML="data exist enter different name";
+     	    	document.getElementById("myvpcbtn").disabled = true;
+     	    	
+     		  }
+     		  else{
+     			 document.getElementById('errfn').innerHTML="";
+     			 if(document.getElementById('ACL').value != ''){
+     			document.getElementById("myvpcbtn").disabled =false;
+     			 }
+     		  }
+     	    
+     	  });
+     	  res.error(function(data, status, headers, config) {
+     		 
+     	    alert("failure message: " + JSON.stringify({
+     	      data : data
+     	    }));
+     	  });
+     };
+     /*===============END of VPC validation==============*/
+
+     
+     
+     /*===============ACL validation==============*/
+	    $scope.aclValidation = function(acl) {
+	    	
+	    
+		  	  console.log("acl >>>>>>>>>>>>>>>>>>. "+acl);
+		  	  var res = $http.get('/paas-gui/rest/networkservice/checkAcl/'+acl);
+		  	  res.success(function(data, status, headers, config) {
+		  		  
+		  		if(data == 'success'){
+		   	    	document.getElementById('aclerr').innerHTML="data exist enter different name";
+		   	    	document.getElementById("myvpcbtn").disabled = true;
+		   	    	
+		   		  }
+		   		  else{
+		   			 document.getElementById('aclerr').innerHTML="";
+		   			document.getElementById("myvpcbtn").disabled =false;
+		   		  }
+	 	  		 
+		  	  });
+		  	  res.error(function(data, status, headers, config) {
+		  	    alert("failure message: " + JSON.stringify({
+		  	      data : data
+		  	    }));
+		  	  });
+		  	 
+		  	};
+		    /*===============END Add ACL validation==============*/
+		  	
   	
   	
 

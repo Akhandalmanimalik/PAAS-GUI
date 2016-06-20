@@ -90,11 +90,11 @@
 									<!-- <label class="control-label col-md-3"> Name <span
 													class="required"> * </span> -->
 
-
+									<label class="control-label col-md-3"> Name <span
+										class="required"> * </span>
+										</label>
 									<div class="col-xs-4">
-										<label for="ex2">Name<span class="required"> *
-										</span>
-										</label> <input type="text" id="name" placeholder="Name"
+										<input type="text" id="name" placeholder="Name"
 											data-ng-model="field.name" name="name" data-required="1"
 											class="form-control placeholder-no-fix" ng-minlength="2"
 											ng-maxlength="20" required /> <span class="error"
@@ -112,12 +112,12 @@
 								<!-- Memory(MB) FIELD -->
 								<div class="form-group"
 									data-ng-class="{ 'has-error' : vpcWizardForm.memory.$invalid && !vpcWizardForm.memory.$pristine }">
-
+										<label class="control-label col-md-3"> Memory(MB) <span
+										class="required"> * </span>
+										</label>
 
 									<div class="col-xs-4">
-										<label for="ex2"> Memory(MB) <span class="required">
-												* </span>
-										</label> <input type="text" id="memory" data-ng-model="field.memory"
+										 <input type="text" id="memory" data-ng-model="field.memory"
 											name="memory" placeholder="Memory" class="form-control"
 											ng-minlength="0" data-ng-maxlength="60" required /> <span
 											class="error"
@@ -135,7 +135,7 @@
 
 									<div class="col-md-4">
 										<!-- <input id="description" data-ng-model="field.description" name="Description"  placeholder="Description" type="text" class="form-control"  /> -->
-										<textarea style="width: 31%" id="description" rows="2"
+										<textarea id="description" rows="2"
 											cols="10" placeholder="Description" class="form-control"
 											data-ng-model="field.description"></textarea>
 

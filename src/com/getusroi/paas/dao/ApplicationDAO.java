@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,22 +20,27 @@ import com.getusroi.paas.db.helper.DataBaseConnectionFactory;
 import com.getusroi.paas.db.helper.DataBaseHelper;
 import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
-import com.getusroi.paas.vo.ApplicantSummary;
+import com.getusroi.paas.vo.Applications;
 import com.getusroi.paas.vo.EnvironmentVariable;
 import com.getusroi.paas.vo.Service;
+import com.paas_gui.dbconnection.DBConnection;
 
 public class ApplicationDAO {
 	static final Logger LOGGER = LoggerFactory.getLogger(ApplicationDAO.class);
+	private static final String NETWORK_TYPE = "BRIDGE";
 
-	private static final String INSERT_APPLICATION_SUMMARY_QUERY = "insert into appsummary values(?,?,?,?,?)";
-	private static final String GET_ALL_APPLICATION_SUMMARY_QUERY = "select * from appsummary";
-	
+	private static final String GET_ALL_SERVICES_BY_TENANTID_BY_SERVICE_ID = "select * from application where apps_id=? and tenant_id=?";
+	private static final String GET_ALL_APPLICATIONS_BY_TENANT_ID = "select * from applications where tenant_id=?";
+	private static final String INSERT_INTO_APPLICATION = "insert into applications(applications_name,description,tenant_id) values(?,?,?)";
+	private static final String UPDATE_APPLICATION_BY_ALL_DETAILS_FOR_GIVE_ID = "UPDATE  applications set applications_name=?,description =? where apps_id=?";
+
 	private static final String INSERT_APPLICATION_SERVICE_QUERY = "insert into application (service_name,registry_url,tag,run,host_name,host_port,container_port,protocol_type,port_index,path,interval_seconds,timeout_seconds,max_consecutive_failures,grace_period_seconds,ignore_http1xx,instance_count,host_path,container_path,volume,subnet_id,createdDTM,tenant_id,registry_id,container_id,apps_id) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?)";
 	private static final String GET_SERVICE_BY_NAME_AND_USERID = "select * from application where service_name=? && tenant_id=?";	
 	private static final String GET_ALL_APPLICATION_SERVICE_BY_TENANT_ID_QUERY_ = "select app_id,service_name,registry_id,tag,container_id from application where tenant_id=? and apps_id=?";
 	private static final String DELETE_SERVICE_BY_SERVICENAME_USER_ID_AND_APPS_ID_QUERY = "delete from application where service_name=? and tenant_id=?";	/*and apps_id=?*/
-	//can be remove after verify
-	//private static final String CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME="select apps_id from applications where applications_name=? and tenant_id=?";
+	
+	private static final String DELETE_APPLICATION_BY_ID_AND_BY_TENANT_ID = "delete from applications where apps_id=? and tenant_id=?";	/*and apps_id=?*/
+
 	
 	private static final String GET_APPLICATION_ID_BY_NAME_AND_TENANT_ID = "select apps_id from applications where applications_name=? && tenant_id=?";
 	private static final String INSERT_ENVIRONMENT_VARIABLE_DETAILS__QUERY = "insert into application_variable (varible_name,varible_value,app_id,createdDTM) values (?,?,?,NOW())";
@@ -44,60 +50,151 @@ public class ApplicationDAO {
 	
 	DataBaseConnectionFactory connectionFactory = null;
 	
+	
+	
+
 	/**
-	 * This method is used to add application summary
+	 * This method is used to add Application to db
 	 * 
-	 * @param appSummary
-	 *            : ApplicantSummary Object contains data need for inserting
-	 *            data
+	 * @param addApplication
+	 *            : addApplication Object
 	 * @throws DataBaseOperationFailedException
-	 *             : Unable to insert ApplicantSummary
+	 *             : Error in adding application to db
 	 */
-	public void insertApplicationSummary(ApplicantSummary appSummary)
+	public String updateApplication(Applications applications)
 			throws DataBaseOperationFailedException {
-		LOGGER.debug(".insertApplicationSummary method of ApplicationDAO");
+		LOGGER.debug(".updateApplication method of ApplicationDAO");
+		JSONObject jsonObject=new JSONObject();
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
+		int apps_id=0;
+		LOGGER.debug(" Applications Details =  "+applications);
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
-			pstmt = (PreparedStatement) connection
-					.prepareStatement(INSERT_APPLICATION_SUMMARY_QUERY);
-			pstmt.setString(1, appSummary.getApplicantionName());
-			pstmt.setString(2, appSummary.getDescription());
-			pstmt.setString(3, appSummary.getImageRegistry());
-			pstmt.setString(4, appSummary.getImageRepository());
-			pstmt.setString(5, appSummary.getTag());
+		pstmt = (PreparedStatement) connection
+					.prepareStatement(UPDATE_APPLICATION_BY_ALL_DETAILS_FOR_GIVE_ID);
+			
+			pstmt.setString(1, applications.getApplicantionName());
+			pstmt.setString(2, applications.getDescription());
+			pstmt.setInt(3, applications.getApps_id());
 			pstmt.executeUpdate();
-			LOGGER.debug("apps summary data : " + appSummary
-					+ " inserted successfully");
-		} catch (ClassNotFoundException | IOException e) {
-			LOGGER.error("Unable to add applicant summary into db with data : "
-					+ appSummary);
+			
+			LOGGER.debug("Application updated sucessfull with Id="+apps_id);		
+			} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error( "Unable to update data for applications into db with data : " + applications, e);
 			throw new DataBaseOperationFailedException(
-					"Unable to add applicant summary into db with data : "
-							+ appSummary, e);
+					"Unable to update data for applications into db with data :  "
+							+ applications, e);
 		} catch (SQLException e) {
+			jsonObject.put("id", "error");
+
+			e.printStackTrace();
 			if (e.getErrorCode() == 1064) {
-				String message = "Unable to add applicant summary into db because: "
+				String message = "Unable to update data for applications into db with because: "
 						+ PAASErrorCodeExceptionHelper
 								.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
 				throw new DataBaseOperationFailedException(message, e);
 			} else if (e.getErrorCode() == 1146) {
-				String message = "Unable to add applicant summary into db because: "
+
+				String message = "Unable to update data for applications into db with because: "
 						+ PAASErrorCodeExceptionHelper
 								.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
 				throw new DataBaseOperationFailedException(message, e);
+
 			} else
 				throw new DataBaseOperationFailedException(
-						"Unable to add applicant summary into db with data : "
-								+ appSummary, e);
+						"Unable to update data for applications into db with data :  "
+								+ applications, e);
 		} finally {
 			DataBaseHelper.dbCleanUp(connection, pstmt);
 		}
+		return apps_id+"";
+		//return jsonObject.toString();
+	}// end of method addApplication
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * This method is used to add Application to db
+	 * 
+	 * @param addApplication
+	 *            : addApplication Object
+	 * @throws DataBaseOperationFailedException
+	 *             : Error in adding application to db
+	 */
+	public String addApplication(Applications applications)
+			throws DataBaseOperationFailedException {
+		LOGGER.debug(".addApplication method of ApplicationDAO");
+		JSONObject jsonObject=new JSONObject();
+		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		int apps_id=0;
+		
+		try {
+			connection = connectionFactory.getConnection(MYSQL_DB);
+		pstmt = (PreparedStatement) connection
+					.prepareStatement(INSERT_INTO_APPLICATION,Statement.RETURN_GENERATED_KEYS);
+			
+			pstmt.setString(1, applications.getApplicantionName());
+			pstmt.setString(2, applications.getDescription());
+			pstmt.setInt(3, applications.getTenant_id());
+			pstmt.executeUpdate();
+			ResultSet resultSet=pstmt.getGeneratedKeys();
+			if(resultSet.next()){
+				apps_id=resultSet.getInt(1);
+			}
+			jsonObject.put("id", apps_id);
+			LOGGER.debug("Application inserted sucessfull with Id="+apps_id);		
+			} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error( "Unable to insert data for applications into db with data : " + applications, e);
+			throw new DataBaseOperationFailedException(
+					"Unable to insert data for applications into db with data :  "
+							+ applications, e);
+		} catch (SQLException e) {
+			jsonObject.put("id", "error");
 
-	}// end of method insertApplicationSummary
+			e.printStackTrace();
+			if (e.getErrorCode() == 1064) {
+				String message = "Unable to insert data for applications into db with because: "
+						+ PAASErrorCodeExceptionHelper
+								.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if (e.getErrorCode() == 1146) {
 
+				String message = "Unable to insert data for applications into db with because: "
+						+ PAASErrorCodeExceptionHelper
+								.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+
+			} else
+				throw new DataBaseOperationFailedException(
+						"Unable to insert data for applications into db with data :  "
+								+ applications, e);
+		} finally {
+			DataBaseHelper.dbCleanUp(connection, pstmt);
+		}
+		return apps_id+"";
+		//return jsonObject.toString();
+	}// end of method addApplication
+	
+	
+	
+	
+	
+	
 	/**
 	 * This method is used to get All applicant summary from db
 	 * 
@@ -105,59 +202,62 @@ public class ApplicationDAO {
 	 * @throws DataBaseOperationFailedException
 	 *             : Unable to get all applicant summary
 	 */
-	public List<ApplicantSummary> getAllApplicantSummary()
+	public List<Service> getAllServiceByAppsIdAndTenantID(int apps_id,int tennat_Id)
 			throws DataBaseOperationFailedException {
-		LOGGER.debug(".getAllApplicantSummary method of ApplicationDAO");
+		LOGGER.debug(".getAllServiceByAppsIdAndTenantID method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
-		List<ApplicantSummary> applicantSummaryList = new LinkedList<ApplicantSummary>();
+		ImageRegistryDAO imRegistryDAO=new ImageRegistryDAO();
+		ContainerTypesDAO containerTypesDAO=new ContainerTypesDAO();
+		List<Service> serviceList = new LinkedList<Service>();
 		Connection connection = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 		ResultSet result = null;
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
-			stmt = connection.createStatement();
-			result = stmt.executeQuery(GET_ALL_APPLICATION_SUMMARY_QUERY);
+			stmt = connection.prepareStatement(GET_ALL_SERVICES_BY_TENANTID_BY_SERVICE_ID);
+			stmt.setInt(1,apps_id);
+			stmt.setInt(2,tennat_Id);
+
+			result = stmt.executeQuery();
 			if (result != null) {
 				while (result.next()) {
-					ApplicantSummary applicantSummary = new ApplicantSummary();
-					applicantSummary = new ApplicantSummary();
-					applicantSummary.setApplicantionName(result
-							.getString("applicantName"));
-					applicantSummary.setDescription(result
-							.getString("description"));
-					applicantSummary.setImageRegistry(result
-							.getString("imageRegistry"));
-					applicantSummary.setImageRepository(result
-							.getString("imageRepository"));
-					applicantSummary.setTag(result.getString("tag"));
-					applicantSummaryList.add(applicantSummary);
+					Service service = new Service();
+					service.setServiceName(result
+							.getString("service_name"));
+					service.setImageRegistry(imRegistryDAO.getImageRegistryNameById(result.getInt("registry_id"), tennat_Id)               
+							);
+					service.setContainerType(containerTypesDAO.getContainerNameByContainerId(result.getInt("container_id")));
+					service.setTag(result.getString("tag"));
+					service.setNetwork_bridge("");
+					service.setTenantId(tennat_Id);
+					serviceList.add(service);
 				}
 			} else {
-				LOGGER.debug("No data avilable in apps summary table");
+				LOGGER.debug("No data avilable in sevice table");
 			}
 		} catch (ClassNotFoundException | IOException e) {
-			LOGGER.error("Unable to fetch applicant summary into db ");
+			LOGGER.error("Unable to fetch serviceinto db ");
 			throw new DataBaseOperationFailedException(
-					"Unable to fetch applicant summary ", e);
+					"Unable to fetch Service ", e);
 		} catch (SQLException e) {
 			if (e.getErrorCode() == 1064) {
-				String message = "Unable to fetch applicant summary into db because: "
+				String message = "Unable to fetch Service into db because: "
 						+ PAASErrorCodeExceptionHelper
 								.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
 				throw new DataBaseOperationFailedException(message, e);
 			} else if (e.getErrorCode() == 1146) {
-				String message = "Unable to fetch applicant summary into db because: "
+				String message = "Unable to fetch Service into db because: "
 						+ PAASErrorCodeExceptionHelper
 								.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
 				throw new DataBaseOperationFailedException(message, e);
 			} else
 				throw new DataBaseOperationFailedException(
-						"Unable to fetch applicant summary ", e);
+						"Unable to fetch Service ", e);
 		} finally {
 			DataBaseHelper.dbCleanup(connection, stmt, result);
 		}
-		return applicantSummaryList;
-	}// end of method getAllApplicantSummary
+		return serviceList;
+	}// end of method getAllServiceByAppsIdAndTenantID
 
 	/**
 	 * This method is used to add service to db
@@ -285,6 +385,7 @@ public class ApplicationDAO {
 					service.setImageRegistry(new ImageRegistryDAO().getImageRegistryNameById(result.getInt("registry_id"), user_id));
 					service.setTag(result.getString("tag"));
 					service.setType(new PoliciesDAO().getContainerTypeNameById(result.getInt("container_id"), 7));					
+					service.setNetwork_bridge(NETWORK_TYPE);
 					addServiceList.add(service);
 				}
 			} else {
@@ -360,6 +461,47 @@ public class ApplicationDAO {
 		}
 	}// end of method deleteServiceByServiceName
 
+	
+
+
+	public void deleteApplicationById(int  apps_id,int tenant_Id)
+			throws DataBaseOperationFailedException {
+		LOGGER.debug(".deleteApplicationById method of ApplicationDAO");
+		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		try {
+			connection = connectionFactory.getConnection(MYSQL_DB);
+			pstmt = (PreparedStatement) connection.prepareStatement(DELETE_APPLICATION_BY_ID_AND_BY_TENANT_ID);
+			pstmt.setInt(1, apps_id);
+			pstmt.setInt(2,tenant_Id );
+			//pstmt.setInt(3, service.getAppsId());
+			pstmt.executeUpdate();
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Unable to delete   data for application from db : "
+					+ apps_id);
+			throw new DataBaseOperationFailedException(
+					"Unable to delete  data for applications from db " + apps_id,
+					e);
+		} catch (SQLException e) {
+			if (e.getErrorCode() == 1064) {
+				String message = "Unable to delete   data for applications from db because: "
+						+ PAASErrorCodeExceptionHelper
+								.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if (e.getErrorCode() == 1146) {
+				String message = "Unable to delete   data for applications from db because: "
+						+ PAASErrorCodeExceptionHelper
+								.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException(
+						"Unable to delete  data for applications from db "
+								+ apps_id, e);
+		}
+	}// end of method deleteServiceByServiceName
+
+	
 	/**
 	 * This method is used to get environment varibale based on service name
 	 * 
@@ -601,5 +743,51 @@ public class ApplicationDAO {
 	return isServiceExist;
 	}
 	
+	
+	/**
+	 * to get Applications Details By given tenant ID 
+	 * @param tenantId
+	 * @return
+	 */
+	public List<Applications> getApplicationsDetailsBytTenantId(int tenantId) {
+
+		LOGGER.debug("(.)  inside getApplicationsDetailsBytTenantId method of Application Dao with tenantID="+tenantId);
+		List<Applications> applicationsList = new LinkedList<Applications>();
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+
+			connection = (Connection) DBConnection.getConnection();
+			preparedStatement = (PreparedStatement) connection.prepareStatement(GET_ALL_APPLICATIONS_BY_TENANT_ID);
+			preparedStatement.setInt(1, tenantId);
+			resultSet = preparedStatement.executeQuery();
+
+			Applications applications = null;
+			while (resultSet.next()) {
+				applications = new Applications();
+				applications.setApps_id(resultSet.getInt(1));
+				applications.setApplicantionName(resultSet.getString(2));
+				applications.setDescription(resultSet.getString(3));
+				applications.setTenant_id(tenantId);
+				applicationsList.add(applications);
+			}
+			LOGGER.info("application list "+applicationsList);
+
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage());
+
+		} finally {
+			try {
+				resultSet.close();
+			} catch (SQLException e) {
+				LOGGER.error(e.getMessage());
+			}
+		}
+
+		return applicationsList;
+	}
+
 
 }

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<title>Environments</title>
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+<link rel="stylesheet" href="../css/table/table.css">
+<script src="../js/environmenttype/environmenttype.js"
+	type="text/javascript"></script>
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+
+
+
+	<div ng-app="myenvironmenttype" ng-controller="MainCtrl"
+		ng-init="selectServices();selectEnvirnamentList()">
+		<!-- ng-init="getApplicationName();selectEnvirnamentList()"> -->
+		<div class="container">
+
+			<div class="page-header" align="center">
+				<h1>PAAS-Environments</h1>
+			</div>
+
+			<button ng-click="toggleModal()" class="btn btn-primary" ng-click="selectEnvirnamentList();">Add
+				Environment</button>
+
+			<modal title="Add Environments" visible="showModal"> <!-- page-header -->
+			<form role="form" onsubmit="return closeSelf()">
+				<div class="container tabs-wrap">
+
+					<ul class="nav nav-tabs col-xs-5" role="tablist">
+						<li><a href="#services" aria-controls="services" role="tab"
+							data-toggle="tab" aria-expanded="false">Services</a></li>
+						<li><a href="#environment_variable"
+							aria-controls="environment_variable" role="tab" data-toggle="tab"
+							aria-expanded="false">Environment Variables</a></li>
+					</ul>
+					<div class="tab-content">
+
+						<div role="tabpanel" class="tab-pane col-xs-12" id="services">
+							<form role="form" class="form-horizontal">
+
+								<br />
+
+								<div style="width: 45%">
+
+
+									<div class="form-group">
+										<label for="version" class="control-label col-sm-2">Service</label>
+										<div class="col-sm-6">
+											<select class="form-control" id="ACL"
+												ng-model="field.service" name="service"
+												ng-change="selectappfortag(field.service)"
+												ng-options="group.serviceName as group.serviceName for group in  services">
+
+											</select>
+										</div>
+										
+									</div>
+									</br> </br>
+									<div class="form-group">
+										<label for="path" class="control-label col-sm-2">Tags</label>
+										<div class="col-sm-6">
+										
+											<input type="text" class="form-control" ng-model="field.tag"
+												>
+										</div>
+									</div>
+
+
+
+
+									<div class="form-group" ng-show="isImg">
+										<img src="smallload.gif">fetching from {{field.service}}
+									</div>
+
+								</div>
+
+
+
+
+								<br /> <br /> <br /> <br /> <br /> <br /> <br />
+								<div class="modal-footer"
+									style="background: #ccefff; width: 45%">
+									<div class="bootstrap-dialog-footer">
+										<div class="bootstrap-dialog-footer-buttons">
+											<button type="button"
+												class="btn btn-danger btn-nirmata col-xs-2"
+												data-dismiss="modal">Cancel</button>
+											<a class="btn btn-primary back">Previous</a> <a
+												class="btn btn-primary continue">Next</a>
+											<button class="btn btn-success btn-nirmata"
+												disabled="disabled">Submit</button>
+										</div>
+									</div>
+								</div>
+
+							</form>
+						</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+						<div role="tabpanel" class="tab-pane col-xs-12 tab-pane"
+							id="environment_variable">
+							<form role="form" class="form-horizontal">
+
+								<div data-ng-repeat="scale in env">
+									<div class="col-sm-9">
+										<label for="version" class="control-label col-sm-2">Env
+											KEy</label>
+
+										<div class="col-sm-3">
+
+											<input type="text" class="form-control"
+												ng-model="scale.envkey" name="envkey">
+										</div>
+
+
+										<div class="col-sm-3">
+
+											<input type="text" class="form-control"
+												ng-model="scale.envvalue" name="envkey">
+										</div>
+
+
+
+
+									</div>
+									</br> </br>
+								</div>
+
+
+
+								<br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
+								<br /> <br />
+
+
+
+
+								<div class="modal-footer"
+									style="background: #ccefff; width: 45%">
+									<div class="bootstrap-dialog-footer">
+										<div class="bootstrap-dialog-footer-buttons">
+											<button type="button"
+												class="btn btn-danger btn-nirmata col-xs-2"
+												data-dismiss="modal">Cancel</button>
+											<a class="btn btn-primary back">Previous</a> <a
+												class="btn btn-primary continue">Next</a>
+											<button class="btn btn-success btn-nirmata" data-dismiss="modal" ng-click="storeEnvironments()" >Finish</button>
+										</div>
+									</div>
+								</div>
+
+							</form>
+						</div>
+					</div>
+
+				</div>
+			</form>
+			<div id="push"></div>
+
+			</modal>
+
+
+			<hr />
+
+			<div class="container">
+				<table border="1" cellpadding="10">
+					<thead>
+						<tr>
+							<th>Container</th>
+							<th>Service</th>
+							<th>Tag</th>
+							<th>Host</th>
+							<th>IP Address</th>
+							<th>state</th>
+							<th>actions</th>
+
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="field12 in envirnamentlist">
+							<td>{{field12.containername}}</td>
+							<td>{{field12.service}}</td>
+							<td>{{field12.tag}}</td>
+							<td>{{field12.host}}</td>
+							<td>{{field12.ipadress}}</td>
+							<td>{{field12.state}}</td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</div>
+
+</body>
+</html>

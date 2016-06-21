@@ -18,7 +18,6 @@ import com.getusroi.paas.db.helper.DataBaseConnectionFactory;
 import com.getusroi.paas.db.helper.DataBaseHelper;
 import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
-import com.getusroi.paas.vo.ApplicantSummary;
 import com.getusroi.paas.vo.EnvironmentType;
 import com.getusroi.paas.vo.Environments;
 import com.paas_gui.vpc.MarathonRest;
@@ -36,9 +35,7 @@ public class EnvironmentDAO {
 	private static final String GET_ALL_ENVIRONMENT_QUERY = "SELECT * FROM environments where tenant_id=?";
 	private static final String DELETE_ENVIRONMENT_BY_NAME = "DELETE FROM environments WHERE  environment_name = ?";
 	private static final String SELECT_ALL_ENVIRONMENTS_LIST = "SELECT * FROM envirnament";
-	private static final String SELECT_APPLICATION_SUMMARY_BY_APPLICATION_NAME = "SELECT applicantName FROM appsummary";
-	private static final String SELECT_IMAGE_REPOSITORY_FROM_APPLICANT_NAME = "SELECT imageRepository FROM appsummary WHERE applicantName=?";
-	private static final String INSERT_ENVIRONMENTS_QUERY = "INSERT INTO envirnament VALUES(?,?,?,?,?,?)";
+		private static final String INSERT_ENVIRONMENTS_QUERY = "INSERT INTO envirnament VALUES(?,?,?,?,?,?)";
 	 private final String GET_ENVIRONMENT_NAME_USING_ID_AND_TENANTID="select environment_name from environments where id =? and tenant_id=?";
 	//private static final String SELECT_ADD_SERVICE_QUERY = "SELECT * FROM addService";
 	//private static final String READ_ENVIRONMENT_VARIABLE = "SELECT * FROM environment_variable WHERE serviceName =?";
@@ -243,7 +240,7 @@ public class EnvironmentDAO {
 	 * @return : it return the application summary list
 	 * @throws DataBaseOperationFailedException
 	 *             : Unable to get application summary
-	 */
+	 *//*
 
 	public List<ApplicantSummary> getApplicationSummaryByApplicationName() throws DataBaseOperationFailedException {
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
@@ -279,7 +276,7 @@ public class EnvironmentDAO {
 		}
 		return applicantSummaryList;
 	} // end of getApplicationSummaryByApplicationName method
-
+*/
 	/**
 	 * this method is used to select image repository from repository name
 	 * 
@@ -290,7 +287,7 @@ public class EnvironmentDAO {
 	 *             : Unable to select image repository
 	 */
 
-	public ApplicantSummary selectImageRepositoryFromRepositoryName(String repoName)
+/*	public ApplicantSummary selectImageRepositoryFromRepositoryName(String repoName)
 			throws DataBaseOperationFailedException {
 
 		LOGGER.debug(".selectImageRepositoryFromRepositoryName of EnvironmentDAO");
@@ -329,7 +326,7 @@ public class EnvironmentDAO {
 		}
 		return applicantSummary;
 	} // end of selectImageRegesitoryFromSummary method
-
+*/
 	/**
 	 * this method is used to insert all environments values into db
 	 * 

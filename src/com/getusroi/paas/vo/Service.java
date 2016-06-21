@@ -64,6 +64,15 @@ public class Service {
 	private String applicationName; 		
 	private int appsId;
 	
+	private String network_bridge;
+	public String getNetwork_bridge() {
+		return network_bridge;
+	}
+
+	public void setNetwork_bridge(String network_bridge) {
+		this.network_bridge = network_bridge;
+	}
+
 	public Service() {
 		// TODO Auto-generated constructor stub
 	}

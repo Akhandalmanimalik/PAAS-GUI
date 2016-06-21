@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PAAS | Application Listings</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="" name="description" />
+<meta content="" name="author" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
+<script src="../assets/global/plugins/jquery.min.js"
+	type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js"
+	type="text/javascript"></script>
+<script src="../assets/pages/scripts/containertype/containertype.js"
+	type="text/javascript"></script>
+
+<link
+	href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all"
+	rel="stylesheet" type="text/css" />
+<link
+	href="../assets/global/plugins/font-awesome/css/font-awesome.min.css"
+	rel="stylesheet" type="text/css" />
+<link
+	href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css"
+	rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css"
+	rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/uniform/css/uniform.default.css"
+	rel="stylesheet" type="text/css" />
+<link href="../assets/global/css/components.min.css" rel="stylesheet"
+	id="style_components" type="text/css" />
+<link href="../assets/pages/css/layout.min.css" rel="stylesheet"
+	type="text/css" />
+<link href="../assets/pages/css/light.min.css" rel="stylesheet"
+	type="text/css" id="style_color" />
+<link rel="shortcut icon" href="favicon.ico" />
+
+</head>
+<!-- END HEAD -->
+
+<body
+	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
+	<!-- BEGIN HEADER -->
+	<div data-ng-app="mycontainertype" data-ng-controller="MainCtrl">
+		<!-- END HEADER -->
+		<!-- BEGIN CONTAINER -->
+		<div class="page-container">
+			<!-- BEGIN CONTENT -->
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				<!-- Progress Bar -->
+				<div class="page-content">
+					<h4>
+						<b> Container Configuration Wizard </b>
+					</h4>
+				</div>
+				<hr>
+				<div style="width: 99%;">
+					<div class="progress">
+						<div class="progress-bar" role="progressbar"
+							style="width: 100%; background-color: #9bd7e1;"></div>
+					</div>
+				</div>
+				<!-- End Progress Bar -->
+				<!-- BEGIN PAGE BASE CONTENT -->
+				<div class="row">
+
+					<div class="col-md-12">
+						<!-- BEGIN FORM-->
+						<form action="#" id="vpcWizardForm" class="form-horizontal"
+							name="vpcWizardForm" data-ng-submit="regContainerTypes();"
+							method="post" novalidate>
+							<div class="form-body">
+								<div class="alert alert-danger display-hide">
+									<button class="close" data-close="alert"></button>
+									You have some form errors. Please check below.
+								</div>
+								<div class="alert alert-success display-hide">
+									<button class="close" data-close="alert"></button>
+									Your form validation is successful!
+								</div>
+
+								<!-- CONTAINER Name FIELD -->
+								<div class="form-group"
+									data-ng-class="{ 'has-error' : vpcWizardForm.name.$invalid && !vpcWizardForm.name.$pristine }">
+									<!-- ie8, ie9 does not support html5 placeholder, so we just show field	title for that -->
+									<!-- <label class="control-label col-md-3"> Name <span
+													class="required"> * </span> -->
+
+									<label class="control-label col-md-3"> Name <span
+										class="required"> * </span>
+										</label>
+									<div class="col-xs-4">
+										<input type="text" id="name" placeholder="Name"
+											data-ng-model="field.name" name="name" data-required="1"
+											class="form-control placeholder-no-fix" ng-minlength="2"
+											ng-maxlength="20" required /> <span class="error"
+											ng-show="vpcWizardForm.name.$error.maxlength"
+											class="help-block" style="color: red;"> Name should be
+											maximum 20 char</span> <span class="error"
+											ng-show="vpcWizardForm.name.$error.maxlength"
+											class="help-block" style="color: red;"> Name should be
+											minimum of 2 char</span>
+
+									</div>
+
+								</div>
+
+								<!-- Memory(MB) FIELD -->
+								<div class="form-group"
+									data-ng-class="{ 'has-error' : vpcWizardForm.memory.$invalid && !vpcWizardForm.memory.$pristine }">
+										<label class="control-label col-md-3"> Memory(MB) <span
+										class="required"> * </span>
+										</label>
+
+									<div class="col-xs-4">
+										 <input type="text" id="memory" data-ng-model="field.memory"
+											name="memory" placeholder="Memory" class="form-control"
+											ng-minlength="0" data-ng-maxlength="60" required /> <span
+											class="error"
+											data-ng-show="vpcWizardForm.memory.$error.maxlength"
+											class="help-block" style="color: red;">Memory should
+											not be greater than 60</span>
+									</div>
+								</div>
+
+								<!-- Description FIELD  -->
+								<div class="form-group">
+									<label class="control-label col-md-3"> Description <span
+										class="required"> * </span>
+									</label>
+
+									<div class="col-md-4">
+										<!-- <input id="description" data-ng-model="field.description" name="Description"  placeholder="Description" type="text" class="form-control"  /> -->
+										<textarea id="description" rows="2"
+											cols="10" placeholder="Description" class="form-control"
+											data-ng-model="field.description"></textarea>
+
+									</div>
+								</div>
+							</div>
+
+							<div class="form-actions">
+								<div class="row">
+									<div class="col-md-offset-3 col-md-9">
+										<button type="submit" class="btn green" id="btn-login"
+											data-ng-disabled="vpcWizardForm.$invalid">Submit</button>
+										<!-- <button type="button" class="btn grey-salsa btn-outline">Cancel</button> -->
+										<a href="vpc-interface.html"
+											class="btn grey-salsa btn-outline">Cancel</a>
+									</div>
+								</div>
+							</div>
+						</form>
+						<!-- END FORM-->
+					</div>
+				</div>
+
+				<!-- END PAGE BASE CONTENT -->
+			</div>
+			<!-- END CONTENT BODY -->
+
+			<!-- END CONTENT -->
+			<!-- BEGIN QUICK SIDEBAR -->
+			<a href="javascript:;" class="page-quick-sidebar-toggler"> <i
+				class="icon-login"></i>
+			</a>
+			<!-- END QUICK SIDEBAR -->
+		</div>
+		<!-- END CONTAINER -->
+	</div>
+</body>
+
+</html>

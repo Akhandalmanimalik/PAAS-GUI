@@ -32,11 +32,9 @@ import com.getusroi.paas.marathon.service.MarathonServiceException;
 import com.getusroi.paas.marathon.service.impl.MarathonService;
 import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.ApplicationServiceException;
-import com.getusroi.paas.vo.ApplicantSummary;
+import com.getusroi.paas.vo.Applications;
 import com.getusroi.paas.vo.Service;
 import com.google.gson.Gson;
-import com.paas_gui.register.userDAO;
-import com.paas_gui.vpc.ApplicantUser;
 
 
 
@@ -44,24 +42,8 @@ import com.paas_gui.vpc.ApplicantUser;
 public class ApplicationService {
 	 static final Logger LOGGER = LoggerFactory.getLogger(ApplicationService.class);
 	 static final String TENANT="tenant";
-	 ApplicantUser app=null;
-	 userDAO userDAO =  null; 
-	 
-	@POST
-	@Path("/addApplicantSummary")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void addApplicationSummary(String appSummaryData) throws ApplicationServiceException, DataBaseOperationFailedException{
-		LOGGER.debug(".addApplicationSummary method of ApplicationService ");
-		ObjectMapper mapper = new ObjectMapper();
-		ApplicationDAO applicationDAO=new ApplicationDAO();
-		try {
-			ApplicantSummary applicantSummary=mapper.readValue(appSummaryData,ApplicantSummary.class);
-			applicationDAO.insertApplicationSummary(applicantSummary);
-		} catch (IOException e) {
-			LOGGER.error("Error in reading data : "+appSummaryData+" using object mapper in addApplicationSummary");
-			throw new ApplicationServiceException("Error in reading data : "+appSummaryData+" using object mapper in addApplicationSummary");
-		}
-	}//end of addApplicationSummary
+	
+
 	
 	@POST
 	@Path("/addService")
@@ -105,7 +87,7 @@ public class ApplicationService {
 	}//end of method addService
 	
 	@GET
-	@Path("/getAllApplicationService")
+	@Path("/getAllServiceByAppsId")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllApplicationService(@Context HttpServletRequest request) throws DataBaseOperationFailedException{
 		LOGGER.debug(".getAllApplicationService method of ApplicationService ");
@@ -124,16 +106,17 @@ public class ApplicationService {
 	
 	
 	@GET
-	@Path("/getAllApplicationSummary")
+	@Path("/getAllServiceByAppsId/{apps_id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAllApplicationSummary() throws DataBaseOperationFailedException{
-		LOGGER.debug(".getAllApplicationSummary method of ApplicationService ");
+	public String getAllServices(@PathParam("apps_id") int apps_id,@Context HttpServletRequest request) throws DataBaseOperationFailedException{
+		LOGGER.debug(".getAllServices method of ApplicationService ");
+		HttpSession session=request.getSession(false);
 		ApplicationDAO applicationDAO=new ApplicationDAO();
-		List<ApplicantSummary> applicantSummaryList=applicationDAO.getAllApplicantSummary();
+		List<Service> applicantSummaryList=applicationDAO.getAllServiceByAppsIdAndTenantID(apps_id, (int)session.getAttribute("id"));
 		Gson gson = new Gson();
 		String applicantSummaryInJsonString=gson.toJson(applicantSummaryList);
 		return applicantSummaryInJsonString;
-	}//end of method getAllApplicationSummary
+	}//end of method getAllServices
 
 	/*@GET
 	@Path("/deleteServiceByName/{serviceName}/{appsid}")
@@ -154,6 +137,7 @@ public class ApplicationService {
 	
 	@GET
 	@Path("/deleteServiceByName/{serviceName}")
+	
 	public void deleteServiceByName(@PathParam("serviceName") String serviceName,@Context HttpServletRequest request) throws DataBaseOperationFailedException, MarathonServiceException{
 		LOGGER.debug(".deleteServiceByName method of ApplicationService ");
 		String appsid="25";
@@ -182,65 +166,84 @@ public class ApplicationService {
 	/*All Below methods for the shake of Fectch.java i.e methods ass*/
 	
 	@GET
-	@Path("/selectApplicantName")
+	@Path("/getApplications")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String selectApplicantName() {
+	
+	public String getApplications(@Context HttpServletRequest request) {
 
-		LOGGER.info("Inside selectApplicantName (.) of ApplicationService ");
-		List<ApplicantUser> customers = new ArrayList<ApplicantUser>();
-		String customersList =null;
+		LOGGER.info("Inside getAllApplications (.) of ApplicationService ");
+		List<Applications> appList = new ArrayList<Applications>();
+		String appsLista =null;
 		try {
-		userDAO customerDao = new userDAO();
-		customers = customerDao.selectApplicantName();
+			ApplicationDAO applicationDAO = new ApplicationDAO();
+			HttpSession session=request.getSession(false);
+
+			appList = applicationDAO.getApplicationsDetailsBytTenantId((int)session.getAttribute("id"));
 		Gson gson = new Gson();
-		customersList = gson.toJson(customers);
+		appsLista = gson.toJson(appList);
 		//LOGGER.info("selectApplicantName : " + customersList);
 		}catch(Exception e){
 			LOGGER.error("Error when getting all data from Applications table");
 		}
-	return customersList;
+	return appsLista;
 	}
 	
 	
 	@GET
-	@Path("/deleteData/{data}")
-	public void deleteData(@PathParam("data") String data) {
-		LOGGER.info("Inside (.) deleteData of ApplicationService"+data);
+	@Path("/deleteApplication/{apps_id}")
+	public void deleteApplicationById(@PathParam("apps_id") int apps_Id,@Context HttpServletRequest request) {
+		LOGGER.info("Inside (.) deleteApplicationById of ApplicationService");
 		
-		userDAO customerDao = new userDAO();
+		ApplicationDAO applicationDAO=new ApplicationDAO();
 		try{
-		customerDao.deleteData(data);
+			HttpSession session=request.getSession(false);
+
+			applicationDAO.deleteApplicationById(apps_Id, (int)session.getAttribute("id"));
 		}catch(Exception e){
-			LOGGER.error("Error when deleting application ");
+			LOGGER.error("Error when deleting application ",e);
 		}
 	}
 	
 	@POST
-	@Path("/storeApplicantUser")
+	@Path("/storeApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response storeApplicantUser(String msg,@Context HttpServletRequest req) throws JSONException {
-		LOGGER.info("Inside storeApplicantUser (.) ApplicationService");
+	@Produces(MediaType.TEXT_PLAIN)
+
+	public String storeApplicationsDetails(String application,@Context HttpServletRequest req) throws JSONException {
+		LOGGER.info("Inside  (.)storeApplicationsDetails  ApplicationService");
 		ObjectMapper mapper = new ObjectMapper();
-		ApplicantUser user = null;
-		try {
-			user = mapper.readValue(msg, ApplicantUser.class);
-			userDAO userDAO = new userDAO();
-			HttpSession session = req.getSession(true);
-			user.setTenant_id((int)session.getAttribute("id"));
-			userDAO.storeApplicant(user);
-			
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		ApplicationDAO applicationDAO=new ApplicationDAO();
+		String  id="";
+		try{
+			HttpSession session=req.getSession(false);
+			Applications apps=mapper.readValue(application, Applications.class);
+				apps.setTenant_id( (int)session.getAttribute("id"));
+				id=applicationDAO.addApplication(apps);
+		}catch(Exception e){
+			LOGGER.error("Error when deleting application ",e);
 		}
-		LOGGER.info("-----Json is -------"+msg);
-		JSONObject  jobj=new JSONObject(msg);
-      		LOGGER.info("-----VPC with  VTN Created  using  SDN -------"+msg);
- 		 
-		return null;
+		
+		return id;
+	}
+	@PUT
+	@Path("/updateApplication")
+	@Produces(MediaType.TEXT_PLAIN)
+
+	public String updateApplication(String application,@Context HttpServletRequest req) throws MarathonServiceException{
+		LOGGER.debug(".updateApplication method of ApplicationService "+application);
+		ObjectMapper mapper = new ObjectMapper();
+		ApplicationDAO applicationDAO=new ApplicationDAO();
+	
+		String  status="sucess";
+		try{
+			HttpSession session=req.getSession(false);
+			Applications apps=mapper.readValue(application, Applications.class);
+				apps.setTenant_id( (int)session.getAttribute("id"));
+				applicationDAO.updateApplication(apps);
+		}catch(Exception e){
+			LOGGER.error("Error updating pplication ",e);
+		}
+		return status;
 	}
 	
 	@POST
@@ -248,7 +251,7 @@ public class ApplicationService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createApplicationByName(String msg,@Context HttpServletRequest req) throws JSONException {
 		LOGGER.info("Inside storeApplicantUser (.) ApplicationService"+msg);
-		userDAO = new userDAO();
+		/*userDAO = new userDAO();
 		
 		try {
 			app = new ApplicantUser();
@@ -259,7 +262,7 @@ public class ApplicationService {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		LOGGER.info("-----Json is -------"+msg);
  		 
 		return null;
@@ -281,7 +284,7 @@ public class ApplicationService {
 		return "success";
 		
 	}catch(Exception e){
-		e.printStackTrace();
+		LOGGER.error("Erro in checking application by name and tenant Id ",e);
 	}
 	return "failure";
 	}

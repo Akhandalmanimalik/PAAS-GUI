@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Image Registry</title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Image Registry</title>
+
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/scripts/angular.min.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/acl/acl.js" type="text/javascript"></script>
+
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/css/components.min.css" rel="stylesheet" 	id="style_components" type="text/css" />
+<link href="../assets/pages/css/layout.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/pages/css/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
+<link rel="shortcut icon" href="favicon.ico" />
+<style type="text/css">
+caption { 
+    display: table-caption;
+    text-align: center;
+    color: red;
+}
+</style>
+</head>
+</head>
+
+<body
+	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
+
+	<div data-ng-app="myAcl" data-ng-controller="MainCtrl" >
+aclId{{id}}
+aclId{{acl.aclId}}
+		<div class="page-head">
+			<!-- BEGIN PAGE TITLE -->
+			<div class="page-title">
+				<h1>Environment Types Configuration Wizard</h1>
+			</div>
+			<!-- END PAGE TITLE -->
+
+		</div>
+
+		<hr>
+		<button OnClick=" location.href='inoutbound_rule.html' " class="btn green"> Add Rule </button>
+		<br>
+		<hr />
+		<div class="table-scrollable">
+			<table class="table table-bordered table-hover">
+			 <caption> In Bound Type </caption>
+				<thead>
+					<tr id="tableheader">
+						<th width="20%"> Type </th>
+						<th width="20%"> Protocol </th>
+						<th width="20%"> Protocol Range </th>
+						<th width="20%"> Source IP </th>
+						<th width="10%"> Action </th>
+						<th width="5%"> Delete </th>
+						<th width="5%"> update </th>
+					</tr>
+					</thead>
+				 	
+				<tbody>
+				<tr data-ng-repeat="val in rule">
+					<td data-ng-click="deleteEnvironmentTypes(val.name)"> {{val.type}}</td>
+					<td>{{val.protocol}}</td>
+					<td>{{val.protocolRange}}</td>
+					<td>{{val.sourceIp}}</td>
+					<td>{{val.action}}</td>
+					<td align="center"><a data-ng-click="deleteEnvironmentTypes(val.name)"
+									class="btn btn-danger"><i class="fa fa-remove"></a></td>
+					 <td align="center"><a data-ng-click="updateEnvironmentTypes(field.name)"
+									class="btn btn-primary"><i class="fa fa-undo"></a></td>
+				</tr>
+				</tbody>
+				</table>
+<br><br>
+			<table class="table table-bordered table-hover">
+				<caption> Out Bound Type </caption>
+				<thead>
+					<tr id="tableheader">
+						<th width="20%"> Type </th>
+						<th width="20%"> Protocol </th>
+						<th width="20%"> Protocol Range </th>
+						<th width="20%"> Destination IP </th>
+						<th width="10%"> Action </th>
+						<th width="5%"> Delete </th>
+						<th width="5%"> update </th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr data-ng-repeat="val in field">
+					<td>{{val.type}}</td>
+					<td>{{val.protocol}}</td>
+					<td>{{val.protocolRange}}</td>
+					<td>{{val.sourceIp}}</td>
+					<td>{{val.action}}</td>
+						<td align="center"><a
+							data-ng-click="deleteEnvironmentTypes(val.name)"
+							class="btn btn-danger"><i class="fa fa-remove"></a></td>
+						<td align="center"><a
+							data-ng-click="updateEnvironmentTypes(field.name)"
+							class="btn btn-primary"><i class="fa fa-undo"></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+ 
+	</div>
+
+</body>
+</html>

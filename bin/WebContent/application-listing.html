@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>PAAS | Application Listings</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+
+        <script src="assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+        <script src="assets/global/scripts/app.min.js" type="text/javascript"></script>
+        <script src="assets/pages/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="assets/pages/scripts/loadPage/loadPage.js" type="text/javascript"></script>
+        
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="assets/pages/css/layout.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/pages/css/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        <link href="assets/pages/css/application-listing.css" rel="stylesheet" type="text/css" />
+        <link rel="shortcut icon" href="favicon.ico" /> 
+        </head>
+    <!-- END HEAD -->
+
+    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
+        <!-- BEGIN HEADER -->
+        <div class="page-header navbar navbar-fixed-top">
+            <!-- BEGIN HEADER INNER -->
+            <div class="page-header-inner">
+                <!-- BEGIN LOGO -->
+                <div class="page-logo">
+                    <a href="#">
+                        <img src="assets/pages/img/logo.png" alt="logo" class="logo-default" /> </a>
+                    <div class="menu-toggler sidebar-toggler">
+                        <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
+                    </div>
+                </div>
+                <!-- END LOGO -->
+                <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+                <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
+                <!-- END RESPONSIVE MENU TOGGLER -->
+                <!-- BEGIN PAGE TOP -->
+                <div class="page-top">
+                    
+                    <!-- BEGIN TOP NAVIGATION MENU -->
+                    <div class="top-menu">
+                        <ul class="nav navbar-nav pull-right">
+                            <li class="separator hide"> </li>
+                            <!-- BEGIN NOTIFICATION DROPDOWN -->
+                            <li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
+                                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                    <i class="icon-bell"></i>
+                                    <span class="badge badge-success"> 7 </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="external">
+                                        <h3>
+                                            <span class="bold">12 pending</span> notifications</h3>
+                                        <a href="page_user_profile_1.html">view all</a>
+                                    </li>
+                                    <li>
+                                        <ul class="dropdown-menu-list scroller" style="height: 250px;" data-handle-color="#637283">
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">just now</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-success">
+                                                            <i class="fa fa-plus"></i>
+                                                        </span> New user registered. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">3 mins</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-danger">
+                                                            <i class="fa fa-bolt"></i>
+                                                        </span> Server #12 overloaded. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">10 mins</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-warning">
+                                                            <i class="fa fa-bell-o"></i>
+                                                        </span> Server #2 not responding. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">14 hrs</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-info">
+                                                            <i class="fa fa-bullhorn"></i>
+                                                        </span> Application error. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">2 days</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-danger">
+                                                            <i class="fa fa-bolt"></i>
+                                                        </span> Database overloaded 68%. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">3 days</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-danger">
+                                                            <i class="fa fa-bolt"></i>
+                                                        </span> A user IP blocked. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">4 days</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-warning">
+                                                            <i class="fa fa-bell-o"></i>
+                                                        </span> Storage Server #4 not responding dfdfdfd. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">5 days</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-info">
+                                                            <i class="fa fa-bullhorn"></i>
+                                                        </span> System Error. </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <span class="time">9 days</span>
+                                                    <span class="details">
+                                                        <span class="label label-sm label-icon label-danger">
+                                                            <i class="fa fa-bolt"></i>
+                                                        </span> Storage server failed. </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- END NOTIFICATION DROPDOWN -->
+                            <li class="separator hide"> </li>
+                            <!-- BEGIN INBOX DROPDOWN -->
+                            <li class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
+                                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                    <i class="icon-envelope-open"></i>
+                                    <span class="badge badge-danger"> 4 </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="external">
+                                        <h3>You have
+                                            <span class="bold">7 New</span> Messages</h3>
+                                        <a href="app_inbox.html">view all</a>
+                                    </li>
+                                    <li>
+                                        <ul class="dropdown-menu-list scroller" style="height: 275px;" data-handle-color="#637283">
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="assets/pages/img/avatar9.jpg" class="img-circle" alt=""> </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Mark Fralick </span>
+                                                        <span class="time">Just Now </span>
+                                                    </span>
+                                                    <span class="message"> Test message for you listed here for reference only... </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="assets/pages/img/avatar9.jpg" class="img-circle" alt=""> </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Richard Doe </span>
+                                                        <span class="time">16 mins </span>
+                                                    </span>
+                                                    <span class="message"> Test message for you listed here for reference only... </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="assets/pages/img/avatar9.jpg" class="img-circle" alt=""> </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Bob Nilson </span>
+                                                        <span class="time">2 hrs </span>
+                                                    </span>
+                                                    <span class="message"> Test message for you listed here for reference only... </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="assets/pages/img/avatar9.jpg" class="img-circle" alt=""> </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Lisa Wong </span>
+                                                        <span class="time">40 mins </span>
+                                                    </span>
+                                                    <span class="message"> Test message for you listed here for reference only... </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="photo">
+                                                        <img src="assets/pages/img/avatar9.jpg" class="img-circle" alt=""> </span>
+                                                    <span class="subject">
+                                                        <span class="from"> Richard Doe </span>
+                                                        <span class="time">46 mins </span>
+                                                    </span>
+                                                    <span class="message"> Test message for you listed here for reference only... </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- END INBOX DROPDOWN -->
+                            <li class="separator hide"> </li>
+                            
+                            <!-- BEGIN USER LOGIN DROPDOWN -->
+                            <li class="dropdown dropdown-user">
+                                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                    <span class="username username-hide-on-mobile"> Nick </span>
+                                    <!-- DOC: Do not remove below empty space(&nbsp;) as its purposely used -->
+                                    <img alt="" class="img-circle" src="assets/pages/img/avatar9.jpg" /> </a>
+                                <ul class="dropdown-menu dropdown-menu-default">
+                                    <li>
+                                        <a href="#">
+                                            <i class="icon-user"></i> My Profile </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="icon-bell"></i> Notifications
+                                            <span class="badge badge-success"> 7 </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="icon-envelope-open"></i> My Inbox
+                                            <span class="badge badge-danger"> 3 </span>
+                                        </a>
+                                    </li>
+                                    
+                                    <li class="divider"> </li>
+                                    <li>
+                                        <a href="logout.html">
+                                            <i class="icon-key"></i> Log Out </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- END USER LOGIN DROPDOWN -->
+                           
+                        </ul>
+                    </div>
+                    <!-- END TOP NAVIGATION MENU -->
+                </div>
+                <!-- END PAGE TOP -->
+            </div>
+            <!-- END HEADER INNER -->
+        </div>
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            <div class="page-sidebar-wrapper">
+                <!-- BEGIN SIDEBAR -->
+                <div class="page-sidebar navbar-collapse collapse">
+                    <!-- BEGIN SIDEBAR MENU -->
+                   <ul class="page-sidebar-menu   " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+                        <li class="nav-item start ">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="icon-speedometer"></i>
+                                <span class="title">Dashboard</span>
+                                <span class="arrow"></span>
+                            </a>
+                            
+                            <ul class="sub-menu">
+                            	<li class="nav-item start ">
+                                    <a href="#" class="nav-link" id="getStartedApplication" onClick="loadpage('getStartedApplication')" >
+                                        <span class="title"> Get Started </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link" id="dashboardsummary" onClick="loadpage('dashboardsummary')" >
+                                        <span class="title"> Summary </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="dashboardresources"
+								onClick="loadpage('dashboardresources')">
+                                        <span class="title"> Resources </span>
+                                        
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+	                        <li class="nav-item">
+	                        <a href="javascript:;" class="nav-link" id="activity" onClick="loadpage('activity')">
+	                           <i class="icon-loop"></i>
+	                          <span class="title">Activity</span>
+	                       </a>   
+	                        </li>
+                       
+                            <li class="nav-item start ">
+                            <a href="#" class="nav-link nav-toggle">
+                                <i class="icon-screen-desktop"></i>
+                                <span class="title">Applications</span>
+                                <span class="arrow"></span>
+                            </a>
+	                            <ul class="sub-menu">
+	                            	<li class="nav-item start "><a href="#" class="nav-link "
+										id="appGetStarted" onClick="loadpage('applicationGetStarted')"> <span
+											class="title"> Get Started </span>
+									</a>
+									</li>
+	                            	<li class="nav-item start ">
+	                            	<a href="#" class="nav-link " id="application" onClick="loadpage('applicationsummary')"> <span
+											class="title"> Application </span>
+									</a>
+									</li>
+	                            </ul>
+	                  	 	</li>
+                         
+                        
+                        <li class="nav-item start ">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                 <i class="icon-grid"></i>
+                                <span class="title">Network</span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                            <li class="nav-item start "><a href="#" class="nav-link "
+										id="subnet" onClick="loadpage('networkWizard')"> <span
+											class="title"> Get Started </span>
+									</a>
+							</li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="vpc" onClick="loadpage('vpcinterface')">
+                                        <span class="title">VPC</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="subnet" onClick="loadpage('subnet')">
+                                        <span class="title">Subnet</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="vpn" onClick="loadpage('vpn')">
+                                        <span class="title">VPN</span>                                        
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                         <li class="nav-item">
+                        <a href="javascript:;" class="nav-link" id="acl" onClick="loadpage('acl')">
+                           <i class="icon-star"></i>
+                          <span class="title">ACL</span>
+                       </a>   
+                        </li>
+                         <li class="nav-item">
+                        <a href="javascript:;" class="nav-link" id="firewall" onClick="loadpage('firewall')">
+                           <i class="icon-fire"></i>
+                          <span class="title">Firewall</span>
+                       </a>   
+                        </li>
+
+                         <li class="nav-item">
+                        <a href="javascript:;" class="nav-link" id="certificates"
+						onClick="loadpage('certificates')">
+                           <i class="icon-book-open"></i>
+                          <span class="title"> Certificates </span>
+                       </a>   
+                        </li>
+                        <li class="nav-item start ">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="icon-layers"></i>
+                                <span class="title"> Policies </span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="scalingandrecovery"
+								onClick="loadpage('scalingandrecovery')">
+                                        <span class="title"> Scaling And Recovery </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="hostscaling"
+								onClick="loadpage('hostscaling')">
+                                        <span class="title"> Host Scaling </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="serviceaffinities"
+								onClick="loadpage('serviceaffinities')">
+                                        <span class="title"> Service Affinities </span>                                        
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="resourceSelection"
+								onClick="loadpage('resourceSelection')">
+                                        <span class="title"> Resource Selection </span>                                        
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="environmentTypes"
+								onClick="loadpage('environmentTypes')">
+                                        <span class="title"> Environment Types </span>                                        
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="containertype"
+								onClick="loadpage('containertype')">
+                                        <span class="title"> Container Types </span>                                        
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+
+
+					<li class="nav-item">
+						<a href="javascript:;" class="nav-link" id="logserver" onClick="loadpage('logserver')">
+							<i class="icon-notebook"></i> <span class="title">Log Server</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="javascript:;" class="nav-link" id="errordiagnosis"
+						onClick="loadpage('errordiagnosis')">
+							<i class="icon-wrench"></i>
+							<span class="title">Error/Diagnostics</span>
+						</a>
+					</li>
+					<li class="nav-item start ">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="fa fa-laptop" aria-hidden="true"></i>
+                                <span class="title"> Host Groups </span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="awsHostGroups"
+								onClick="loadpage('awsHostGroups')">
+                                        <span class="title"> AWS Host Groups </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="otherHostGroups"
+								onClick="loadpage('otherHostGroups')">
+                                        <span class="title"> Other Host Groups </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="allHost" onClick="loadpage('allHost')">
+                                        <span class="title"> All Hosts </span>                                        
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="container"
+								onClick="loadpage('container')">
+                                        <span class="title"> Containers </span>                                        
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="hostLabels"
+								onClick="loadpage('hostLabels')">
+                                        <span class="title"> Host Labels </span>                                        
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+						<a href="javascript:;" class="nav-link" id="cloudprovider"
+						onClick="loadpage('cloudprovider')">
+							<i class="fa fa-cloud-upload" aria-hidden="true"></i>
+							<span class="title">Cloud Providers	</span>
+						</a>
+						</li> 
+						<li class="nav-item">
+						<a href="javascript:;" class="nav-link" id="storage" onClick="loadpage('storage')">
+							<i class="fa fa-database" aria-hidden="true"></i>
+							<span class="title"> Storage </span>
+						</a>
+						</li>
+						<li class="nav-item">
+							<a href="javascript:;" class="nav-link" id="imageregistry" onClick="loadpage('imageregistrywizard')">
+								<i class="fa fa-github" aria-hidden="true"></i>
+								<span class="title"> Repositories </span>
+							</a>
+							
+								
+						</li>
+						<li class="nav-item">
+							<a href="javascript:;" class="nav-link" id="allhost"onClick="loadpage('allhost')">
+								<i class="fa fa-ioxhost" aria-hidden="true"></i>
+								<span class="title"> All Hosts </span>
+							</a>
+						</li>
+						<li class="nav-item start ">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="fa fa-plug" aria-hidden="true"></i>
+                                <span class="title"> Setting </span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="gettingStarted"
+								onClick="loadpage('gettingstarted')">
+                                        <span class="title"> Getting Started </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="privatecloud"
+								onClick="loadpage('privatecloud')">
+                                        <span class="title"> Private Cloud </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="users" onClick="loadpage('users')">
+                                        <span class="title"> Users </span>                                        
+                                    </a>
+                                </li>
+                                <li class="nav-item start ">
+                                    <a href="#" class="nav-link " id="account" onClick="loadpage('account')">
+                                        <span class="title"> Account </span>                                        
+                                    </a>
+                                </li>
+                            </ul>
+                        </li> 
+						 
+
+				</ul>
+                    <!-- END SIDEBAR MENU -->
+                </div>
+                <!-- END SIDEBAR -->
+            </div>
+           
+		
+		
+			
+		
+		<div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE BASE CONTENT -->
+                    <div class="row">
+                       
+                       <div class="col-md-12">
+						<div class="parent">
+							<div class="banner"></div>
+							<iframe id="content" style="overflow: auto;"></iframe>
+						</div>
+					</div>
+                    </div>
+                    
+                    <!-- END PAGE BASE CONTENT -->
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+            
+            
+            
+            
+            <!-- BEGIN QUICK SIDEBAR -->
+            <a href="javascript:;" class="page-quick-sidebar-toggler">
+                <i class="icon-login"></i>
+            </a><!-- END QUICK SIDEBAR -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        <div class="page-footer">
+            <div class="page-footer-inner"> 2014 &copy; Platform As A Service</div>
+            <div class="scroll-to-top">
+                <i class="icon-arrow-up"></i>
+            </div>
+        </div>
+        <!-- END FOOTER -->
+       
+ 
+    </body>
+
+</html>

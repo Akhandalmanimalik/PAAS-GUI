@@ -1,11 +1,6 @@
 package com.getusroi.paas.rest.service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,14 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.dao.EnvironmentDAO;
-import com.getusroi.paas.dao.ImageRegistryDAO;
-import com.getusroi.paas.helper.PAASConstant;
-import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.EnvironmentTypeServiceException;
-import com.getusroi.paas.vo.ApplicantSummary;
 import com.getusroi.paas.vo.EnvironmentType;
 import com.getusroi.paas.vo.Environments;
-import com.getusroi.paas.vo.ImageRegistry;
 import com.google.gson.Gson;
 
 /**
@@ -113,52 +102,7 @@ public class EnvironmentTypeService {
 		return customersList;
 	} // end of getEnvironmentList
 
-	@GET
-	@Path("/getApplicationSummary")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getApplicationSummary() throws DataBaseOperationFailedException {
-		List<ApplicantSummary> appSummaryList = new ArrayList<ApplicantSummary>();
-		EnvironmentDAO environmentDAO = new EnvironmentDAO();
-		appSummaryList = environmentDAO.getApplicationSummaryByApplicationName();
-		Gson gson = new Gson();
-		String appList = gson.toJson(appSummaryList);
-		return appList;
-	} // end of getApplicationSummary
 
-	@POST
-	@Path("/getImageRepositoryFromSummary")    
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getImageRepository(String appName,@Context HttpServletRequest req) throws DataBaseOperationFailedException, EnvironmentTypeServiceException {		
-		LOGGER.info(".getImageRepository of EnvironmentsTypeService: ");		
-		String response=null;
-		RestServiceHelper restServiceHelper = new RestServiceHelper();
-		EnvironmentDAO environmentDAO = new EnvironmentDAO();
-		ImageRegistryDAO imageRegistryDAO=new ImageRegistryDAO();
-		ApplicantSummary applicantSummary =environmentDAO.selectImageRepositoryFromRepositoryName(appName);
-		
-		HttpSession session = req.getSession(true);
-		int tenantId=restServiceHelper.convertStringToInteger(session.getAttribute("id")+"");
-		
-		if(applicantSummary !=null){
-		ImageRegistry imageRegistry=imageRegistryDAO.getImageRegistryByName(applicantSummary.getImageRegistry().trim(),tenantId);
-		
-		if(imageRegistry != null){
-			String baseURL = PAASConstant.HTTPS_PROTOCOL_KEY+imageRegistry.getLocation() +PAASConstant.ALL_REPOSTORY_KEY+imageRegistry.getName()+PAASConstant.ALL_TAGS_KEY;
-			String authentication=imageRegistry.getUser_name() + ":" + imageRegistry.getPassword();
-			try {
-				 response=getHttpResponse(baseURL, authentication, "GET");
-				LOGGER.debug("http response  : "+response);				
-			} catch (IOException e) {
-				LOGGER.error("Unable to get the http response using base url :"+baseURL+", authentication : "+authentication);
-				throw new EnvironmentTypeServiceException("Unable to get the http response using base url :"+baseURL+", authentication : "+authentication);
-			}
-		}else{
-			LOGGER.debug("No image repository availabel with name : "+applicantSummary.getImageRegistry().trim());
-		}	
-		}//end of if(applicantSummary !=null)
-		return response;
-	} // end of getImageRepository
-	
 	@POST
 	@Path("/insertEnvironmentsData")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -189,40 +133,7 @@ public class EnvironmentTypeService {
 	} // end of insertEnvironmentsData method
 	
 	
-	/**
-	 * This method is used to get response from http client
-	 * @param baseURL : base url in String
-	 * @param authentication : authentication in String
-	 * @param httpRequestMethod : http request method
-	 * @return String : response data in String
-	 * @throws IOException : Unable to connect to url using http client
-	 */
-	private String getHttpResponse(String baseURL,String authentication,String httpRequestMethod) throws IOException{
-		LOGGER.debug(".getHttpResponse method of EnvironmentTypeService");	
-		StringBuffer result = new StringBuffer();
-		URL url = new URL(baseURL);       
-		//String authStr = summary.getUser_name() + ":" + summary.getPassword();
-        String encodedAuthStr = Base64.encodeBase64String(authentication.getBytes());
-		// Create Http connection
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        if(connection!=null){
-        // Set connection properties
-        connection.setRequestMethod(httpRequestMethod);
-        connection.setRequestProperty("Authorization", "Basic "
-                + encodedAuthStr);
-        connection.setRequestProperty("Accept", "application/json");        
-        LOGGER.debug("Response  Code"+connection.getResponseCode());        
-        InputStream content = (InputStream) connection.getInputStream();
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                content));
-        String line = "";
-        while ((line = in.readLine()) != null) {
-            result.append(line);
-        }
-        }
-        return result.toString();
-	}//end of method getHttpResponse
-	
+
 	/**
 	 * To check environment name exist
 	 * @param envName

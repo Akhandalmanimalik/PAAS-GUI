@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="MyApp">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link href="http://getbootstrap.com/dist/css/bootstrap.min.css"rel="stylesheet">
+<link href="http://getbootstrap.com/examples/signin/signin.css"rel="stylesheet">
+<!-- <link href="justified-nav.css" rel="stylesheet"> -->
+<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script type="text/javascript" src="../js/testAngAjax.js"></script>
+
+</head>
+<body data-ng-controller="MyController">
+<input type="email" class="form-control" name="email"
+									placeholder="Email Address" ng-model="fields.email"  required="required">
+<input type="password" class="form-control" name="pasword"
+									placeholder="Password" ng-model="fields.password"  required="required">
+									
+									<button id="btn-login" type="submit" class="btn btn-success"  ng-click="login()">Login</button>
+</body>
+</html>

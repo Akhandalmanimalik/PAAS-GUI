@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8" />
+<title>PAAS | Application Listings</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="" name="description" />
+<meta content="" name="author" />
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/form-validation.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/fuelux/js/spinner.min.js" type="text/javascript"></script>
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/components-bootstrap-touchspin.min.js" type="text/javascript"></script>
+
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+<link href="../assets/pages/css/layout.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/pages/css/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
+<link href="../assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css" rel="stylesheet" type="text/css">
+<link rel="shortcut icon" href="favicon.ico" />
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<!-- <script src="../assets/pages/scripts/application/applicationGetStarted.js" type="text/javascript"></script> -->
+<script src="../assets/pages/scripts/application/getstartedapplication.js" type="text/javascript"></script>
+
+</head>
+<!-- END HEAD -->
+
+<body
+	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
+	<div class="page-content" style="height: 100%">
+		<!-- BEGIN PAGE HEAD-->
+		<div class="page-head">
+			<!-- BEGIN PAGE TITLE -->
+			<div class="page-title">
+				<h1>Application Configuration Wizard</h1>
+			</div>
+			<!-- END PAGE TITLE -->
+
+		</div>
+		<!-- END PAGE HEAD-->
+		<hr>
+		<!-- BEGIN PAGE BASE CONTENT -->
+
+
+
+
+
+
+		<div ng-app="getstartedApp" ng-controller="MainCtrl">
+			<div class="row" style="height: 100%; width: 97%">
+				<div class="col-md-12">
+					<div id="spacer"></div>
+					<div id="progress-bar">
+
+						<div ng-show="false" class="col-md-2 col-sm-3 col-xs-3">
+							<ul class="nav nav-tabs tabs-left">
+								<li class="active"><a href="#tab_6_1" data-toggle="tab">
+										Configure Application </a></li>
+								<li><a href="#tab_6_2" data-toggle="tab"> Configure
+										NetWork </a></li>
+								<li><a href="#tab_6_3" data-toggle="tab">Configure
+										Image Registory </a></li>
+								<li><a href="#tab_6_4" data-toggle="tab">Create Service
+								</a></li>
+									<li><a href="#tab_6_5" data-toggle="tab">Deploy
+								</a></li>
+
+							</ul>
+						</div>
+						<div>
+							<!-- TAB CONTENT -->
+							<div class="tab-content" style="width: 97%; height: 100%">
+
+
+								<div class="tab-pane fade" id="tab_6_2">
+									<div id="progress-bar" style="width: 100%">
+										<div class="step">
+											<div class="circle">1</div>
+
+											<div class="title">Configure Application</div>
+										</div>
+										<div class="stepcurrent">
+											<div class="circle">2</div>
+											<div class="title">Configure NetWork</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">3</div>
+											<div class="title">Configure Image Registory</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">4</div>
+											<div class="title">Create Service</div>
+										</div>
+											<div class="stepinactive">
+											<div class="circle">5</div>
+											<div class="title">Deploy</div>
+										</div>
+
+									</div>
+								 <br><br><br><br>
+									<h3>Step: Configure NetWork</h3>
+									<br>
+
+									<form action="#" id="step-1" class="form-horizontal" name="vpcForm">
+
+										<div class="form-body">
+											<div class="form-group" data-ng-class="{ 'has-error' : vpcForm.vpc_name.$invalid && !vpcForm.vpc_name.$pristine }">
+												<label class="control-label col-md-3">Vpc Name <span
+													class="required"> * </span>
+												</label>
+												<div class="col-md-4">
+													<select name="vpc_name" id="vpc_name" data-ng-model="service.vpc_name"
+														aria-required="true" aria-describedby="select-error"
+														class="form-control"
+														data-ng-init="selectVpc()"
+														data-ng-options="choice.vpc_name as choice.vpc_name  for choice in vpcObject" required>
+													</select> <span class="help-block"> Select vpc</span>
+												</div>
+
+											</div>
+											<div class="form-group">
+												<label class="control-label col-md-3">Subnet Name<span
+													class="required"> * </span>
+												</label>
+												<div class="col-md-4">
+													<select name="type" id="type" data-ng-model="service.subnetName"
+														aria-required="true" aria-describedby="select-error"
+														class="form-control"
+														data-ng-click="selectSubnetnew()"
+														data-ng-options="choice.subnetName as choice.subnetName  for choice in subnetObject" required>
+													</select>
+													 <span class="help-block"> Select subnet</span>
+												</div>
+											</div>
+ 			 
+										</div>
+									</form>
+									<button type="button"
+										class="btn grey-salsa btn-outline pull-left"
+										data-dismiss="modal">Cancel</button>
+									<a class="btn green continue pull-right" data-ng-disabled="vpcForm.$invalid">Next</a> <a
+										class="btn green back pull-right">Previous</a>
+
+								</div>
+
+								<div class="tab-pane fade" id="tab_6_3">
+
+									<div id="progress-bar" style="width: 100%">
+										<div class="step">
+											<div class="circle">1</div>
+
+											<div class="title">Configure Application</div>
+										</div>
+										<div class="step">
+											<div class="circle">2</div>
+											<div class="title">Configure Network</div>
+										</div>
+										<div class="stepcurrent">
+											<div class="circle">3</div>
+											<div class="title">Configure Image</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">4</div>
+											<div class="title">Configure Service</div>
+										</div>
+
+											<div class="stepinactive">
+											<div class="circle">5</div>
+											<div class="title">Deploy</div>
+										</div>
+									</div>
+									
+									<br><br><br><br>
+									<h3>Step: Configure Image Registory</h3>
+									<br>
+									<form action="#" id="step-1" class="form-horizontal" name="registryForm">
+										<div class="form-body">
+											<div class="form-group">
+												<label class="control-label col-md-3">Select Image <span
+													class="required"> * </span>
+												</label>
+												<div class="col-md-4">
+													<select name="type" id="type" data-ng-model="service.imageRegistry"
+														aria-required="true" aria-describedby="select-error"
+														class="form-control"
+														data-ng-init="selectImageRegistry()"
+														data-ng-options="choice.name as choice.name  for choice in imageRegObject" required>
+													</select> <span class="help-block"> Select Image</span>
+												</div>
+											</div>
+										</div>
+									</form>
+									<button type="button"
+										class="btn grey-salsa btn-outline pull-left"
+										data-dismiss="modal">Cancel</button>
+									<a class="btn green continue pull-right" data-ng-disabled="registryForm.$invalid">Next</a> <a
+										class="btn green back pull-right">Previous</a>
+
+
+								</div>
+								<div class="tab-pane active" id="tab_6_1">
+									<div id="progress-bar" style="width: 100%">
+										<div class="stepcurrent">
+											<div class="circle">1</div>
+
+											<div class="title">Create Application</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">2</div>
+											<div class="title">Configure Subnet</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">3</div>
+											<div class="title">Configure Image</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">4</div>
+											<div class="title">Configure Service</div>
+										</div>
+											<div class="stepinactive">
+											<div class="circle">5</div>
+											<div class="title">Deploy</div>
+										</div>
+									</div>
+
+
+								
+									<br><br><br><br>
+									<h3>Step: Configure Application</h3>
+									<br>
+									<form action="#" id="step-1" class="form-horizontal"
+										name="apcWizardForm">
+										<div class="form-body">
+											<div class="form-group"
+												data-ng-class="{ 'has-error' : apcWizardForm.applicantionName.$invalid && !apcWizardForm.applicantionName.$pristine }">
+												<label class="control-label col-md-3">Application
+													Name <span class="required"> * </span>
+												</label>
+												<div class="col-md-4">
+													<input type="text" id="applicantionName"
+														name="applicantionName"
+														data-ng-model="service.applicantionName"
+														class="form-control"
+														data-ng-blur="createApplicationByName()" ng-maxlength="20"
+														ng-minlength="2" required />
+														<span class="error"
+														data-ng-show="apcWizardForm.applicantionName.$error.maxlength"
+														class="help-block" style="color: red;">Application
+														name Shouldn't exceed 20 chars</span> <span
+														data-ng-show="apcWizardForm.applicantionName.$error.minlength"
+														class="help-block" style="color: red;">Application
+														name Shouldn't below 2 chars</span>
+												</div>
+											</div>
+
+										</div>
+									</form>
+									<button type="button"
+										class="btn grey-salsa btn-outline pull-left"
+										data-dismiss="modal">Cancel</button>
+									<a class="btn green continue pull-right" data-ng-disabled="apcWizardForm.$invalid" >Next</a> <a
+										class="btn green back pull-right">Previous</a>
+
+								</div>
+
+
+								<div class="tab-pane fade" id="tab_6_4">
+									<div id="progress-bar" style="width: 100%">
+										<div class="step">
+											<div class="circle">1</div>
+
+											<div class="title">Create Application</div>
+										</div>
+										<div class="step">
+											<div class="circle">2</div>
+											<div class="title">Configure Subnet</div>
+										</div>
+										<div class="step">
+											<div class="circle">3</div>
+											<div class="title">Configure Image</div>
+										</div>
+										<div class="stepcurrent">
+											<div class="circle">4</div>
+											<div class="title">Configure Service</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">5</div>
+											<div class="title">Deploy</div>
+										</div>
+									</div>
+
+
+									
+									<br><br><br><br>	
+									<h3>Step: Create Service</h3>
+									<br>
+									<form action="#" id="step-1" class="form-horizontal">
+										<div class="row">
+											<div class="col-md-12">
+												<div id="spacer"></div>
+												<div id="progress-bar">
+
+													<div class="col-md-2 col-sm-3 col-xs-3">
+														<ul class="nav nav-tabs tabs-left">
+															<li class="active"><a href="#tab_6_11"
+																data-toggle="tab"> Service </a></li>
+															<li><a href="#tab_6_12" data-toggle="tab"> Image
+															</a></li>
+															<li><a href="#tab_6_13" data-toggle="tab"> Run
+																	Settings </a></li>
+															<li><a href="#tab_6_14" data-toggle="tab">
+																	Networking Policy </a></li>
+															<li><a href="#tab_6_15" data-toggle="tab">
+																	Health Check Routes </a></li>
+															<li><a href="#tab_6_16" data-toggle="tab">
+																	Volumes </a></li>
+															<li><a href="#tab_6_17" data-toggle="tab">
+																	Subnet </a></li>
+														</ul>
+													</div>
+													<div class="col-md-9 col-sm-9 col-xs-9">
+														<!-- TAB CONTENT -->
+														<div class="tab-content">
+															<div class="tab-pane true" id="tab_6_11">
+
+																<div class="form-body">
+																	<div class="form-group">
+																		<label class="control-label col-md-3">Service
+																			Name <span class="required"> * </span>
+																		</label>
+																		<div class="col-md-4">
+																			<input name="serviceName" type="text" data-ng-model="service.serviceName"
+																				class="form-control" id="serviceName" value="" />
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-3">Type <span
+																			class="required"> * </span>
+																		</label>
+																		<div class="col-md-4">
+																			<select name="type" id="type"
+																				data-ng-model="service.type"
+																				aria-required="true" aria-describedby="select-error"
+																				class="form-control"
+																				data-ng-init="getAllRelatedContainerTypes()"
+																				data-ng-options="choice.name as choice.name  for choice in containerObject">
+																			</select>
+																		</div>
+																	</div>
+																</div>
+
+
+
+															</div>
+															<div class="tab-pane fade" id="tab_6_12">
+
+																<div class="form-body">
+																	<div class="form-group">
+																		<label class="control-label col-md-3">Image
+																			Registry <span class="required"> * </span>
+																		</label>
+																		<div class="col-md-4">
+																			<select name="imageRegistry" id="imageRegistry"
+																				data-ng-model="service.imageRegistry"
+																				aria-required="true" aria-describedby="select-error"
+																				class="form-control"
+																				data-ng-init="selectImageRegistry()"
+																				data-ng-options="choice.name as choice.name  for choice in imageRegObject">
+																			</select>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-3">Image
+																			Repository <span class="required"> * </span>
+																		</label>
+																		<div class="col-md-4">
+																			<input type="text" id="imageRegi" name="imageRegi" data-ng-model="service.imageRepository" 
+																				class="form-control"  data-ng-blur="selectSummary(service)"/>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-3">Tag <span
+																			class="required"> * </span>
+																		</label>
+																		<div class="col-md-4">
+																			<select
+																				class="form-control ng-pristine ng-valid ng-touched"
+																				id="tag" data-ng-model="service.tag"
+																				data-ng-options="choice.name as choice.name  for choice in reponames"><option
+																					selected="selected" value="?"></option>
+																			</select>
+																		</div>
+																	</div>
+																	<div class="form-group" data-ng-show="isImg">
+																		<div class="col-md-6">
+																			<img src="smallload.gif">fetching from
+																			{{field.imageRegistry}}
+
+																		</div>
+																	</div>
+																</div>
+
+
+															</div>
+															<div class="tab-pane fade" id="tab_6_13">
+
+																<div class="form-body">
+																	<div class="form-group">
+																		<label class="control-label col-md-3"> Run
+																			Command <span class="required"> * </span>
+																		</label>
+																		<div class="col-md-4">
+																			<input type="text" id="run" name="run" data-ng-model="service.run"
+																				class="form-control"  value="" />
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-3">Host
+																			Name <span class="required"> * </span>
+																		</label>
+																		<div class="col-md-4">
+																			<input name="hostName" type="text" data-ng-model="service.hostName"
+																				class="form-control" id="hostName" value="" />
+																		</div>
+																	</div>
+																	
+																	<!-- Environment Variables -->
+																	<!-- <div class="form-group">
+																		<label for="envirnament" class="control-label col-md-4">Environmental
+																			VARS <span class="required"> * </span>
+																		</label>
+																		<div data-ng-repeat="field in env">
+																			<div class="col-md-4">
+																				<input type="text" class="form-control" data-ng-model="field.envkey"	
+																					name="envkey">
+																					 <span class="help-block"> Sample VAR </span>
+																			</div>
+																			<div class="col-md-4">
+																				<input type="text" class="form-control"
+																					data-ng-model="field.envvalue" name="envvalue">
+																			</div>
+																			<div class="col-md-4">
+																				<button data-ng-click="removeEnvirnament($index)" class="btn btn-icon-only green"><i class="fa fa-minus"></i></button>
+																			</div>
+																		</div>
+																		<div class="row">
+																			<div class="col-sm4">
+																				<div class="col-sm-3">
+																					<a class="btn green" data-ng-click="addNewEnvirnament()"><i class="fa fa-plus"></i></a>
+																				</div>
+																			</div>
+																		</div>
+																		 
+																	</div> -->
+																	
+																	<!-- Environment Variables -->
+																	<div class="form-group">
+																		<label for="envirnament" class="control-label col-md-0">Environmental
+																			VARS <span class="required"> * </span>
+																		</label>
+																		<br><br>
+																	
+																		<div data-ng-repeat="field in env">
+																				<div class="row">
+																				<div class="col-md-2">
+																				<input type="hidden" class="form-control" 	
+																					>
+																					
+																			</div>
+																			<div class="col-md-3">
+																				<input type="text" class="form-control" data-ng-model="field.envkey"	
+																					name="envkey">
+																					 <span class="help-block"> Sample VAR </span>
+																			</div>
+																			<div class="col-md-3">
+																				<input type="text" class="form-control"
+																					data-ng-model="field.envvalue" name="envvalue">
+																			</div>
+																			<div class="col-md-2">
+																				<button data-ng-click="removeEnvirnament($index)" class="btn btn-icon-only green"><i class="fa fa-minus"></i></button>
+																			</div>
+																		</div>
+																		</div>
+																		<div class="row">
+																			<div class="col-sm-4">
+																				<div class="col-sm-3">
+																					<a class="btn green" data-ng-click="addNewEnvirnament()"><i class="fa fa-plus"></i></a>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																</div>
+
+															</div>
+															<div class="tab-pane fade" id="tab_6_14">
+
+																<div class="form-body">
+																	<div class="form-group">
+																		<label class="control-label col-md-3"> Port
+																			Name </label>
+																		<div class="col-md-4">
+																			<input id="portName" name="portName" type="text" data-ng-model="service.portName"
+																				class="form-control" id="username" value="" />
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-3">Port
+																			Type </label>
+																		<div class="col-md-4">
+																			<select name="portType" id="portType" data-ng-model="service.portType"
+																				aria-required="true" aria-describedby="select-error"
+																				class="form-control">
+																				<option value="Http">Http</option>
+																				<option value="Https">Https</option>
+																			</select>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-3"> Host
+																			Port </label>
+																		<div class="col-md-4">
+																			<input name="hostPort" type="text" data-ng-model="service.hostPort"
+																				class="form-control" id="hostPort" value="" />
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-3">
+																			Container Port </label>
+																		<div class="col-md-4">
+																			<input name="containerPort" type="text" data-ng-model="service.containerPort"
+																				class="form-control" id="containerPort" value="" />
+																		</div>
+																	</div>
+
+
+
+																</div>
+
+
+															</div>
+															<div class="tab-pane fade" id="tab_6_15">
+
+																<div class="form-body">
+																	<div class="form-group">
+																		<label class="control-label col-md-2"> Type
+																			Name </label>
+																		<div class="col-md-3">
+																			<select name="typeName" id="typeName" data-ng-model="service.typeName"
+																				aria-required="true" aria-describedby="select-error"
+																				class="form-control">
+																				<option value="TCP">TCP</option>
+																				<option value="HTTP">HTTP</option>
+																				<option value="HTTPs">HTTPs</option>
+																			</select> <span class="help-block"> Select Type </span>
+																		</div>
+																		<label class="control-label col-md-2">
+																			Interval </label>
+																		<div class="col-md-3">
+																			<input id="envInterval" type="text" value="" data-ng-model="service.envInterval"
+																				name="envInterval">
+																				<span class="help-block"> Seconds</span>
+																		</div>
+																	</div>
+
+																	<div class="form-group">
+																		<label class="control-label col-md-2"> Path </label>
+																		<div class="col-md-3">
+																			<input id="envPath" type="text" class="form-control" name="envPath" data-ng-model="service.envPath"
+																				value="/">
+																		</div>
+																		<label class="control-label col-md-2"> Failure
+																			Threshold </label>
+																		<div class="col-md-3">
+																			<input id="envThreshold" type="text" value="3" data-ng-model="service.envThreshold"
+																				name="envThreshold">
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-2"> Ignore
+																		</label>
+																		<div class="col-md-3">
+																			<input id="envIgnore" type="text" value="4" data-ng-model="service.envIgnore"
+																				name="envIgnore">
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+
+															<div class="tab-pane fade" id="tab_6_16">
+																<div class="form-body">
+
+																	<div class="form-group">
+																		<label class="control-label col-md-3">Volume <span
+																			class="required"> * </span>
+																		</label>
+																		<div class="col-md-4">
+																			<input name="volume" type="text" data-ng-model="service.volume"
+																				class="form-control" id="volume" value="" />
+																		</div>
+																	</div>
+
+																</div>
+
+															</div>
+															<div class="tab-pane fade" id="tab_6_17">
+
+																<div class="form-body">
+
+																	<div class="form-group">
+																		<label class="control-label col-md-4">Subnet<span
+																			class="required"> * </span>
+																		</label>
+																		<div class="col-md-6">
+																			<select name="type" id="type"
+																				data-ng-model="service.subnetName"
+																				aria-required="true" aria-describedby="select-error"
+																				class="form-control"
+																				data-ng-blur="selectSubnetnew()"
+																				data-ng-options="choice.subnetName as choice.subnetName  for choice in subnetObject">
+																			</select> <span class="help-block"> Select Type</span>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="control-label col-md-4">Cidr<span
+																			class="required"> * </span>
+																		</label>
+																		<div class="col-md-6">
+																			<input name="cidr" type="text" class="form-control" data-ng-model="service.cidr"
+																				value="" />
+
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+														</div>
+														<!-- END TAB CONTENT -->
+
+													</div>
+													<div class="col-md-12">
+														<hr>
+														<div id="spacer"></div>
+														<button type="button"
+															class="btn grey-salsa btn-outline pull-left"
+															data-dismiss="modal">Cancel</button>
+														<a class="btn green continue pull-right">Next</a> <a
+															class="btn green back pull-right">Previous</a>
+
+
+
+														<div id="spacer"></div>
+													</div>
+
+												</div>
+
+											</div>
+
+											<modal title="Add Cloud Provider" visible="showModal">
+
+
+
+											<div id="push"></div>
+
+											</modal>
+										</div>
+								</div>
+									
+									<div class="tab-pane fade" id="tab_6_5">
+									<div id="progress-bar" style="width: 100%">
+										<div class="step">
+											<div class="circle">1</div>
+
+											<div class="title">Create Application</div>
+										</div>
+										<div class="step">
+											<div class="circle">2</div>
+											<div class="title">Configure Subnet</div>
+										</div>
+										<div class="step">
+											<div class="circle">3</div>
+											<div class="title">Configure Image</div>
+										</div>
+										<div class="step">
+											<div class="circle">4</div>
+											<div class="title">Configure Service</div>
+										</div>
+											<div class="stepcurrent">
+											<div class="circle">5</div>
+											<div class="title">Deploy</div>
+										</div>
+									</div>
+
+
+								
+									<br><br><br><br>
+									<h3>Step: Deploy</h3>
+									<br>
+									<form action="#" id="step-1" class="form-horizontal">
+										      <!-- BEGIN PAGE BASE CONTENT -->
+      <div class="row">
+        <div class="col-md-12">
+         
+          <div id="spacer"></div>
+          <div class="col-md-6 col-sm-6 col-xs-6"> 
+            
+            <!-- TAB CONTENT -->
+            
+            <div class="portlet box grey">
+              <div class="portlet-title">
+                <div class="caption"> Services </div>
+                <div class="tools"> <a href="javascript:;" class="collapse" data-original-title="" title=""> </a> </div>
+              </div>
+              <div class="portlet-body" style="display: block;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td width="45%" align="right">Type</td>
+                    <td width="5%">&nbsp;</td>
+                    <td>{{service.type}}</td>
+                  </tr>
+                  <tr>
+                    <td align="right">Image Repository</td>
+                    <td>&nbsp;</td>
+                    <td>{{service.imageRegistry}}</td>
+                  </tr>
+                  <tr>
+                    <td align="right">Tag</td>
+                    <td>&nbsp;</td>
+                    <td>{{service.tag}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="portlet box grey">
+              <div class="portlet-title">
+                <div class="caption"> Run Settings </div>
+                <div class="tools"> <a href="javascript:;" class="collapse" data-original-title="" title=""> </a> </div>
+              </div>
+              <div class="portlet-body" style="display: block;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td width="45%" align="right">Run Command</td>
+                    <td width="5%">&nbsp;</td>
+                    <td>{{service.run}}</td>
+                  </tr>
+                  <tr>
+                    <td align="right">Host Name</td>
+                    <td></td>
+                    <td>{{service.hostName}}</td>
+                  </tr>
+                  <tbody>
+                  <tr>
+                    <td align="right"><span class="caption">Environment Variables</span></td>
+                    <td>&nbsp;</td>
+                     <td><tr ng-repeat="envVal in env">
+					 		<td>{{envVal.envkey}}</td>
+					 		<td>{{envVal.envvalue}}</td>
+						</tr>
+						</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="portlet box grey">
+              <div class="portlet-title">
+                <div class="caption">Environment Variables</div>
+                <div class="tools"> <a href="javascript:;" class="collapse" data-original-title="" title=""> </a> </div>
+              </div>
+              <div class="portlet-body" style="display: block;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td width="45%" align="right">Type</td>
+                    <td width="5%">&nbsp;</td>
+                    <td>{{service.typeName}}</td>
+                  </tr>
+                  <tr>
+                    <td align="right">Interval (Seconds)</td>
+                    <td>&nbsp;</td>
+                    <td>{{service.envInterval}}</td>
+                  </tr>
+                  <tr>
+                    <td align="right">Failure Threshold</td>
+                    <td>&nbsp;</td>
+                    <td>{{service.envThreshold}}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              
+            </div>
+            
+            
+            <!-- END TAB CONTENT --> 
+            
+          </div>
+          
+          
+          
+          <div class="col-md-6 col-sm-6 col-xs-6"> 
+           
+           <div class="portlet box grey">
+              <div class="portlet-title">
+                <div class="caption">Networking</div>
+                <div class="tools"> <a href="javascript:;" class="collapse" data-original-title="" title=""> </a> </div>
+              </div>
+              <div class="portlet-body" style="display: block;">
+                 <!-- <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td width="45%" align="right">Service Networking</td>
+                    <td width="5%">&nbsp;</td>
+                    <td>enabled</td>
+                  </tr>
+                  <tr>
+                    <td align="right">FDQN</td>
+                    <td></td>
+                    <td>Passdemo.Jobbfuse.local</td>
+                  </tr>
+                </table> -->
+                
+                
+                
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover bluebg">
+                      <thead>
+                        <tr>
+                          <th width="15%"> Name </th>
+                          <th width="15%"> Port Type </th>
+                          <th width="15%"> Host Port </th>
+                          <th width="15%"> Consumer Port </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td> HTTPS</td>
+                          <td>TCP</td>
+                          <td> 80</td>
+                          <td> 45</td>
+                        </tr>
+                       <tbody>
+                        <tr>
+                          <td> {{service.portName}} </td>
+                          <td> {{service.portType}} </td>
+                          <td> {{service.hostPort}} </td>
+                          <td> {{service.containerPort}} </td>
+                        </tr>
+                       </tbody>
+                    </table>
+                  </div>
+                
+              </div>
+            </div>
+          
+          
+             <!-- <div class="portlet box grey">
+              <div class="portlet-title">
+                <div class="caption">Scaling Policy</div>
+                <div class="tools"> <a href="javascript:;" class="collapse" data-original-title="" title=""> </a> </div>
+              </div>
+              <div class="portlet-body" style="display: block;">
+              
+                
+                
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover bluebg">
+                      <thead>
+                        <tr>
+                          <th width="15%"> Name </th>
+                          <th width="15%"> Port Type </th>
+                          <th width="15%"> Host Port </th>
+                          <th width="15%"> Consumer Port </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td> HTTPS</td>
+                          <td>TCP</td>
+                          <td> 80</td>
+                          <td> 45</td>
+                        </tr>
+                      <tbody>
+                        <tr>
+                          <td> HTTPS</td>
+                          <td>TCP</td>
+                          <td> 80</td>
+                          <td> 45</td>
+                        </tr>
+                      <tbody>
+                        <tr>
+                          <td> HTTPS</td>
+                          <td>TCP</td>
+                          <td> 80</td>
+                          <td> 45</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                
+              </div>
+            </div> -->        
+          
+          
+          <div class="portlet box grey">
+              <div class="portlet-title">
+                <div class="caption"> Volumes </div>
+                <div class="tools"> <a href="javascript:;" class="collapse" data-original-title="" title=""> </a> </div>
+              </div>
+              <div class="portlet-body" style="display: block;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td width="45%" align="right">Volumes</td>
+                    <td width="5%">&nbsp;</td>
+                    <td>{{service.volume}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          
+        </div>
+	        <div class="col-md-12">
+	          <hr>
+	          <div id="spacer"></div>
+	          <div id="spacer"></div>
+	        </div>
+      		</div>
+    	</div>
+									</form>
+									<button type="button"
+										class="btn grey-salsa btn-outline pull-left"
+										data-dismiss="modal">Cancel</button>
+								<button class="btn green pull-right " ng-click="processForm()">Finish</button>	
+									<a class="btn green back pull-right">Previous</a>
+
+								</div>
+									
+							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

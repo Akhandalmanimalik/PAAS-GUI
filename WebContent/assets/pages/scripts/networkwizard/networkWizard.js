@@ -26,7 +26,7 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
     /*===============Add Environments details==============*/
     $scope.regVpc = function(vpc) {
     	  console.log("vpc "+vpc);
-    	  var res = $http.post('/paas-gui/rest/networkservice/addVPC', vpc);
+    	  var res = $http.post('/paas-gui/rest/vpcService/addVPC', vpc);
     	  res.success(function(data, status, headers, config) {
     	    $scope.message = data;
     	  });
@@ -60,7 +60,7 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
     /*===============Add ACL details==============*/
     $scope.regAcl = function(acl) {
 	  	  console.log("acl "+acl);
-	  	  var res = $http.post('/paas-gui/rest/networkservice/addACLRule', acl);
+	  	  var res = $http.post('/paas-gui/rest/aclService/addACLRule', acl);
 	  	  res.success(function(data, status, headers, config) {
  	  		 
 	  	  });
@@ -76,7 +76,7 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 	  	/*=============== Add SUBNET details==============*/
 	  	$scope.regSubnet = function(subnet) {
 		  	  console.log("subnet "+subnet);
-		  	  var res = $http.post('/paas-gui/rest/networkservice/addSubnet', subnet);
+		  	  var res = $http.post('/paas-gui/rest/subnetService/addSubnet', subnet);
 		  	  res.success(function(data, status, headers, config) {
 	 	  		 
 		  	  });
@@ -95,7 +95,7 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 		  	 $scope.vpcValidation = function(vpc) {
 		     	
 		     	  console.log("vpc "+vpc);
-		     	  var res = $http.get('/paas-gui/rest/networkservice/checkVPC/'+vpc);
+		     	  var res = $http.get('/paas-gui/rest/vpcService/checkVPC/'+vpc);
 		     	  res.success(function(data, status, headers, config) {
 		   
 		     	    	
@@ -144,7 +144,7 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 			    	
 			    	 
 				  	  console.log("acl "+acl);
-				  	  var res = $http.get('/paas-gui/rest/networkservice/checkAcl/'+acl);
+				  	  var res = $http.get('/paas-gui/rest/aclService/checkAcl/'+acl);
 				  	  res.success(function(data, status, headers, config) {
 				  		  
 				  		if(data == 'success'){
@@ -171,7 +171,7 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
 				  	/*=============== Add SUBNET validation==============*/
 				  	$scope.subnetValidation = function(subnet) {
 					  	  console.log("subnet "+subnet);
-					  	  var res = $http.get('/paas-gui/rest/networkservice/checkSubnet/'+subnet);
+					  	  var res = $http.get('/paas-gui/rest/subnetService/checkSubnet/'+subnet);
 					  	  res.success(function(data, status, headers, config) {
 					  		  
 					  		if(data == 'success'){

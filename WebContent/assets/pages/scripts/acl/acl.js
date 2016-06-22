@@ -14,14 +14,11 @@ myfirewall.controller('MainCtrl', function($scope,$http) {
 	};
 	
 	
-/*============ ACL REG=============*/
-	
-	
-	
+	/*============ ACL REG=============*/
 	 $scope.regAcl = function() {
 	  	  console.log($scope.field);
 	  	  var userData = JSON.stringify($scope.field);
-	  	  var res = $http.post('/paas-gui/rest/networkservice/addACLRule', userData);
+	  	  var res = $http.post('/paas-gui/rest/aclService/addACLRule', userData);
 	  	  console.log(userData);
 	  	  res.success(function(data, status, headers, config) {
 	  		  alert(""+data);
@@ -43,7 +40,7 @@ myfirewall.controller('MainCtrl', function($scope,$http) {
    
  	 $scope.selectAcl = function() {
  		
-    	var response = $http.get('/paas-gui/rest/networkservice/getAllACL');
+    	var response = $http.get('/paas-gui/rest/aclService/getAllACL');
     	response.success(function(data){
     		$scope.fields = data;
     		console.log($scope.fields);
@@ -59,7 +56,7 @@ myfirewall.controller('MainCtrl', function($scope,$http) {
    
     $scope.deleteAcl = function(data) {
     	 
-     	var response = $http.get('/paas-gui/rest/networkservice/deleteACLByNameUsingTenantId/'+data);
+     	var response = $http.get('/paas-gui/rest/aclService/deleteACLByNameUsingTenantId/'+data);
      	response.success(function(data){
      		$scope.selectAcl();
      	});
@@ -134,33 +131,13 @@ $scope.setAclId = function(aclIds) {
  	
 };
 
-/* To add rule */
-$scope.regRule = function($scope, $rootScope) {
-	alert("comming to regRule ");
-	 
-	   
-	  /*var res = $http.post('/paas-gui/rest/networkservice/addACLRule', userData);
-	  console.log(userData);
-	  res.success(function(data, status, headers, config) {
-		  alert(""+data);
-		// $location.path('/paas-gui/html/Acl.html');
-	    //document.location.href = '/paas-gui/html/Acl.html';
-	  });
-	  res.error(function(data, status, headers, config) {
-	    alert("failure message: " + JSON.stringify({
-	      data : data
-	    }));
-	  });*/
-	 
-	};
-
 
 	/*===============ACL validation==============*/
     $scope.aclValidation = function(acl) {
     	
     	
 	  	 console.log("<<<<<< acl validation >>>>>>>>>" +acl);
-	  	  var res = $http.get('/paas-gui/rest/networkservice/checkAcl/'+acl);
+	  	  var res = $http.get('/paas-gui/rest/aclService/checkAcl/'+acl);
 	  	  res.success(function(data, status, headers, config) {
 	  		  
 	  		if(data == 'success'){

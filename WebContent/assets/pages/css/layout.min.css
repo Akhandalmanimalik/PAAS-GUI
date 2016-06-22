@@ -2080,3 +2080,7 @@ clear:both;
 margin-left:5px !important;
 margin-right:5px !important;
 }
+
+.fa.fa-remove {
+color: red;
+}

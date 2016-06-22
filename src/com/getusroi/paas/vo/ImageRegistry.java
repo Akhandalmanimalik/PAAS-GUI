@@ -1,5 +1,8 @@
 package com.getusroi.paas.vo;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ImageRegistry {
 
 	private String name;

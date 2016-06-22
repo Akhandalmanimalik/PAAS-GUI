@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import com.getusroi.paas.db.helper.DataBaseConnectionFactory;
 import com.getusroi.paas.db.helper.DataBaseHelper;
 import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
+import com.getusroi.paas.vo.VPC;
 
 /**
  * This class is used to control db operation for all network related setup like
@@ -23,9 +26,13 @@ import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
  */
 public class VpcDAO {
 	static final Logger LOGGER = LoggerFactory.getLogger(VpcDAO.class);
+	private final String REGISTER_VPC_QUERY="insert into vpc(vpc_name,tenant_id,createdDTM,acl_id) values(?,?,NOW(),?)";
 	private final String GET_VPC_NAME_USING_VPCID_TENANTID = "select vpc_name from vpc where vpc_id =? and tenant_id=?";
 	private final String GET_VPCID_BY_VPCNAME_AND_TENANT_ID_QUERY="select vpc_id from vpc where vpc_name=? and tenant_id=?";
+	private final String DELETE_VPC_BY_NAME_QUERY="delete from vpc where vpc_name=?";
+	private final String UPDATE_VPC_BY_NAME_AND_VPCID_QUERY="update vpc set vpc_region=? , cidr=?, acl=? where vpcId=? AND vpc_name=?";
 	
+	AclDAO netwrkDAO = null;
 	/**
 	 * This method is used to get vpc name by using vpcId and tenantId from db
 	 * @param vpcid
@@ -126,5 +133,160 @@ public class VpcDAO {
 		return vpcId;
 	}//end of method getAllVPC
 
+	/**
+	 * This method is used to add VPC to database
+	 * @param vpc : VPC object containg data need to be stored
+	 * @throws DataBaseOperationFailedException : Unable to register vpc with db
+	 */
+	public void registerVPC(VPC vpc) throws DataBaseOperationFailedException{
+		LOGGER.debug(".registerVPC method of NetworkDAO vpc"+vpc);
+		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+		Connection connection=null;
+		PreparedStatement pstmt=null;
+		netwrkDAO = new AclDAO();   
+		try {
+			connection=connectionFactory.getConnection("mysql");
+			pstmt=(PreparedStatement) connection.prepareStatement(REGISTER_VPC_QUERY);
+			pstmt.setString(1, vpc.getVpc_name());
+			pstmt.setInt(2, vpc.getTenant_id());
+			pstmt.setInt(3, netwrkDAO.getACLIdByACLNames(vpc.getAclName(), vpc.getTenant_id()));
+			pstmt.executeUpdate();
+			LOGGER.debug("VPC registerd successfully with data : "+vpc);
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Unable to register vpc to database with details : "+vpc);
+			throw new DataBaseOperationFailedException("Unable to register vpc to database with details : "+vpc,e);
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Unable to register vpc to database because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Unable to register vpc to database because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException("Unable to register vpc to database with details : "+vpc,e);
+		}finally{
+			DataBaseHelper.dbCleanUp(connection, pstmt);
+		}
+	}//end of method registerVPC
 	
+	
+	 private final String GET_ALL_VPC_QUERY="select * from vpc where tenant_id=?";
+		/**
+		 * This method is used to get list of all the vpc store in db
+		 * @return List<VPC> : list of VPC object containg vpc information
+		 * @throws DataBaseOperationFailedException : Unable to get all the vpc stored in db
+		 */
+		public List<VPC> getAllVPC(int tenant_id) throws DataBaseOperationFailedException{
+			LOGGER.debug(".getAllVPC method of NetworkDAO");
+			DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+			List<VPC> vpcList=new ArrayList<VPC>();
+			Connection connection=null;
+			PreparedStatement pstmt=null;
+			ResultSet result=null;
+			netwrkDAO = new AclDAO();
+			try {
+				connection=connectionFactory.getConnection("mysql");
+				pstmt=(PreparedStatement) connection.prepareStatement(GET_ALL_VPC_QUERY);
+				pstmt.setInt(1, tenant_id);
+				result=pstmt.executeQuery();
+				if(result !=null){
+					while(result.next()){
+						VPC vpc = new VPC();
+						vpc.setVpc_name(result.getString("vpc_name"));
+						vpc.setAclName(netwrkDAO.getACLNameByAclIdAndTenantId(result.getInt("acl_id"), tenant_id));
+						vpc.setVpcId(result.getString("vpc_id"));
+						vpcList.add(vpc);
+					}
+				}else{
+					LOGGER.debug("No VPC available in db");
+				}
+			} catch (ClassNotFoundException | IOException e) {
+				LOGGER.error("Error in getting the vpc detail from db");
+				throw new DataBaseOperationFailedException("Error in fetching the vpc from db",e);
+			} catch(SQLException e) {
+				if(e.getErrorCode() == 1064) {
+					String message = "Error in getting the vpc detail from db because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+					throw new DataBaseOperationFailedException(message, e);
+				} else if(e.getErrorCode() == 1146) {
+					String message = "Error in getting the vpc detail from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+					throw new DataBaseOperationFailedException(message, e);
+				} else
+					throw new DataBaseOperationFailedException("Error in fetching the vpc from db",e);
+			} finally{
+				DataBaseHelper.dbCleanup(connection, pstmt, result);
+			}
+			return vpcList;
+		}//end of method getAllVPC
+		
+		
+		/**
+		 * This method is used to delete vpc from db using vpc name
+		 * @param vpcName : name of the vpc to be delete in String
+		 * @throws DataBaseOperationFailedException : Unable to delete the vpc by vpc name
+		 */
+		public void deleteVPCByName(String vpcName) throws DataBaseOperationFailedException{
+			LOGGER.debug(".deleteVPCByName method of NetworkDAO");
+			DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+			Connection connection=null;
+			PreparedStatement pstmt=null;
+			try {
+				connection=connectionFactory.getConnection("mysql");
+				pstmt=(PreparedStatement) connection.prepareStatement(DELETE_VPC_BY_NAME_QUERY);
+				pstmt.setString(1, vpcName);
+				pstmt.executeUpdate();
+				LOGGER.debug("vpc : "+vpcName+" deleted from db successfully");
+			} catch (ClassNotFoundException | IOException e) {
+				LOGGER.error("Error in deleting the vpc from table using vpc name : "+vpcName);
+				throw new DataBaseOperationFailedException("Error in deleting the vpc from table using vpc name : "+vpcName,e);
+			} catch(SQLException e) {
+				if(e.getErrorCode() == 1064) {
+					String message = "Error in deleting the vpc from table using vpc name because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+					throw new DataBaseOperationFailedException(message, e);
+				} else if(e.getErrorCode() == 1146) {
+					String message = "Error in deleting the vpc from table using vpc name because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+					throw new DataBaseOperationFailedException(message, e);
+				} else
+					throw new DataBaseOperationFailedException("Error in deleting the vpc from table using vpc name : "+vpcName,e);
+			} finally{
+				DataBaseHelper.dbCleanUp(connection, pstmt);
+			}
+		}//end of method deleteVPCByName
+
+		
+		/**
+		 * This method is used to update vpc based on vpcid and vpc name
+		 * @param vpc : VPC object
+		 * @throws DataBaseOperationFailedException : Unable to update the vpc error
+		 */
+		public void updateVPCByNameAndVPCId(VPC vpc) throws DataBaseOperationFailedException{
+			LOGGER.debug(".updateVPCByNameAndVPCId method of NetworkDAO");
+			DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+			Connection connection=null;
+			PreparedStatement pstmt=null;
+			try {
+				connection=connectionFactory.getConnection("mysql");
+				pstmt=(PreparedStatement) connection.prepareStatement(UPDATE_VPC_BY_NAME_AND_VPCID_QUERY);
+				
+				pstmt.setString(3, vpc.getAclName());
+				pstmt.setString(4,vpc.getVpcId());
+				pstmt.setString(5,vpc.getVpc_name());
+				LOGGER.debug("VPC update with data : "+vpc+" successfully");
+			} catch (ClassNotFoundException | IOException e) {
+				LOGGER.error("Unable to update VPC with data :  "+ vpc);
+				throw new DataBaseOperationFailedException("Unable to update VPC with data :  "+ vpc,e);
+			} catch(SQLException e) {
+				if(e.getErrorCode() == 1064) {
+					String message = "Unable to update VPC with data because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+					throw new DataBaseOperationFailedException(message, e);
+				} else if(e.getErrorCode() == 1146) {
+					String message = "Unable to update VPC with data because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+					throw new DataBaseOperationFailedException(message, e);
+				} else
+					throw new DataBaseOperationFailedException("Unable to update VPC with data :  "+ vpc,e);
+			} finally{
+				DataBaseHelper.dbCleanUp(connection, pstmt);
+			}
+		}//end of method updateVPCByNameAndVPCId
+		
+		
 }

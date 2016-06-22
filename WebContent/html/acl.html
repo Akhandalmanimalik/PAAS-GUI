@@ -15,10 +15,14 @@
 <script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
 <script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="../assets/global/scripts/angular.min.js" type="text/javascript"></script>
-<!-- <script src="../assets/pages/scripts/acl/acl.js" type="text/javascript"></script>  -->
-<script data-semver="1.2.28" src="https://code.angularjs.org/1.2.28/angular.js" data-require="angular.js@1.2.x"></script>
-<script src="https://code.angularjs.org/1.2.28/angular-route.js"></script>
+
+<script src="../assets/global/scripts/angular.js" type="text/javascript"></script>
+<script src="../assets/global/scripts/angular-route.js" type="text/javascript"></script>
 <script src="../assets/pages/scripts/acl/newAcl.js" type="text/javascript"></script>
+
+<!-- <script data-semver="1.2.28" src="https://code.angularjs.org/1.2.28/angular.js" data-require="angular.js@1.2.x"></script> 
+<!-- <script src="https://code.angularjs.org/1.2.28/angular-route.js"></script> 
+<!-- <script src="../assets/pages/scripts/acl/acl.js" type="text/javascript"></script>  -->
 
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
 <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
@@ -35,7 +39,7 @@
 <body
 	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
 
-	<div data-ng-app="myAcl" data-ng-controller="createNewAcl">
+	<div data-ng-app="myAcl" data-ng-controller="MainCtrl" data-ng-init="selectAcl()">
 
 		<div class="page-head">
 			<!-- BEGIN PAGE TITLE -->
@@ -61,12 +65,12 @@
 				 	
 				<tbody>
 				<tr data-ng-repeat="val in aclObj">
-					<td data-ng-click="setAclId(val.id)">{{val.aclName}}</td>
+					<td data-ng-click="shareMyData(val.id)">{{val.aclName}}</td>
 					<td>{{val.description}}</td>
 					<td align="center"><a data-ng-click="deleteAcl(val.aclName)"
-									class="btn btn-danger"><i class="fa fa-remove"></a></td>
-					 <td align="center"><a data-ng-click="updateAcl(field.name)"
-									class="btn btn-primary"><i class="fa fa-undo"></a></td>
+									 ><i class="fa fa-remove"></a></td>
+					 <td align="center"><a data-ng-click="updateAcl(val.aclName)"
+									 ><i class="fa fa-undo"></a></td>
 				</tr>
 				</tbody>
 				</table>

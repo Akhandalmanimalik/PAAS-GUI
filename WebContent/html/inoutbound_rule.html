@@ -9,7 +9,6 @@
         <meta content="" name="author" />
  		<script src="../assets/global/scripts/angular.min.js" type="text/javascript"></script>
         <script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
-
         <script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
         <script src="../assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
         <script src="../assets/pages/scripts/form-validation.min.js" type="text/javascript"></script> 
@@ -18,16 +17,16 @@
         <script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
 		<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>   
 		<script src="../assets/pages/scripts/layout.min.js" type="text/javascript"></script>
-		<script src="../assets/pages/scripts/acl/acl.js" type="text/javascript"></script> 
-		
-		      
+		<!-- <script src="../assets/pages/scripts/acl/acl.js" type="text/javascript"></script>  -->
+		<script src="../assets/global/scripts/angular.js" type="text/javascript"></script>
+		<script src="../assets/global/scripts/angular-route.js" type="text/javascript"></script>
+		<script src="../assets/pages/scripts/acl/newAcl.js" type="text/javascript"></script>
 		
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
         <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
         <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
          <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" /> 
         <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
-
         <link href="../assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
         <link href="../assets/pages/css/layout.min.css" rel="stylesheet" type="text/css" />
         <link href="../assets/pages/css/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
@@ -38,8 +37,10 @@
         </head>
     <!-- END HEAD -->
 
-    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo" data-ng-app="myAcl" data-ng-controller="MainCtrl" data-ng-init="selectAcl()">
+    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo" data-ng-app="myAcl" data-ng-controller="createNewInOutBoundRule" data-ng-init="selectAcl()">
         <!-- BEGIN HEADER -->
+        
+		
         <div>
         
         <!-- END HEADER -->
@@ -127,7 +128,7 @@
 									</label>
 									<div class="col-md-4">
 										<select name="protocolRange" id="protocolRange" aria-required="true"
-											data-ng-model="rule.protocolRange" aria-describedby="select-error"
+											data-ng-model="rule.protocolRange	" aria-describedby="select-error"
 											class="form-control">
 											<option value="All"> All </option>
 											<option value="0-6555"> 0 - 6555 </option>
@@ -185,7 +186,7 @@
 										</select>
 									</div>
 								</div>
-								
+					{{rule}}
 								
 							</div>
                                       	<div class="form-actions">
@@ -193,7 +194,7 @@
                                                 <div class="col-md-offset-3 col-md-9">
                            
                                                     <button type="submit" class="btn green" id="btn-login" 
-                                                    data-ng-disabled="vpcWizardForm.$invalid"  data-ng-click="regRule()">Submit</button>
+                                                    data-ng-disabled="vpcWizardForm.$invalid"  data-ng-click="regRule(selectedAclId)">Submit</button>
                                                     <!-- <button type="button" class="btn grey-salsa btn-outline">Cancel</button> -->                                                    
                                                     <a href="vpc-interface.html" class="btn grey-salsa btn-outline">Cancel</a>
                                                 </div>

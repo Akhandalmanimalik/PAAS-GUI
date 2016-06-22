@@ -16,7 +16,7 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
   	  console.log($scope.field);
   	  
   	  var userData = JSON.stringify($scope.field);
-  	  var res = $http.post('/paas-gui/rest/networkservice/addVPC', userData);
+  	  var res = $http.post('/paas-gui/rest/vpcService/addVPC', userData);
   	  console.log(userData);
   	  res.success(function(data, status, headers, config) {
   	    $scope.message = data;
@@ -35,7 +35,7 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
   	           /*POPULATE DATA TO TABLE*/
   
   	 $scope.selectVpc = function() {
-     	var response = $http.get('/paas-gui/rest/networkservice/getAllVPC');
+     	var response = $http.get('/paas-gui/rest/vpcService/getAllVPC');
      	response.success(function(data){
      		$scope.fields = data;
      	});
@@ -47,7 +47,7 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
    
      //ACL
      $scope.getAcl = function() {
-      	var response = $http.get('/paas-gui/rest/networkservice/getAllACL');
+      	var response = $http.get('/paas-gui/rest/aclService/getAllACL');
       	response.success(function(data){
       		
       		$scope.aclist = data;
@@ -65,7 +65,7 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
   	
 
      $scope.deleteData = function(data) {
-     	var response = $http.get('/paas-gui/rest/networkservice/deleteVPCByName/'+data);
+     	var response = $http.get('/paas-gui/rest/vpcService/deleteVPCByName/'+data);
      	response.success(function(data){
      		$scope.select();
      	});
@@ -77,7 +77,7 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
      
               /*EDIT VPC DATA*/
      $scope.update = function(data) {
-     	var response = $http.get('/paas-gui/rest/networkservice/updateVPC/'+data);
+     	var response = $http.get('/paas-gui/rest/vpcService/updateVPC/'+data);
      	response.success(function(data){
      		$scope.select();
      	});
@@ -95,7 +95,7 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
   		 
      	
      	  console.log("vpc "+vpc);
-     	  var res = $http.get('/paas-gui/rest/networkservice/checkVPC/'+vpc);
+     	  var res = $http.get('/paas-gui/rest/vpcService/checkVPC/'+vpc);
      	  res.success(function(data, status, headers, config) {
    
      	    	
@@ -128,7 +128,7 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
 	    	
 	    
 		  	  console.log("acl >>>>>>>>>>>>>>>>>>. "+acl);
-		  	  var res = $http.get('/paas-gui/rest/networkservice/checkAcl/'+acl);
+		  	  var res = $http.get('/paas-gui/rest/aclService/checkAcl/'+acl);
 		  	  res.success(function(data, status, headers, config) {
 		  		  
 		  		if(data == 'success'){

@@ -13,7 +13,7 @@ mycloudprovider.controller('MainCtrl', function ($scope,$http) {
     };
     
     $scope.selectVpc = function() {
-     	var response = $http.get('/paas-gui/rest/networkservice/getAllVPC');
+     	var response = $http.get('/paas-gui/rest/vpcService/getAllVPC');
      	response.success(function(data){
      		$scope.vpcObject = data;
      	});

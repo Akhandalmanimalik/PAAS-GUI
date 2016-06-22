@@ -58,7 +58,7 @@
                        
                         <div class="col-md-12">
                                     <!-- BEGIN FORM-->
-                                    <form action="#" id="appWizardForm" class="form-horizontal" name="appWizardForm" 
+                                    <form action="#" id="vpcWizardForm" class="form-horizontal" name="vpcWizardForm" 
                                     data-ng-submit="storeApplication();" method="post" novalidate>
                                         <div class="form-body">
                                             <div class="alert alert-danger display-hide">
@@ -68,6 +68,7 @@
                                                 
 						
 											<div class="form-group">
+												<!-- ie8, ie9 does not support html5 placeholder, so we just show field	title for that -->
 												
 												
 												<div class="col-xs-4">
@@ -76,9 +77,11 @@
 												</label>
 													<input type="text"  placeholder="Name" data-ng-model="field.applicantionName" name="applicantName"
 														  data-required="1" class="form-control placeholder-no-fix" data-ng-minlength="6" data-ng-maxlength="20" required />
-													 	<span class="error" data-ng-show="appWizardForm.applicantName.$error.maxlength" class="help-block" style="color: red;" >Application name Shouldn't exceed 20 chars.</span>
-													 	<span class="error" data-ng-show="appWizardForm.applicantName.$error.minlength" class="help-block" style="color: red;" >Application name Should greater than 6 chars.</span>
-												</div>											                      
+													 	<span class="error" data-ng-show="vpcWizardForm.applicantName.$error.maxlength" class="help-block" style="color: red;" >Application name Shouldn't exceed 20 chars.</span>
+													 	<span class="error" data-ng-show="vpcWizardForm.applicantName.$error.minlength" class="help-block" style="color: red;" >Application name Should greater than 6 chars.</span>
+												</div>
+												<!-- <p data-ng-show="vpcWizardForm.vpc_name.$error.maxlength" class="help-block" style="color: red;">VPC name Shouldn't exceed 20 chars.</p> -->
+												                      
 											</div>
 								 
                                             <div class="form-group">
@@ -87,7 +90,7 @@
                                                 <div class="col-xs-4">
                                                  <label for="ex2">  Description
                                                 </label>
-                                                    <textarea style="width:100%"   data-ng-model="field.description" name="Description"   class="form-control" >
+                                                    <textarea style="width:50%"   data-ng-model="field.description" name="Description"   class="form-control" >
                                                    </textarea> </div>
                                             </div>
                                         </div>
@@ -95,7 +98,7 @@
                                       	<div class="form-actions">
                                             <div class="row">
                                                 <div class="col-md-offset-3 col-md-9">
-                                                    <button type="submit" class="btn green" id="btn-login" data-ng-disabled="appWizardForm.$invalid">Submit</button>
+                                                    <button type="submit" class="btn green" id="btn-login" data-ng-disabled="vpcWizardForm.$invalid">Submit</button>
                                                     <!-- <button type="button" class="btn grey-salsa btn-outline">Cancel</button> -->                                                    
                                                     <a href="applicantmain.html" class="btn grey-salsa btn-outline">Cancel</a>
                                                 </div>

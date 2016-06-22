@@ -1,119 +1,177 @@
-var myvpc = angular.module('VpcApp', []);
+var app = angular.module('application', []);
 
-myvpc.controller('VpcCtrl', function ($scope,$http) {
+app.controller('appCtrl', function($scope,$http, srvShareData) {
+	  
+	  $scope.dataToShare = [];
+	  
+	  $scope.shareMyData = function (myValue) {
+
+	    $scope.dataToShare = myValue;
+	    srvShareData.addData($scope.dataToShare);
+	    
+	    window.location.href = "applicationWizard.html";
+	  };
+	  
+	  
+		 
+		
+		$scope.field = {};
+		
+	 
+	      /*================Application REGISTRATION===================*/
+	    
+	    
+	    
+	    /*to store application deatils */
+	    $scope.storeApplication = function() {
+	    	
+		  	  console.log("inside application data value ");
+
+	    	  $scope.message=null;
+	  	  var application = JSON.stringify($scope.field);
+	  	  var res = $http.post('/paas-gui/rest/applicationService/storeApplication', application);
+	  	  res.success(function(data, status, headers, config) {
+		  	  console.log("inside application data value "+data);
+		  	window.location.href = "applicantmain.html";
+	  	  
+	  	  });
+	  	  res.error(function(data, status, headers, config) {
+	  	    alert("failure message : " + JSON.stringify({
+	  	      data : data
+	  	    }));
+	  	  });
+	  	 /* console.log("application data value "+$scope.message);
+	  	  if($scope.message!=null){
+		  	  window.location.href = "applicantmain.html";
+
+	  	  }*/
+	  	 
+	  	};//store application  
+	  	
+	  	   /*To Get Application Details */
+	  	 $scope.getApplications = function() {
+	     	var response = $http.get('/paas-gui/rest/applicationService/getApplications');
+	     	response.success(function(data){
+	     		$scope.fields = data;
+	     		 
+	     	});
+	     	response.error(function(data, status, headers, config) {
+	                 alert("Error in Fetching Data");
+	         });
+	     };//end of getApplications script
+	     
+	     //edit application
+	     $scope.editApplication=function(application){
+	    	 
+	    	 $scope.dataToShare = application;
+	 	    srvShareData.addData($scope.dataToShare);
+	 	     window.location.href = "editApplication.html"; 
+	    	 
+	     };//end of edit application
+	     
+	     
+	  	 /*delete of Application based on given Id*/
+	     $scope.deleteApplication = function(apps_id) {
+	     	var response = $http.get('/paas-gui/rest/applicationService/deleteApplication/'+apps_id);
+	     	response.success(function(data){
+	     		$scope.getApplications();
+	     	});
+	     	response.error(function(data, status, headers, config) {
+	                 alert("Error in Fetching Data");
+	         });
+	     	
+	     };//end of application script 
+	     
+	        
 	
-	$scope.field = {};
-	
-    $scope.showModal = false;
-    $scope.toggleModal = function(){
-        $scope.showModal = !$scope.showModal;
-    };
-    
-      /*================VPC REGISTRATION===================*/
-    
-    $scope.storeApplicantUser = function() {
-    	alert("comming to storeApplicantUser ");
-  	  console.log($scope.field);
-  	  var userData = JSON.stringify($scope.field);
-  	  var res = $http.post('/paas-gui/rest/applicationService/storeApplicantUser', userData);
-  	  console.log(userData);
-  	  res.success(function(data, status, headers, config) {
-  	    $scope.message = data;
-  	   
-  	    window.location = "html/applicantmain.html";
-  	 
-  	  });
-  	  res.error(function(data, status, headers, config) {
-  	    alert("failure message : " + JSON.stringify({
-  	      data : data
-  	    }));
-  	  });
-  	 
-  	};
-  	
-  	   /*POPULATE DATA TO TABLE*/
-  	 $scope.selectApplicantName = function() {
-     	var response = $http.get('/paas-gui/rest/applicationService/selectApplicantName');
-     	response.success(function(data){
-     		$scope.fields = data;
-     		 
-     	});
-     	response.error(function(data, status, headers, config) {
-                 alert("Error in Fetching Data");
-         });
-     };
-     
-     
-  	 /*DELETE POPULATED DATA*/
-     $scope.deleteData = function(data) {
-     	var response = $http.get('/paas-gui/rest/applicationService/deleteData/'+data);
-     	response.success(function(data){
-     		$scope.select();
-     	});
-     	response.error(function(data, status, headers, config) {
-                 alert("Error in Fetching Data");
-         });
-     	
-     };
-     
-              /*EDIT VPC DATA*/
-     $scope.update = function(data) {
-     	var response = $http.get('/paas-gui/rest/fetchData/updata/'+data);
-     	response.success(function(data){
-     		$scope.select();
-     	});
-     	response.error(function(data, status, headers, config) {
-                 alert("Error in Fetching Data");
-         });
-     };
-     
-     
-    
-  	
-  	
+	     
+	});
 
-    
-});  /*end of controller*/
+	app.controller('appDisplayCtrl', function($scope, srvShareData,$http) {
+	  
+	  $scope.sharedData = srvShareData.getData();
+	  
+		$scope.field = {};
+
+	  
+	   $scope.getAllServiceByAppsId = function(id) {
+		   	 var response = $http.get('/paas-gui/rest/applicationService/getAllServiceByAppsId/'+id);
+			     	response.success(function(data){
+			     		$scope.field = data;
+			     		console.log("data given");
+			     	});
+			     	response.error(function(data, status, headers, config) {
+			                 alert("Error in Fetching Data of selectImageRegistry");
+			         });	
+		    };  
+		   
+		   
+		 
+		    /*=================== delete*====================*/
+		   
+		    $scope.deleteApplicationByApplName = function(serviceName) {
+		     	alert("coming applicationName>>>"+serviceName);
+		     	//25 is hardcode value for apps_id
+		     	$scope.appsid=25;
+		     	alert("coin");
+		     	var response = $http.get('/paas-gui/rest/applicationService/deleteServiceByName/'+serviceName);
+		     	response.success(function(data){
+		     		
+		     	});
+		     	response.error(function(data, status, headers, config) {
+		                 alert("Error in Fetching Data"+data);
+		         });
+		     	
+		     };
+		     
+
+	});
+	app.controller('appUpdateCtrl', function($scope, srvShareData,$http) {
+		  
+		  $scope.sharedData = srvShareData.getData();
+		  
+			$scope.field = $scope.sharedData[0];
+
+		  
+		     /*Edit application script  */
+		     $scope.updateApplication = function() {
+		    var applictaionUpdatedData=	$scope.field;
+		     	var response = $http.put('/paas-gui/rest/applicationService/updateApplication',	applictaionUpdatedData);
+		     	response.success(function(data){
+		     		
+		     		window.location.href = "applicantmain.html";
+		     	});
+		     	response.error(function(data, status, headers, config) {
+		                 alert("Error in Fetching Data");
+		         });
+		     };//end of edit script
+		     
+			     
+
+		});
+
+	app.service('srvShareData', function($window) {
+        var KEY = 'App.SelectedValue';
+
+        var addData = function(newObj) {
+            var mydata = [];
+           
+            mydata.push(newObj);
+            $window.sessionStorage.setItem(KEY, JSON.stringify(mydata));
+        };
+
+        var getData = function(){
+            var mydata = $window.sessionStorage.getItem(KEY);
+            if (mydata) {
+                mydata = JSON.parse(mydata);
+            }
+            return mydata || [];
+        };
+
+        return {
+            addData: addData,
+            getData: getData
+        };
+    });
 
 
-myvpc.directive('modal', function () {
-    return {
-      template: '<div class="modal fade">' + 
-          '<div class="modal-dialog">' + 
-            '<div class="modal-content">' + 
-              '<div class="modal-header">' + 
-                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
-                '<h4 class="modal-title">{{ title }}</h4>' + 
-              '</div>' + 
-              '<div class="modal-body" ng-transclude></div>' + 
-            '</div>' + 
-          '</div>' + 
-        '</div>',
-      restrict: 'E',
-      transclude: true,
-      replace:true,
-      scope:true,
-      link: function postLink(scope, element, attrs) {
-        scope.title = attrs.title;
-
-        scope.$watch(attrs.visible, function(value){
-          if(value == true)
-            $(element).modal('show');
-          else
-            $(element).modal('hide');
-        });
-
-        $(element).on('shown.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = true;
-          });
-        });
-
-        $(element).on('hidden.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = false;
-          });
-        });
-      }
-    };
-  });

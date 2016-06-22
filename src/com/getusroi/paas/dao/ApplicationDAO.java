@@ -228,7 +228,7 @@ public class ApplicationDAO {
 							);
 					service.setContainerType(containerTypesDAO.getContainerNameByContainerId(result.getInt("container_id")));
 					service.setTag(result.getString("tag"));
-					service.setNetwork_bridge("");
+					service.setNetwork_bridge(NETWORK_TYPE);
 					service.setTenantId(tennat_Id);
 					serviceList.add(service);
 				}

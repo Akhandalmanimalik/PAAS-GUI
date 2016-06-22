@@ -34,15 +34,14 @@
    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.min.js"></script>
      <!-- <script src="../app.js"></script>   -->
-<!--     <script src="../assets/pages/scripts/application/applicationWizard.js" type="text/javascript"></script> 
- -->   
-                <script src="../assets/pages/scripts/applicationmain.js" type="text/javascript"></script> 
+    <script src="../assets/pages/scripts/application/applicationWizard.js" type="text/javascript"></script> 
+   
         
       
         </head>
     <!-- END HEAD -->
 <!--  -->
-    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo" ng-app="application" ng-controller="appDisplayCtrl" data-ng-init="getAllServiceByAppsId(sharedData[0])">
+    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo" ng-app="applicationWizards" ng-controller="MainCtrl" data-ng-init="getAllApplicationByByService()">
    
       <div class="page-content">
                     <!-- BEGIN PAGE HEAD-->
@@ -58,12 +57,12 @@
                     <hr>
                     <a href="../ServiceWizards.html" class="btn green"> Add Service </a>
                     <hr>
-                    {{sharedData[0]}}
+                    
                     
                     <br>
                     <!-- BEGIN PAGE BASE CONTENT -->
                              <!-- BORDERED TABLE PORTLET-->
-                             
+                             <h2>Service Details Will be displayed Here </h2>
                              <div class="table-scrollable">
                                         <table class="table table-bordered table-hover">
                                             <thead>
@@ -83,10 +82,10 @@
                                                     <td> {{sevc.imageRegistry}} </td>
                                                     <td> {{sevc.tag}} </td>
                                                     <td> {{sevc.type}} </td>
-                                                    <td> {{sevc.network_bridge}} </td>
+                                                    <td> NOT NOW </td>
                                                    <td align="center"><button data-ng-click="deleteApplicationByApplName(sevc.serviceName)"
 															class="btn btn-danger"><i class="fa fa-remove"></i></button></td>
-													<td align="center"><button data-ng-click="editService(field)"
+													<td align="center"><button data-ng-click="update(field.vpc_name)"
 															class="btn btn-primary"><i class="fa fa-undo"></i></button></td>
                                                 </tr>
                                             </tbody>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8" />
+<title>PAAS | Application Listings</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="" name="description" />
+<meta content="" name="author" />
+<script
+	src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+	type="text/javascript"></script>
+<script src="../assets/global/plugins/uniform/jquery.uniform.min.js"
+	type="text/javascript"></script>
+<script src="../assets/pages/scripts/form-validation.min.js"
+	type="text/javascript"></script>
+<script
+	src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js"
+	type="text/javascript"></script>
+<script
+	src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js"
+	type="text/javascript"></script>
+<script
+	src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"
+	type="text/javascript"></script>
+<script
+	src="../assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js"
+	type="text/javascript"></script>
+<script src="../assets/global/plugins/fuelux/js/spinner.min.js"
+	type="text/javascript"></script>
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/layout.min.js"
+	type="text/javascript"></script>
+<script
+	src="../assets/pages/scripts/components-bootstrap-touchspin.min.js"
+	type="text/javascript"></script>
+
+<link
+	href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all"
+	rel="stylesheet" type="text/css" />
+<link
+	href="../assets/global/plugins/font-awesome/css/font-awesome.min.css"
+	rel="stylesheet" type="text/css" />
+<link
+	href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css"
+	rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css"
+	rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/uniform/css/uniform.default.css"
+	rel="stylesheet" type="text/css" />
+<link href="../assets/global/css/components.min.css" rel="stylesheet"
+	id="style_components" type="text/css" />
+<link href="../assets/pages/css/layout.min.css" rel="stylesheet"
+	type="text/css" />
+<link href="../assets/pages/css/light.min.css" rel="stylesheet"
+	type="text/css" id="style_color" />
+<link
+	href="../assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css"
+	rel="stylesheet" type="text/css">
+<link rel="shortcut icon" href="favicon.ico" />
+
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<!-- <script src="../assets/pages/scripts/application/applicationGetStarted.js" type="text/javascript"></script> -->
+<script
+	src="../assets/pages/scripts/application/getstartedapplication.js"
+	type="text/javascript"></script>
+
+</head>
+<!-- END HEAD -->
+
+<body
+	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
+	<div class="page-content" style="height: 100%">
+		<!-- BEGIN PAGE HEAD-->
+		<div class="page-head">
+			<!-- BEGIN PAGE TITLE -->
+			<div class="page-title">
+				<h1>Application Configuration Wizard</h1>
+			</div>
+			<!-- END PAGE TITLE -->
+
+		</div>
+		<!-- END PAGE HEAD-->
+		<hr>
+		<!-- BEGIN PAGE BASE CONTENT -->
+
+
+
+
+
+
+		<div ng-app="getstartedApp" ng-controller="MainCtrl">
+			<div class="row" style="height: 100%; width: 97%">
+				<div class="col-md-12">
+					<div id="spacer"></div>
+					<div id="progress-bar">
+
+						<div ng-show="false" class="col-md-2 col-sm-3 col-xs-3">
+							<ul class="nav nav-tabs tabs-left">
+								<li class="active"><a href="#tab_6_1" data-toggle="tab">
+										Service</a></li>
+								<li><a href="#tab_6_2" data-toggle="tab"> Image
+										Registory </a></li>
+								<li><a href="#tab_6_3" data-toggle="tab">Run Settings </a></li>
+								<li><a href="#tab_6_4" data-toggle="tab">Networking
+										Policy </a></li>
+								<li><a href="#tab_6_5" data-toggle="tab">Health Check
+										Routes </a></li>
+								<li><a href="#tab_6_6" data-toggle="tab">Volumes </a></li>
+								<li><a href="#tab_6_7" data-toggle="tab">Subnet </a></li>
+
+							</ul>
+						</div>
+						<div>
+							<!-- TAB CONTENT -->
+							<div class="tab-content" style="width: 97%; height: 100%">
+
+
+								<div class="tab-pane active" id="tab_6_1">
+									<div id="progress-bar">
+										<div class="stepcurrent">
+											<div class="circle">1</div>
+
+											<div class="title">Service</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">2</div>
+											<div class="title">Image Registory</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">3</div>
+											<div class="title">Run Settings</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">4</div>
+											<div class="title">Networking Policy</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">5</div>
+											<div class="title">Health Check Routes</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">6</div>
+											<div class="title">Volumes</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">7</div>
+											<div class="title">Subnet</div>
+										</div>
+									</div>
+
+									<!-- End Progress Bar -->
+									<br> <br> <br> <br>
+									<h3>Step: Service</h3>
+									<br>
+
+
+									<div class="col-md-6 col-sm-6 col-xs-6">
+									
+					<div  class="col-md-4 col-sm-4 col-xs-4">
+							<ul class="nav nav-tabs tabs-left">
+								<li class="active"><a href="#" data-toggle="tab">
+										Service</a></li>
+								<li><a href="#" data-toggle="tab"> Image
+										Registory </a></li>
+								<li><a href="#" data-toggle="tab">Run Settings </a></li>
+								<li><a href="#" data-toggle="tab">Networking
+										Policy </a></li>
+								<li><a href="#" data-toggle="tab">Health Check
+										Routes </a></li>
+								<li><a href="#" data-toggle="tab">Volumes </a></li>
+								<li><a href="#" data-toggle="tab">Subnet </a></li>
+
+							</ul>
+						</div>
+
+										<form action="#" id="step-1" class="form-horizontal">
+											<div class="form-body">
+
+												<!-- Service Name -->
+												<div class="form-group">
+													<label class="control-label col-md-4">Service Name
+														<span class="required"> * </span>
+													</label>
+													<div class="col-md-6">
+														<input type="text" id="serviceName" name="serviceName"
+															data-ng-model="field.serviceName" class="form-control" />
+														<span class="help-block"> Enter Service Name</span>
+													</div>
+												
+													<label class="control-label col-md-4 "> Type <span
+														class="required"> * </span>
+													</label>
+													<div class="col-md-6">
+														<select name="type" id="type" data-ng-model="field.type"
+															aria-required="true" aria-describedby="select-error"
+															class="form-control"
+															data-ng-init="getAllRelatedContainerTypes()"
+															data-ng-options="choice.name as choice.name  for choice in image">
+														</select> <span class="help-block"> Select Type</span>
+													</div>
+												</div>
+											</div>
+
+										</form>
+										<br>
+
+
+										<button type="button"
+											class="btn grey-salsa btn-outline pull-left"
+											data-dismiss="modal">Cancel</button>
+										<a class="btn green continue pull-right"
+											data-ng-disabled="vpcForm.$invalid">Next</a> <a
+											class="btn green back pull-right">Previous</a>
+									</div>
+								</div>
+
+								<div class="tab-pane fade" id="tab_6_2">
+
+									<div id="progress-bar">
+										<div class="step">
+											<div class="circle">1</div>
+
+											<div class="title">Service</div>
+										</div>
+										<div class="stepcurrent">
+											<div class="circle">2</div>
+											<div class="title">Image Registory</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">3</div>
+											<div class="title">Run Settings</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">4</div>
+											<div class="title">Networking Policy</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">5</div>
+											<div class="title">Health Check Routes</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">6</div>
+											<div class="title">Volumes</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">7</div>
+											<div class="title">Subnet</div>
+										</div>
+									</div>
+
+									<!-- End Progress Bar -->
+									<br> <br> <br> <br>
+									<h3>Step: Image Registory</h3>
+									<br>
+										<div class="col-md-6 col-sm-6 col-xs-6">
+									
+					<div  class="col-md-4 col-sm-4 col-xs-4">
+							<ul class="nav nav-tabs tabs-left">
+								<li ><a  data-toggle="tab">
+										Service</a></li>
+								<li class="active"><a  data-toggle="tab"> Image
+										Registory </a></li>
+								<li><a data-toggle="tab">Run Settings </a></li>
+								<li><a data-toggle="tab">Networking
+										Policy </a></li>
+								<li><a  data-toggle="tab">Health Check
+										Routes </a></li>
+								<li><a  data-toggle="tab">Volumes </a></li>
+								<li><a  data-toggle="tab">Subnet </a></li>
+
+							</ul>
+						</div>
+
+									<form action="#" id="step-1" class="form-horizontal">
+                  <div class="form-body">
+                    <div class="form-group">
+                      <label class="control-label col-md-4">Image Registry <span class="required"> * </span> </label>
+                      <div class="col-md-6">
+                       			<select	class="form-control ng-pristine ng-valid ng-touched" id="imageRegistry"  name="imageRegistry" data-ng-init="selectImageRegistry()"
+                       			 	  data-ng-model="field.imageRegistry" 
+                       			 	data-ng-options="choice.name as choice.name  for choice in imageregistry">
+									<option selected="selected" value="?"></option>
+								</select>
+								<span class="help-block"> Enter Image Registry</span> </div>
+                  
+                      <label class="control-label col-md-4">Image Repository <span class="required"> * </span> </label>
+                      <div class="col-md-6">
+                        <input type="text" id="imageRepository" name="imageRepository" data-ng-model="field.imageRepository"  class="form-control"  data-ng-blur="selectSummary(field)"/>
+                        <span class="help-block"> Enter Image Repository</span> </div>
+                   
+                     
+                   
+                      <label class="control-label col-md-4">Tag <span class="required"> * </span> </label>
+                      <div class="col-md-6">
+								<select class="form-control ng-pristine ng-valid ng-touched"
+									id="tag" data-ng-model="field.tag"
+									data-ng-options="choice.name as choice.name  for choice in reponames"><option
+										selected="selected" value="?"></option>
+								</select> 
+						 
+                    </div>
+                 
+                  
+                  
+                      <div class="col-md-6" data-ng-show="isImg">
+								<img src="smallload.gif">fetching from
+									{{field.imageRegistry}}
+						 
+                    </div>
+                  </div>
+                  </div>
+                   
+                </form>
+            
+										<br>
+
+									
+									
+									<button type="button"
+										class="btn grey-salsa btn-outline pull-left"
+										data-dismiss="modal">Cancel</button>
+									<a class="btn green continue pull-right"
+										data-ng-disabled="registryForm.$invalid">Next</a> <a
+										class="btn green back pull-right">Previous</a>
+
+
+								</div>
+								
+							<div class="tab-pane fade" id="tab_6_3">
+
+											<div id="progress-bar">
+										<div class="step">
+											<div class="circle">1</div>
+
+											<div class="title">Service</div>
+										</div>
+										<div class="step">
+											<div class="circle">2</div>
+											<div class="title">Image Registory</div>
+										</div>
+										<div class="stepcurrent">
+											<div class="circle">3</div>
+											<div class="title">Run Settings</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">4</div>
+											<div class="title">Networking Policy</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">5</div>
+											<div class="title">Health Check Routes</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">6</div>
+											<div class="title">Volumes</div>
+										</div>
+										<div class="stepinactive">
+											<div class="circle">7</div>
+											<div class="title">Subnet</div>
+										</div>
+									</div>
+
+									<!-- End Progress Bar -->
+									<br> <br> <br> <br>
+									<h3>Step: Run Settings</h3>
+									<br>
+
+
+  <div class="col-md-2 col-sm-3 col-xs-3">
+            <ul class="nav nav-tabs tabs-left">
+              <li  > <a  data-toggle="tab"> Service </a> </li>
+              <li> <a  data-toggle="tab"> Image Registory </a> </li>
+              <li class="active"> <a  data-toggle="tab"> Run Settings </a> </li>
+              <li> <a  data-toggle="tab"> Networking Policy </a> </li>
+              <li> <a  data-toggle="tab"> Health Check Routes </a> </li>
+              <li > <a  data-toggle="tab"> Volumes </a> </li>
+                            <li > <a  data-toggle="tab"> Subnet </a> </li>
+              
+            </ul>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-6"> 
+           
+  			<form action="#" id="step-1" class="form-horizontal">
+                  <div class="form-body">
+                    <div class="form-group">
+                      <label class="control-label col-md-4"> Run Command <span class="required"> * </span> </label>
+                      <div class="col-md-7">
+                        <input type="text"  id="run" name="run" data-ng-model="field.run" class="form-control" />
+                        <span class="help-block"> Enter Command</span> </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-md-4">Host Name <span class="required"> * </span> </label>
+                      <div class="col-md-7">
+                        <input type="text" id="hostName" name="hostName" data-ng-model="field.hostName" class="form-control"/>
+                        <span class="help-block"> Enter Host Name</span> </div>
+                    </div>
+	                     
+                    <!-- Environment Variables -->
+						<div class="form-group">
+							<label for="envirnament" class="control-label col-md-4">Environmental
+								VARS <span class="required"> * </span>
+							</label>
+							<div data-ng-repeat="field in env">
+								<div class="col-md-4">
+									<input type="text" class="form-control" data-ng-model="field.envkey"	
+										name="envkey">
+										 <span class="help-block"> Sample VAR </span>
+								</div>
+								<div class="col-md-4">
+									<input type="text" class="form-control"
+										data-ng-model="field.envvalue" name="envvalue">
+								</div>
+								<div class="col-md-4">
+									<button data-ng-click="removeEnvirnament($index)" class="btn btn-icon-only green"><i class="fa fa-minus"></i></button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm4">
+									<div class="col-sm-3">
+										<a class="btn green" data-ng-click="addNewEnvirnament()"><i class="fa fa-plus"></i></a>
+									</div>
+								</div>
+							</div>
+							 
+						</div>
+
+
+
+					</div>
+                </form>
+            <br>
+             
+            </div>
+
+<button type="button"
+										class="btn grey-salsa btn-outline pull-left"
+										data-dismiss="modal">Cancel</button>
+									<a class="btn green continue pull-right"
+										data-ng-disabled="registryForm.$invalid">Next</a> <a
+										class="btn green back pull-right">Previous</a>
+
+</div>
+
+								<div class="tab-pane fade" id="tab_6_4">
+									
+								
+											<modal title="Add Cloud Provider" visible="showModal">
+
+
+
+											<div id="push"></div>
+
+											</modal>
+										</div>
+								</div>
+
+								<div class="tab-pane fade" id="tab_6_5">
+									
+
+
+																		<button type="button"
+										class="btn grey-salsa btn-outline pull-left"
+										data-dismiss="modal">Cancel</button>
+									<button class="btn green pull-right " ng-click="processForm()">Finish</button>
+									<a class="btn green back pull-right">Previous</a>
+
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+</body>
+
+</html>

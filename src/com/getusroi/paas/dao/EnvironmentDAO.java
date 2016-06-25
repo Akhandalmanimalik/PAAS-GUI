@@ -37,6 +37,7 @@ public class EnvironmentDAO {
 	private static final String SELECT_ALL_ENVIRONMENTS_LIST = "SELECT * FROM envirnament";
 		private static final String INSERT_ENVIRONMENTS_QUERY = "INSERT INTO envirnament VALUES(?,?,?,?,?,?)";
 	 private final String GET_ENVIRONMENT_NAME_USING_ID_AND_TENANTID="select environment_name from environments where id =? and tenant_id=?";
+	 private final String 	UPDATE_ENVIRONMENT_TYPE_BYID="UPDATE  environments set environment_name=?,description =? where id=? ";
 	//private static final String SELECT_ADD_SERVICE_QUERY = "SELECT * FROM addService";
 	//private static final String READ_ENVIRONMENT_VARIABLE = "SELECT * FROM environment_variable WHERE serviceName =?";
 	//private static final String READ_ROUTE = "SELECT * FROM route WHERE serviceName =?";
@@ -87,6 +88,41 @@ public class EnvironmentDAO {
 		}
 
 	} // end of insertEnvironmentType method
+	public void updateEnvironmentType(EnvironmentType environmentType) throws DataBaseOperationFailedException {
+		LOGGER.debug(".updateEnvironmentType method of updateEnvironmentType");
+		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
+		Connection connection = null;
+		PreparedStatement pStatement = null;
+		try {
+			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
+			pStatement = (PreparedStatement) connection.prepareStatement(UPDATE_ENVIRONMENT_TYPE_BYID);
+			pStatement.setString(1, environmentType.getName());
+			pStatement.setString(2, environmentType.getDescription());
+			pStatement.setInt(3, environmentType.getId());
+
+			pStatement.executeUpdate();
+			LOGGER.debug("EnvironmentType Data is Updated");
+
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Unable to update environment type into db with data: " + environmentType);
+			throw new DataBaseOperationFailedException(
+					"Unable to update environment type into db with data : " + environmentType, e);
+		
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Unable to update data into environmenttype because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Unable to update data into environmenttype because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException(
+						"Unable to update environment type into db with data : " + environmentType, e);
+		} finally {
+			DataBaseHelper.dbCleanUp(connection, pStatement);
+		}
+
+	} // end of insertEnvironmentType method
 
 	/**
 	 * this method is used to get all environment type data from db
@@ -113,8 +149,12 @@ public class EnvironmentDAO {
 				while (resultSet.next()) {
 					
 					EnvironmentType environmentType = new EnvironmentType();
+					
+					
+					environmentType.setId(resultSet.getInt("id"));
 					environmentType.setName(resultSet.getString("environment_name"));
 					environmentType.setDescription(resultSet.getString("description"));
+					environmentType.setTenantId(resultSet.getInt("tenant_id"));
 					environmentTypesList.add(environmentType);
 				}
 			} else {

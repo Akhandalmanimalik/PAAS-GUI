@@ -33,6 +33,7 @@ public class ImageRegistryDAO {
 	 private final String GET_IMAGE_REGISTRY_ID_BY_NAME = "select id from image_registry where registory_name=?";
 	 private final String GET_IMAGE_REGISTRY_NAME_BY_ID_AND_TENANT_ID = "select registory_name from image_registry where tenant_id=? and id=?";
 	 private final String GET_IMAGE_REGISTRY_ID_BY_UserNAME = "select id from image_registry where  user_name=? and tenant_id=?";
+	 private final String UPDATE_IMAGE_REGISTRY_BY_ID="UPDATE  image_registry set registory_name=?,registory_url =?,version=?,user_name=?,password=?,tenant_id=? where id=?";
 	 /**
 	  * This method is used to store imageRegistry in db
 	  * @param imageRegistryVO : ImageRegistryVO 
@@ -75,6 +76,50 @@ public class ImageRegistryDAO {
 		}
 	}//end of method addImageRegistry
 	
+public int updateImageRegistry(ImageRegistry imageRegistryVO)throws DataBaseOperationFailedException
+{
+
+	
+	LOGGER.debug(".updateImageRegistry method of ImageRegistryDAO");
+	LOGGER.debug("Image DAO"+imageRegistryVO.getId()+"name "+imageRegistryVO.getName()+" url "+imageRegistryVO.getLocation()+" Version "+imageRegistryVO.getVersion()+" user name "+imageRegistryVO.getUser_name()+" password "+imageRegistryVO.getPassword()+" tenant id "+imageRegistryVO.getTenant_id());
+	DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+	Connection connection=null;
+	PreparedStatement pstmt=null;
+	int updateImage;
+	 try {
+		connection=connectionFactory.getConnection(MYSQL_DB);
+		pstmt = (PreparedStatement) connection.prepareStatement(UPDATE_IMAGE_REGISTRY_BY_ID);
+		pstmt.setString(1, imageRegistryVO.getName());
+		pstmt.setString(2, imageRegistryVO.getLocation());
+		pstmt.setString(3, imageRegistryVO.getVersion());
+		pstmt.setString(4, imageRegistryVO.getUser_name());
+		pstmt.setString(5, imageRegistryVO.getPassword());
+		pstmt.setInt(6, imageRegistryVO.getTenant_id());
+		pstmt.setInt(7, imageRegistryVO.getId());
+		
+		 updateImage =pstmt.executeUpdate()>0 ? 1 : 0;
+		
+		LOGGER.debug("image registry data updates successfully : "+imageRegistryVO);
+	} catch (ClassNotFoundException | IOException e) {
+		LOGGER.error("Unable to update the image registry in db : "+imageRegistryVO.toString(),e);
+		throw new DataBaseOperationFailedException("Unable to update the image registry in db : "+imageRegistryVO.toString(),e);
+	}catch(SQLException e) {
+		if(e.getErrorCode() == 1064) {
+			String message = "Unable to store the image registry in db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+			throw new DataBaseOperationFailedException(message, e);
+		} else if(e.getErrorCode() == 1146) {
+			String message = "Unable to update the image registry in db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+			throw new DataBaseOperationFailedException(message, e);
+		} else
+			throw new DataBaseOperationFailedException("Unable to update the image registry in db : "+imageRegistryVO.toString(),e);
+	} finally{
+		DataBaseHelper.close(pstmt);
+		DataBaseHelper.close(connection);
+	}
+return updateImage;
+}
+	
+	
 	/**
 	 * This method is used to get all image registry from db
 	 * @return List<ImageRegistryVO> : List of all image registry from db
@@ -94,6 +139,7 @@ public class ImageRegistryDAO {
 			result=stmt.executeQuery();
 			if(result !=null){
 				while(result.next()){
+					int imageId = result.getInt("id");
 					String name=result.getString("registory_name");
 					String location=result.getString("registory_url");
 					String version=result.getString("version");
@@ -101,8 +147,8 @@ public class ImageRegistryDAO {
 					String user_name=result.getString("user_name");
 					String password=result.getString("password");
 					int tenant_id = result.getInt("tenant_id");
-					LOGGER.debug("name : "+name+", location : "+location+", version : "+version+", user name : "+user_name+", password : "+password);
-					ImageRegistry imageRegistry=new ImageRegistry(name, location, version, user_name, password,tenant_id);
+					LOGGER.debug("name : "+name+", location : "+location+", version : "+version+", user name : "+user_name+", password : "+password+"Imageid : "+imageId+",");
+					ImageRegistry imageRegistry=new ImageRegistry(imageId,name, location, version, user_name, password,tenant_id);
 					imageRegistryList.add(imageRegistry);
 				}//end of while
 				LOGGER.debug("element in image registry list are : "+imageRegistryList);
@@ -150,6 +196,7 @@ public class ImageRegistryDAO {
 			result=pstmt.executeQuery();
 			if(result !=null){
 				while(result.next()){
+					int iamgeId =result.getInt("id");
 					String name = result.getString("registory_name");
 					String location = result.getString("registory_url");
 					 
@@ -158,7 +205,7 @@ public class ImageRegistryDAO {
 					String password = result.getString("password");
 					 
 					
-					 imageRegistry=new ImageRegistry(name, location, "", user_name, password,7);
+					 imageRegistry=new ImageRegistry(iamgeId,name, location, "", user_name, password,7);
 					
 				}//end of while
 				LOGGER.debug("element in image registry list are : "+imageRegistry);

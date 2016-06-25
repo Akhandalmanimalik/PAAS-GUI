@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -189,14 +190,16 @@ public class PoliciesService {
 		policiesDAO.removeResourceSelectionByRank(rank);
 	} // end of removeResourceSelectionByRank
 	
-	@POST
+	@PUT
 	@Path("/insertContainerTypes")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void insertContainerTypes(String containerTypesData,@Context HttpServletRequest req) throws DataBaseOperationFailedException, PoliciesServiceException {
+	@Produces(MediaType.TEXT_PLAIN)
+	public String insertContainerTypes(String containerTypesData,@Context HttpServletRequest req) throws DataBaseOperationFailedException, PoliciesServiceException {
 		logger.debug(".insertContainerTypes of PoliciesService s");
 		ObjectMapper mapper = new ObjectMapper();
 		ContainerTypes containerTypes = null;
 		RestServiceHelper restServiceHelper = new RestServiceHelper();
+		boolean isupdated=false;
 		try {
 			containerTypes = mapper.readValue(containerTypesData, ContainerTypes.class);
 			HttpSession session = req.getSession(true);
@@ -209,6 +212,11 @@ public class PoliciesService {
 		} catch (IOException e) {
 			logger.error("Error in reading data : " + containerTypesData + " using object mapper in insertScalingAndRecovery");
 			throw new PoliciesServiceException("Error in reading data : " + containerTypesData + " using object mapper in insertScalingAndRecovery");
+		}
+		if(isupdated==true){
+			return "success";
+		}else{
+			return "failed";
 		}
 	} // end of insertContainerTypes
 	
@@ -246,7 +254,7 @@ public class PoliciesService {
 	@GET
 	@Path("/deleteContainerTypes/{name}")
 	public void deleteContainerTypes(@PathParam("name") String name) throws DataBaseOperationFailedException {
-		logger.debug(".deleteContainerTypes of PoliciesService");
+		logger.debug(".deleteContainerTypes of PoliciesService"+name);
 		PoliciesDAO policiesDAO = new PoliciesDAO();
 		policiesDAO.removeContainerTypesByName(name);
 		

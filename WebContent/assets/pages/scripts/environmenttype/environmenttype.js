@@ -1,17 +1,21 @@
 var myenvironmenttype = angular.module('myenvironmenttype', []);
 
-myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
+myenvironmenttype.controller('MainCtrl', function ($scope,$http,srvShareData) {
 	
 	$scope.field = {};
 	
-	 $scope.showModal = false;
-	    $scope.toggleModal = function(){
-	        $scope.showModal = !$scope.showModal;
-	    };
-   
+	 
+	$scope.dataToShare = [];
+	  /**FOR SHARED THED DATA IN DIFFERERT PAGE */
+	  $scope.shareMyData = function (myValue) {
+
+	    $scope.dataToShare = myValue;
+	    srvShareData.addData($scope.dataToShare);
+	    
+	    window.location.href = "editenvironmenttypes12.html";
+	  };/**END OF SHARED SCOPE */
     
-    
- /*============ ENVIRONMENT TYPES REG=============*/ // DONE
+ /**============ ENVIRONMENT TYPES REG=============*/ // DONE
     
     $scope.regEnvironmentTypes = function() {
     	 
@@ -29,9 +33,9 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
     			data : data
     		}));
     	});
-    }; 
+    }; /**END OF THE INSERT ENVIRONMENT TYPE */
     
-    /*==================POPULATE DATA TO TABLE===================*/ // DONE
+    /**==================POPULATE DATA TO TABLE===================*/ // DONE
     
  	 $scope.selectEnvironmentTypes = function() {
  		 
@@ -44,7 +48,7 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
     	response.error(function(data, status, headers, config) {
                 alert("Error in Fetching Data");
         });
-    };   
+    };  /**END OF THE SELECT THE DATA FROM ENVIRONMENT TYPE */ 
     
 /*    $scope.selectEnvironmentTypes = function() {
 		 //console.log("hiii");
@@ -69,7 +73,7 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
        });
    }; 
 */
-    /*=================== delete*====================*/ // DONE
+    /**=================== delete*====================// DONE */ 
    
     $scope.deleteEnvironmentTypes = function(data) {
      	var response = $http.post('/paas-gui/rest/environmentTypeService/deleteEnvironmentByName/'+data);
@@ -80,7 +84,7 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
                  alert("Error in Fetching Data");
          });
      	
-     };
+     };/**END OF THE DELETE ENVIRONMENT */
     
      //Done
     
@@ -133,7 +137,7 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
     		}));
     	});
     }; */
- 
+ /**SELECT SERVICE NAME IN TAG IN DROPDOWN OPTION */
  $scope.selectappfortag = function(reponame) {
 	 $scope.field.tag;
 	 $scope.env;
@@ -153,7 +157,7 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
 				  // alert("==="+$scope.env);
 				   // alert("====="+angular.Json(item.env));
  }
-});
+});/**END OF TNE SELECT TAG FOR OPTION */
 	
 	/*response.success(function(data){
 		alert("data "+data);
@@ -166,8 +170,8 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
           alert("Error in Fetching Data");
   });*/
 };
-    
- $scope.selectServices = function() {  // Done
+    /**GET ALL APPLICATION SERVICES IN THE TABLE */
+ $scope.selectServices = function() {  
    	var response = $http.get('/pass-gui/rest/applicationService/getAllApplicationService');
    	response.success(function(data){
    		
@@ -177,10 +181,10 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
    	response.error(function(data, status, headers, config) {
                alert("Error in Fetching Data");
        });
-   };
+   };/**END OF THE APPLICATION SERVICE SCOPE*/
  
    
- /*===============Add Environments validation==============*/
+ /**===============Add Environments validation==============*/
    
    $scope.environmentTypesValidation = function(environment) {
    	
@@ -202,66 +206,93 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http) {
    			data : data
    		}));
    	});
-   }; //end of validation
+   }; /**END OF THE VALIDATION FOR ENVIRONMENT TYPES NAME */
    
 
-});      /*===============end of controllers=======================*/
+}); /** END OF THE CONTROLLER OF-- ('MainCtrl')---*/
 
-/*POPULATE DATA TO TABLE*/
 
+/** FOR UPDATE PAGE ,2ND CONTROLLER START */
+myenvironmenttype.controller('environmentUpdateCtrl', function($scope, srvShareData,$http) {
 	
-
-
-
-/*=============directive starts================*/
-
-myenvironmenttype.directive('modal', function () {
-	return {
-		template : '<div class="modal fade">'
-				+ '<div class="modal-dialog">'
-				+ '<div class="modal-content">'
-				+ '<div class="modal-header">'
-				+ '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'
-				+ '<h4 class="modal-title">{{ title }}</h4>'
-				+ '</div>'
-				+ '<div class="modal-body" ng-transclude></div>'
-				+ '</div>' + '</div>' + '</div>',
-		restrict : 'E',
-		transclude : true,
-		replace : true,
-		scope : true,
-		link : function postLink(scope, element, attrs) {
-			scope.title = attrs.title;
-
-			scope.$watch(attrs.visible, function(value) {
-				if (value == true)
-					$(element).modal('show');
-				else
-					$(element).modal('hide');
-			});
-
-			$(element).on('shown.bs.modal', function() {
-				scope.$apply(function() {
-					scope.$parent[attrs.visible] = true;
-				});
-			});
-
-			$(element).on('hidden.bs.modal', function() {
-				scope.$apply(function() {
-					scope.$parent[attrs.visible] = false;
-				});
-			});
+	$scope.sharedData = srvShareData.getData();
+	$scope.field = $scope.sharedData[0];
+	/** UPDATE FUNCTION USED IN UPDATE PAGE  ON SUBMIT */
+	$scope.updateEnvironmentType = function(field){
+		console.log("inside updateEnvironmentType Function calling ");
+		var userData = JSON.stringify($scope.field);
+		var res = $http.put('/paas-gui/rest/environmentTypeService/updateEnvironmentType/', userData);
+		  console.log(userData);
+		  res.success(function(data, status, headers, config) {
+			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+			  if(data!='failed'){
+					console.log("login success");
+					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+					window.location.href = "environmenttypes.html";
+				}else{
+					console.log("Login Error Please Enter Proper Details");
+					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
+					 window.location.href = "editenvironmenttypes12.html"; 
+				}
 			
-			$('.continue').click(function() {
-				$('.nav-tabs > .active').next('li').find('a').trigger('click');
-			});
-			$('.back').click(function() {
-				$('.nav-tabs > .active').prev('li').find('a').trigger('click');
-			});
-			$('.cancel').click(function() {
-				$('.nav-tabs > .active').cancel('li').find('a').trigger('click');
-			});
-			
-		}
-	};
-});
+		  });
+		  res.error(function(data, status, headers, config) {
+			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+		    alert("failure message: " + JSON.stringify({
+		      data : data
+		    }));
+		  });
+	}
+/**ENVIRONMENT VALIDATION IN UPDAGTE PAGE */
+	 $scope.environmentTypesValidation1 = function(environment) {
+		   	
+		   	var res = $http.get('/paas-gui/rest/environmentTypeService/checknvironmentType/'+environment);
+
+		   	res.success(function(data, status, headers, config) {
+		   		console.log("data"+data);
+		   		
+		  		  if(data == 'success'){
+		  	    	document.getElementById('environmenterr').innerHTML="data exist enter different name";
+		  	    	document.getElementById("myenvbtn").disabled = true;
+		  		  }
+		  		  else{
+		  			 document.getElementById('environmenterr').innerHTML="";
+		  			document.getElementById("myenvbtn").disabled =false;
+		  		  }
+		   	});
+		   	res.error(function(data, status, headers, config) {
+		   		alert("failure message: " + JSON.stringify({
+		   			data : data
+		   		}));
+		   	});
+		   };
+});/**END OF THE UPDATE CONTROLLER --('environmentUpdateCtrl')--*/
+
+
+/**THE 3RD CONTROLLER FOR SERVICE TO SHARE THE DATA IN UPDATE PAGE */
+myenvironmenttype.service('srvShareData', function($window) {
+    var KEY = 'App.SelectedValue';
+
+    var addData = function(newObj) {
+        var mydata = [];
+       
+        mydata.push(newObj);
+        $window.sessionStorage.setItem(KEY, JSON.stringify(mydata));
+    };
+
+    var getData = function(){
+        var mydata = $window.sessionStorage.getItem(KEY);
+        if (mydata) {
+            mydata = JSON.parse(mydata);
+        }
+        return mydata || [];
+    };
+
+    return {
+        addData: addData,
+        getData: getData
+    };
+});/**END OF THE SERVICE CONTROLLER--('srvShareData')-- */
+
+
+

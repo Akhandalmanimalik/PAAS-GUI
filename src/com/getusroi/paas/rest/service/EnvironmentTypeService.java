@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -22,9 +23,13 @@ import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.dao.EnvironmentDAO;
+import com.getusroi.paas.dao.ImageRegistryDAO;
 import com.getusroi.paas.rest.service.exception.EnvironmentTypeServiceException;
+import com.getusroi.paas.rest.service.exception.ImageRegistryServiceException;
+import com.getusroi.paas.sdn.service.impl.SDNServiceImplException;
 import com.getusroi.paas.vo.EnvironmentType;
 import com.getusroi.paas.vo.Environments;
+import com.getusroi.paas.vo.ImageRegistry;
 import com.google.gson.Gson;
 
 /**
@@ -133,7 +138,38 @@ public class EnvironmentTypeService {
 	} // end of insertEnvironmentsData method
 	
 	
-
+	@PUT
+	@Path("/updateEnvironmentType")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String updateEnvironmentType(String updateEnviromentType,@Context HttpServletRequest req) throws DataBaseOperationFailedException, SDNServiceImplException, ImageRegistryServiceException{
+		LOGGER.debug(".update EnvironmentType method of EnvironmentTypeService"+updateEnviromentType);
+		EnvironmentDAO environmentDAO = new EnvironmentDAO();
+		ObjectMapper mapper = new ObjectMapper();
+		
+		
+		
+		try {
+			//HttpSession session =req.getSession();
+			
+			EnvironmentType invironmentType = mapper.readValue(updateEnviromentType, EnvironmentType.class);
+	
+				
+			environmentDAO.updateEnvironmentType(invironmentType);
+			String username = invironmentType.getName();
+			String pass =invironmentType.getDescription();		
+			
+			LOGGER.debug("username : "+username+ " pass: "+pass);			
+			
+		
+	return "Success";
+		} catch (IOException e) {
+			LOGGER.error("Error in reading value from image registry  : "+updateEnviromentType+" using object mapper in addImageRegistry",e);
+			throw new ImageRegistryServiceException("Error in reading value from image registry  : "+updateEnviromentType+" using object mapper in addImageRegistry");
+		}
+	}
+	
+	
 	/**
 	 * To check environment name exist
 	 * @param envName

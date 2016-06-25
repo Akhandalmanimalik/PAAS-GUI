@@ -1,45 +1,78 @@
 var myimageregistry = angular.module('myimageregistry', []);
 
-myimageregistry.controller('MainCtrl', function ($scope,$http) {
+myimageregistry.controller('MainCtrl', function ($scope,$http,srvShareData) {
 	
 	$scope.field = {};
 	
-    $scope.showModal = false;
-    $scope.toggleModal = function(){
-        $scope.showModal = !$scope.showModal;
-    };
+	 
+	    
+	    $scope.dataToShare = [];
+		  
+	    /** USED FOR ADD DATA TO SHARE SCOPE TO TRANSFER IN ANOTHER PAGE */
+		  $scope.shareMyData = function (myValue) {
+
+		    $scope.dataToShare = myValue;
+		    srvShareData.addData($scope.dataToShare);
+		    
+		    window.location.href = "editImageRegistry12.html";
+		  };
     
-    
- /*============ ImageRegistry REG=============*/
-    
+ 
+		  /** START OF ADD REGISTRY */
     $scope.regImageRegistry = function() {
-    
+    	
     	console.log($scope.field);
     	var userData = JSON.stringify($scope.field);
-    	var response = $http.post('/paas-gui/rest/imageRegistry/addImageRegistry', userData);
+    	var response = $http.post('/paas-gui/rest/imageRegistry/addImageRegistry/', userData);
+     
     	
-    	JSON.stringify(response);
-    	
-    	 
+    	response.success(function(data, status, headers, config) {
+			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+				console.log("userData : "+userData);
+			  $scope.message = data;
+			  window.location.href="/html/imageregistry.html";
+			  /* if(data!='failed'){
+					console.log("login success");
+					document.location.href = '/paas-gui/html/acl.html'; also working 
+					window.location.href = "imageregistry.html";
+				}else{
+					console.log("Login Error Please Enter Proper Details");
+					document.location.href = '/paas-gui/html/acl_wizard.html'; also working
+					 window.location.href = "editImageRegistry12.html"; 
+				}
+			*/
+		  });
+    	 //test
     
-    	console.log(userData);
+   
 
-    	response.success(function(data, status) {
+    /*	response.success(function(data, status) {
+    		console.log("data is coming "+data);
+    		console.log("coming after succress");
     		alert("coming to success");
     		$scope.message = data;
     	
-    		window.location.href="/html/imageregistry.html";
-    		/*window.location.href='http://localhost:8080/paas-gui/html/imageregistry.html';*/
-    	});
-    	response.error(function(data, status, headers, config) {
+    		
+    		window.location.href='http://localhost:8080/paas-gui/html/imageregistry.html';
+    	});*/
+    	/*response.error(function(data, status, headers, config) {
     		alert("failure message: " + JSON.stringify({
     			data : data
     		}));
     	});
+    	*/
+    	
+    	response.error(function(data, status, headers, config) {
+			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+		    alert("failure message: " + JSON.stringify({
+		      data : data
+		    }));
+		  });
+    	
     }; 
+    /** END OF ADD REGISTRY */
     
-    
-    /*==================POPULATE DATA TO TABLE===================*/
+    /**======== POPULATE DATA TO TABLE USING selectImageRegistry===============*/
     
  	 $scope.selectImageRegistry = function() {
     	var response = $http.get('/paas-gui/rest/imageRegistry/getAllImageRegistry');
@@ -51,9 +84,9 @@ myimageregistry.controller('MainCtrl', function ($scope,$http) {
                 alert("Error in Fetching Data of selectImageRegistry");
         });
     };           
-
-    /*=================== delete*====================*/
-   
+    /** END selectImageRegistry IMAGE REGISTRY */
+    
+   /**START DELETE IMAGE REGISTRY*/
     $scope.deleteImageRegistry = function(data,username) {
     	alert(username);
     	alert("coming delete"+username);
@@ -67,11 +100,22 @@ myimageregistry.controller('MainCtrl', function ($scope,$http) {
          });
      	
      };
+     /**END DELETE IMAGE REGISTRY*/
+     
+   /*  $scope.updateImageRegistry=function(application){
+    	 console.log("inside the application functon ");
+    	 console.log("application --> "+application);
+    	 $scope.dataToShare = application;
+    	 console.log("application --> "+$scope.dataToShare);
+ 	    srvShareData.addData($scope.dataToShare);
+ 	     window.location.href = "editImageRegistry.html"; 
+    	 
+     };*/
     
-     /*===============Image registry validation==============*/
+     /**===============START Image registry validation==============*/
 	    $scope.registryValidation = function(name) {
 	    	
-	    	
+	    	console.log("coming");
 		  	 console.log("<<<<<< acl validation >>>>>>>>>" +name);
 		  	  var res = $http.get('/paas-gui/rest/imageRegistry/checkimageRegistry/'+name);
 		  	  res.success(function(data, status, headers, config) {
@@ -98,9 +142,9 @@ myimageregistry.controller('MainCtrl', function ($scope,$http) {
 		  	  });
 		  	 
 		  	};
-		    /*===============END Image registry validation==============*/
+		    /**===============END Image registry validation==============*/
     
-    
+		  	/**===============START Image registry validation==============*/
 		  	$scope.registUsernameValidation = function(userName) {
 		    	
 		    	
@@ -129,52 +173,140 @@ myimageregistry.controller('MainCtrl', function ($scope,$http) {
 			  	  });
 			  	 
 			  	};
-			    /*===============END Image registry validation==============*/
+			    /**===============END Image registry validation==============*/
 		  	
     
-  });   /*================end of controllers===================*/
+  });   /**================end of controllers===================*/
 
 
 
+/**
+ * This imageUpdateCtrl is used in Image Update page for update the data.
+ */
 
-/*================directive starts=================*/
+/**START THE IMAGE UPDATE CTRL */
 
-myimageregistry.directive('modal', function () {
-	return {
-		template : '<div class="modal fade">'
-				+ '<div class="modal-dialog">'
-				+ '<div class="modal-content">'
-				+ '<div class="modal-header">'
-				+ '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'
-				+ '<h4 class="modal-title">{{ title }}</h4>'
-				+ '</div>'
-				+ '<div class="modal-body" ng-transclude></div>'
-				+ '</div>' + '</div>' + '</div>',
-		restrict : 'E',
-		transclude : true,
-		replace : true,
-		scope : true,
-		link : function postLink(scope, element, attrs) {
-			scope.title = attrs.title;
+myimageregistry.controller('imageUpdateCtrl', function($scope, srvShareData,$http) {
+	
+	$scope.sharedData = srvShareData.getData();
+	$scope.field = $scope.sharedData[0];
+	
+	$scope.updateImageRegistry = function(field){
+		console.log("inside updateImageRegistry Function calling ");
+		var userData = JSON.stringify($scope.field);
+		var res = $http.put('/paas-gui/rest/imageRegistry/updateImageRegistry/', userData);
+		  console.log(userData);
+		  res.success(function(data, status, headers, config) {
+			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+			  if(data!='failed'){
+					console.log("login success");
+					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+					window.location.href = "imageregistry.html";
+				}else{
+					console.log("Login Error Please Enter Proper Details");
+					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
+					 window.location.href = "editImageRegistry12.html"; 
+				}
+			
+		  });
+		  res.error(function(data, status, headers, config) {
+			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+		    alert("failure message: " + JSON.stringify({
+		      data : data
+		    }));
+		  });
+	}
+	
+	
+	 $scope.registryValidation1 = function(name) {
+	    	
+	    	alert("comingREG2");
+		  	 console.log("<<<<<< acl validation >>>>>>>>>" +name);
+		  	  var res = $http.get('/paas-gui/rest/imageRegistry/checkimageRegistry/'+name);
+		  	  res.success(function(data, status, headers, config) {
+		  		  
+		  		if(data == 'success'){
+		   	    	document.getElementById('registryerror').innerHTML="data exist enter different name";
+		   	    	document.getElementById("registrybtn").disabled = true;
+		   	    	
+		   		  }
+		   		  else{
+		   			 document.getElementById('registryerror').innerHTML="";
+		   			 
+		   			/* if(document.getElementById('location').value !=''){
+		   				 
+		   			document.getElementById("registrybtn").disabled =false;
+		   			 }*/
+		   		  }
+	 	  		 
+		  	  });
+		  	  res.error(function(data, status, headers, config) {
+		  	    console.log("failure message: " + JSON.stringify({
+		  	      data : data
+		  	    }));
+		  	  });
+		  	 
+		  	};
+		  	
+		  	$scope.registUsernameValidation1 = function(userName) {
+		    	
+		    	
+			  	 console.log("<<<<<< acl validation >>>>>>>>>" +name);
+			  	  var res = $http.get('/paas-gui/rest/imageRegistry/checkingUserName/'+userName);
+			  	  res.success(function(data, status, headers, config) {
+			  		  
+			  		if(data == 'success'){
+			   	    	document.getElementById('userNameerror').innerHTML="data exist enter different name";
+			   	    	document.getElementById("registrybtn").disabled = true;
+			   	    	
+			   		  }
+			   		  else{
+			   			 document.getElementById('userNameerror').innerHTML="";
+			   			 if(document.getElementById('location').value !=''){
+			   				 
+			   			document.getElementById("registrybtn").disabled =false;
+			   			 }
+			   		  }
+		 	  		 
+			  	  });
+			  	  res.error(function(data, status, headers, config) {
+			  	    alert("failure message: " + JSON.stringify({
+			  	      data : data
+			  	    }));
+			  	  });
+			  	 
+			  	};
+});  /**END THE IMAGE UPDATE CTRL */
 
-			scope.$watch(attrs.visible, function(value) {
-				if (value == true)
-					$(element).modal('show');
-				else
-					$(element).modal('hide');
-			});
+/***
+ * The service Controller for data can be shared in different page ,
+ * The srvShareData should be declared for get and set data,
+ */
 
-			$(element).on('shown.bs.modal', function() {
-				scope.$apply(function() {
-					scope.$parent[attrs.visible] = true;
-				});
-			});
 
-			$(element).on('hidden.bs.modal', function() {
-				scope.$apply(function() {
-					scope.$parent[attrs.visible] = false;
-				});
-			});
-		}
-	};
+/**START THE IMAGE SERVICE SHARED CTRL */
+myimageregistry.service('srvShareData', function($window) {
+    var KEY = 'App.SelectedValue';
+
+    var addData = function(newObj) {
+        var mydata = [];
+       
+        mydata.push(newObj);
+        $window.sessionStorage.setItem(KEY, JSON.stringify(mydata));
+    };
+
+    var getData = function(){
+        var mydata = $window.sessionStorage.getItem(KEY);
+        if (mydata) {
+            mydata = JSON.parse(mydata);
+        }
+        return mydata || [];
+    };
+
+    return {
+        addData: addData,
+        getData: getData
+    };
 });
+/**END THE IMAGE SERVICE SHARED CTRL */
+

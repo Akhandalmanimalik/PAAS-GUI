@@ -601,8 +601,10 @@ public class PoliciesDAO {
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				ContainerTypes containerTypes = new ContainerTypes();
+				containerTypes.setId(resultSet.getInt("id"));
 				containerTypes.setName(resultSet.getString("container_type"));
 				containerTypes.setMemory(resultSet.getInt("memory"));
+				containerTypes.setTenantId(resultSet.getInt("tenan_id"));
 				containerTypes.setDescription(resultSet.getString("description"));
 				containerTypesList.add(containerTypes);
 			}
@@ -674,7 +676,7 @@ public class PoliciesDAO {
 	} // end of getAllContainerTypesData
 	
 	public void removeContainerTypesByName(String name) throws DataBaseOperationFailedException {		
-		logger.debug(".removeContainerTypesByName of PoliciesDAO");
+		logger.debug(".removeContainerTypesByName of PoliciesDAO"+name);
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;

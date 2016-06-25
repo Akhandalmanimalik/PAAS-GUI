@@ -4,6 +4,14 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ImageRegistry {
+	private int id;
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	private String name;
 	private String location;
@@ -62,9 +70,10 @@ public class ImageRegistry {
 		this.tenant_id = tenant_id;
 	}
 
-	public ImageRegistry(String name, String location, String version,
+	public ImageRegistry(int id, String name, String location, String version,
 			String user_name, String password, int tenant_id) {
 		super();
+		this.id=id;
 		this.name = name;
 		this.location = location;
 		this.version = version;
@@ -73,11 +82,12 @@ public class ImageRegistry {
 		this.tenant_id = tenant_id;
 	}
 
+	
+
 	@Override
 	public String toString() {
-		return "ImageRegistry [name=" + name + ", location=" + location
-				+ ", version=" + version + ", user_name=" + user_name
-				+ ", password=" + password + ", tenant_id=" + tenant_id + "]";
+		return "ImageRegistry [id=" + id + ", name=" + name + ", location=" + location + ", version=" + version
+				+ ", user_name=" + user_name + ", password=" + password + ", tenant_id=" + tenant_id + "]";
 	}
 
 	public ImageRegistry() {

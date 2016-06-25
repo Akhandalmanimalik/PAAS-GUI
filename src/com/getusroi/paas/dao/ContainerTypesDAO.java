@@ -14,6 +14,8 @@ import com.getusroi.paas.db.helper.DataBaseConnectionFactory;
 import com.getusroi.paas.db.helper.DataBaseHelper;
 import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
+import com.getusroi.paas.vo.ContainerTypes;
+import com.getusroi.paas.vo.EnvironmentType;
 import com.mysql.jdbc.PreparedStatement;
 
 /**
@@ -27,6 +29,7 @@ public class ContainerTypesDAO {
 	public static final String GET_CONTAINER_ID_BY_CONTAINER_NAME_QUERY = "SELECT id FROM container_type where container_type=?";
 	
 	public static final String GET_CONTAINER_NAME_BY_CONTIANER_ID = "SELECT * FROM container_type where id=?";
+	public static final String UPDATE_CONTAINER_TYPE_BYID="UPDATE  container_type set container_type=?,description =?,memory=? where id=?";
 
 	
 	/**
@@ -112,6 +115,50 @@ public class ContainerTypesDAO {
 
 		return containerType;
 	} // end of getAllContainerTypesData
+	
+	
+	public int updateContainerType(ContainerTypes containerTypes) throws DataBaseOperationFailedException {
+		logger.debug("(.)updateContainerType method of ContainerTypesDAO");
+		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
+		Connection connection = null;
+		PreparedStatement pStatement = null;
+		int updatedContainer=0;
+		try {
+			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
+			pStatement = (PreparedStatement) connection.prepareStatement(UPDATE_CONTAINER_TYPE_BYID);
+			pStatement.setString(1, containerTypes.getName());
+			pStatement.setString(2, containerTypes.getDescription());
+			pStatement.setInt(3, containerTypes.getMemory());
+			pStatement.setInt(4, containerTypes.getId());
+
+		 updatedContainer =	pStatement.executeUpdate();
+		logger.debug("updatedContainer : "+updatedContainer);
+			logger.debug("EnvironmentType Data is Updated");
+
+		} catch (ClassNotFoundException | IOException e) {
+			logger.error("Unable to update Container type into db with data: " + containerTypes);
+			throw new DataBaseOperationFailedException(
+					"Unable to update Container type into db with data : " + containerTypes, e);
+		
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Unable to update data into Containertype because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Unable to update data into Containertype because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException(
+						"Unable to update Container type into db with data : " + containerTypes, e);
+		} finally {
+			DataBaseHelper.dbCleanUp(connection, pStatement);
+		}
+		return updatedContainer;
+	} // end of insertEnvironmentType method
+
+	
+	
+	
 }
 
 

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -37,184 +38,233 @@ import com.getusroi.paas.sdn.service.impl.SDNServiceWrapperImpl;
 import com.getusroi.paas.vo.ImageRegistry;
 import com.google.gson.Gson;
 
-
 @Path("/imageRegistry")
 public class ImageRegistryService {
-	 static final Logger logger = LoggerFactory.getLogger(ImageRegistryService.class);
+	static final Logger logger = LoggerFactory.getLogger(ImageRegistryService.class);
 
-	
 	@POST
 	@Path("/addImageRegistry")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String addImageRegistry(String imageRegistryData,@Context HttpServletRequest req) throws DataBaseOperationFailedException, SDNServiceImplException, ImageRegistryServiceException{
+	public String addImageRegistry(String imageRegistryData, @Context HttpServletRequest req)
+			throws DataBaseOperationFailedException, SDNServiceImplException, ImageRegistryServiceException {
 		logger.debug(".addImageRegistry method of ImageRegistryService");
 		ImageRegistryDAO imageRegistryDAO = new ImageRegistryDAO();
 		ObjectMapper mapper = new ObjectMapper();
-		SDNInterface sdnService=new SDNServiceWrapperImpl();
-		String responseMessage=null;
+		SDNInterface sdnService = new SDNServiceWrapperImpl();
+		String responseMessage = null;
 		RestServiceHelper restServcHelper = new RestServiceHelper();
 		try {
 			ImageRegistry imageRegistry = mapper.readValue(imageRegistryData, ImageRegistry.class);
 			HttpSession session = req.getSession(true);
-			if(session != null && imageRegistry != null)
-				imageRegistry.setTenant_id(restServcHelper.convertStringToInteger(session.getAttribute("id")+""));
+			if (session != null && imageRegistry != null)
+				imageRegistry.setTenant_id(restServcHelper.convertStringToInteger(session.getAttribute("id") + ""));
 			imageRegistryDAO.addImageRegistry(imageRegistry);
 			String username = imageRegistry.getUser_name();
 			String pass = imageRegistry.getPassword();
 			String url = imageRegistry.getLocation();
-			
-			logger.debug("username : "+username+ " pass: "+pass+ " url : "+url+" id "+session.getAttribute("id"));			
-			boolean response=sdnService.getUserDetailsRegistry(imageRegistry);
-			if(response)
-				responseMessage= "add Image Registry is successful in sdn";
+
+			logger.debug("username : " + username + " pass: " + pass + " url : " + url + " id "
+					+ session.getAttribute("id"));
+			boolean response = sdnService.getUserDetailsRegistry(imageRegistry);
+			if (response)
+				responseMessage = "add Image Registry is successful in sdn";
 			else
-				responseMessage="Unable to add Image Registry in sdn";
+				responseMessage = "Unable to add Image Registry in sdn";
 		} catch (IOException e) {
-			logger.error("Error in reading value from image registry  : "+imageRegistryData+" using object mapper in addImageRegistry",e);
-			throw new ImageRegistryServiceException("Error in reading value from image registry  : "+imageRegistryData+" using object mapper in addImageRegistry");
+			logger.error("Error in reading value from image registry  : " + imageRegistryData
+					+ " using object mapper in addImageRegistry", e);
+			throw new ImageRegistryServiceException("Error in reading value from image registry  : " + imageRegistryData
+					+ " using object mapper in addImageRegistry");
 		}
 		return responseMessage;
-	}//end of method addImageRegistry
+	}// end of method addImageRegistry
+
+	@PUT
+	@Path("/updateImageRegistry")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String updateImageRegistry(String imageRegistryData, @Context HttpServletRequest req)
+			throws DataBaseOperationFailedException, SDNServiceImplException, ImageRegistryServiceException {
+		logger.debug(".update ImageRegistry method of ImageRegistryService" + imageRegistryData);
+		ImageRegistryDAO imageRegistryDAO = new ImageRegistryDAO();
+		ObjectMapper mapper = new ObjectMapper();
+
+		int imageUpdate;
+
+			try {
+
+				ImageRegistry imageRegistry = mapper.readValue(imageRegistryData, ImageRegistry.class);
+
+				 imageUpdate =imageRegistryDAO.updateImageRegistry(imageRegistry);
+				
+				logger.debug("error-_pppppppppppppppppppppppppppppppppppppp_________________-----------------------------");
+				
+			} catch (IOException e) {
+				logger.error("Error in reading value from image registry  : " + imageRegistryData
+						+ " using object mapper in addImageRegistry", e);
+				throw new ImageRegistryServiceException("Error in reading value from image registry  : "
+						+ imageRegistryData + " using object mapper in addImageRegistry");
+			}
+			
+			if(imageUpdate==1){
+				return "success";
+			}
+			return "failed";
+
+		}
+		
+
+		
+	
 
 	@GET
 	@Path("/getAllImageRegistry")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAllImageRegistry(@Context HttpServletRequest req) throws DataBaseOperationFailedException{
+	public String getAllImageRegistry(@Context HttpServletRequest req) throws DataBaseOperationFailedException {
 		logger.debug(".selectImageRegistry method of ImageRegistryService");
-		ImageRegistryDAO imageRegistryDAO=new ImageRegistryDAO();
-		RestServiceHelper restServcHelper= new RestServiceHelper();
+		ImageRegistryDAO imageRegistryDAO = new ImageRegistryDAO();
+		RestServiceHelper restServcHelper = new RestServiceHelper();
 		HttpSession session = req.getSession(true);
-		if(session != null){
-			int tenantId = restServcHelper.convertStringToInteger(session.getAttribute("id")+"");
-			List<ImageRegistry> imageRegistryList=imageRegistryDAO.getAllImageRegistry(tenantId);
+		if (session != null) {
+			int tenantId = restServcHelper.convertStringToInteger(session.getAttribute("id") + "");
+			List<ImageRegistry> imageRegistryList = imageRegistryDAO.getAllImageRegistry(tenantId);
 			Gson gson = new Gson();
-			String imageRegistryListInJSON=gson.toJson(imageRegistryList);
-			
-			return imageRegistryListInJSON;	
-		}else{
+			String imageRegistryListInJSON = gson.toJson(imageRegistryList);
+
+			return imageRegistryListInJSON;
+		} else {
 			return null;
 		}
-		
-		
-	}//end of method getAllImageRegistry
-	
+
+	}// end of method getAllImageRegistry
+
 	@GET
 	@Path("/deleteImageRegistry/{imageName}/{userName}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String deleteImageRegistry(@PathParam("imageName") String imageName,@PathParam("userName") String userName) throws DataBaseOperationFailedException{
+	public String deleteImageRegistry(@PathParam("imageName") String imageName, @PathParam("userName") String userName)
+			throws DataBaseOperationFailedException {
 		logger.debug(".deleteImageRegistry method of ImageRegistryService");
-		ImageRegistryDAO imageRegistryDAO=new ImageRegistryDAO();
-		imageRegistryDAO.deleteImageRegistryByNameAndUserName(imageName, userName);	
-		return "delete successful for image registry with image name : "+imageName+" and user name : "+userName;
-	}//end of method deleteImageRegistry
-	
+		ImageRegistryDAO imageRegistryDAO = new ImageRegistryDAO();
+		imageRegistryDAO.deleteImageRegistryByNameAndUserName(imageName, userName);
+		return "delete successful for image registry with image name : " + imageName + " and user name : " + userName;
+	}// end of method deleteImageRegistry
+
 	@POST
 	@Path("/getDockerHubRegistryTags")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getApplicationSummary(String repositoryName,@Context HttpServletRequest req) throws DataBaseOperationFailedException, ApplicationServiceException{
-		logger.debug(".getApplicationSummary method of ApplicationService "+repositoryName);
-		JSONObject jsonObject =new JSONObject(repositoryName);
-		RestServiceHelper restServcHelper= new RestServiceHelper();
+	public String getApplicationSummary(String repositoryName, @Context HttpServletRequest req)
+			throws DataBaseOperationFailedException, ApplicationServiceException {
+		logger.debug(".getApplicationSummary method of ApplicationService " + repositoryName);
+		JSONObject jsonObject = new JSONObject(repositoryName);
+		RestServiceHelper restServcHelper = new RestServiceHelper();
 		ImageRegistryDAO imageRegistryDAO = new ImageRegistryDAO();
 		HttpSession session = req.getSession(true);
-		
-		int tenantId = restServcHelper.convertStringToInteger(session.getAttribute("id")+"");
-		ImageRegistry imageRegistry = imageRegistryDAO.getImageRegistryByName(jsonObject.getString("imageRegistry"),tenantId);
-		logger.debug("imageRegistry>>>>>>>>>>>>>>>>>> "+imageRegistry);
-		String response=null;
-		if(imageRegistry != null ){
-			
-			String baseURL = PAASConstant.HTTPS_PROTOCOL_KEY+PAASConstant.IMAGE_RESISTRY_NAME+ PAASConstant.ALL_REPOSTORY_KEY+imageRegistry.getLocation()+PAASConstant.ALL_TAGS_KEY;
-			logger.debug(">>>>>>>>>>>>>>>>>>>>>>>>"+baseURL);
-			String authentication=imageRegistry.getUser_name() + ":" + imageRegistry.getPassword();
+
+		int tenantId = restServcHelper.convertStringToInteger(session.getAttribute("id") + "");
+		ImageRegistry imageRegistry = imageRegistryDAO.getImageRegistryByName(jsonObject.getString("imageRegistry"),
+				tenantId);
+		logger.debug("imageRegistry>>>>>>>>>>>>>>>>>> " + imageRegistry);
+		String response = null;
+		if (imageRegistry != null) {
+
+			String baseURL = PAASConstant.HTTPS_PROTOCOL_KEY + PAASConstant.IMAGE_RESISTRY_NAME
+					+ PAASConstant.ALL_REPOSTORY_KEY + imageRegistry.getLocation() + PAASConstant.ALL_TAGS_KEY;
+			logger.debug(">>>>>>>>>>>>>>>>>>>>>>>>" + baseURL);
+			String authentication = imageRegistry.getUser_name() + ":" + imageRegistry.getPassword();
 			try {
-				 response=getHttpResponse(baseURL, authentication, "GET");
-				logger.debug("http response  : "+response);				
+				response = getHttpResponse(baseURL, authentication, "GET");
+				logger.debug("http response  : " + response);
 			} catch (IOException e) {
-				logger.error("Unable to get the http response using base url :"+baseURL+", authentication : "+authentication);
-				throw new ApplicationServiceException("Unable to get the http response using base url :"+baseURL+", authentication : "+authentication);
+				logger.error("Unable to get the http response using base url :" + baseURL + ", authentication : "
+						+ authentication);
+				throw new ApplicationServiceException("Unable to get the http response using base url :" + baseURL
+						+ ", authentication : " + authentication);
 			}
-		}else{
-			logger.debug("No image repository availabel with name : "+repositoryName);
-		}		
+		} else {
+			logger.debug("No image repository availabel with name : " + repositoryName);
+		}
 		return response;
-	}//end of method getApplicationSummary
-	
+	}// end of method getApplicationSummary
+
 	/**
 	 * This method is used to get response from http client
-	 * @param baseURL : base url in String
-	 * @param authentication : authentication in String
-	 * @param httpRequestMethod : http request method
+	 * 
+	 * @param baseURL
+	 *            : base url in String
+	 * @param authentication
+	 *            : authentication in String
+	 * @param httpRequestMethod
+	 *            : http request method
 	 * @return String : response data in String
-	 * @throws IOException : Unable to connect to url using http client
+	 * @throws IOException
+	 *             : Unable to connect to url using http client
 	 */
-	private String getHttpResponse(String baseURL,String authentication,String httpRequestMethod) throws IOException{
-		logger.debug(".getHttpResponse method of ApplicationService");	
+	private String getHttpResponse(String baseURL, String authentication, String httpRequestMethod) throws IOException {
+		logger.debug(".getHttpResponse method of ApplicationService");
 		StringBuffer result = new StringBuffer();
-		URL url = new URL(baseURL);       
-		//String authStr = summary.getUser_name() + ":" + summary.getPassword();
-        String encodedAuthStr = Base64.encodeBase64String(authentication.getBytes());
+		URL url = new URL(baseURL);
+		// String authStr = summary.getUser_name() + ":" +
+		// summary.getPassword();
+		String encodedAuthStr = Base64.encodeBase64String(authentication.getBytes());
 		// Create Http connection
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        if(connection!=null){
-        // Set connection properties
-        connection.setRequestMethod(httpRequestMethod);
-        connection.setRequestProperty("Authorization", "Basic "
-                + encodedAuthStr);
-        connection.setRequestProperty("Accept", "application/json");        
-        logger.debug("Response  Code"+connection.getResponseCode());        
-        InputStream content = (InputStream) connection.getInputStream();
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                content));
-        String line = "";
-        while ((line = in.readLine()) != null) {
-            result.append(line);
-        }
-        }
-        return result.toString();
-	}//end of method getHttpResponse
-	 
-	 @GET
-	 @Path("/checkimageRegistry/{registryName}")
-	 @Produces(MediaType.TEXT_PLAIN)
-	public String imgRegistryValidation(@PathParam("registryName") String registryName,@Context HttpServletRequest req) throws DataBaseOperationFailedException {
-		 logger.debug(" coming to check Image Registry of pass network");
-		 HttpSession session = req.getSession(true);
-		 ImageRegistryDAO registryDAO=new ImageRegistryDAO();
-		 int id = registryDAO.getImageRegistryIdByName(registryName,(int)session.getAttribute("id"));
-		
-		if(id>0)
-			return "success";
-		else
-		 return "failure" ;
-	 }//end of method aClByName validation
-	
-	 /**
-	  * to check image registry username exist or not
-	  * @param userName
-	  * @param req
-	  * @return
-	  * @throws DataBaseOperationFailedException
-	  */
-	 
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		if (connection != null) {
+			// Set connection properties
+			connection.setRequestMethod(httpRequestMethod);
+			connection.setRequestProperty("Authorization", "Basic " + encodedAuthStr);
+			connection.setRequestProperty("Accept", "application/json");
+			logger.debug("Response  Code" + connection.getResponseCode());
+			InputStream content = (InputStream) connection.getInputStream();
+			BufferedReader in = new BufferedReader(new InputStreamReader(content));
+			String line = "";
+			while ((line = in.readLine()) != null) {
+				result.append(line);
+			}
+		}
+		return result.toString();
+	}// end of method getHttpResponse
+
 	@GET
-	@Path("/checkingUserName/{userName}")
+	@Path("/checkimageRegistry/{registryName}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String userValidation(@PathParam("userName") String userName,
-			@Context HttpServletRequest req)
+	public String imgRegistryValidation(@PathParam("registryName") String registryName, @Context HttpServletRequest req)
 			throws DataBaseOperationFailedException {
 		logger.debug(" coming to check Image Registry of pass network");
-
 		HttpSession session = req.getSession(true);
-
 		ImageRegistryDAO registryDAO = new ImageRegistryDAO();
-		int id = registryDAO.getImgRegistryIdByUser_NameandTenant_Id(userName,
-				(int) session.getAttribute("id"));
+		int id = registryDAO.getImageRegistryIdByName(registryName, (int) session.getAttribute("id"));
 
 		if (id > 0)
 			return "success";
 		else
 			return "failure";
 	}// end of method aClByName validation
-	 
+
+	/**
+	 * to check image registry username exist or not
+	 * 
+	 * @param userName
+	 * @param req
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 */
+
+	@GET
+	@Path("/checkingUserName/{userName}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String userValidation(@PathParam("userName") String userName, @Context HttpServletRequest req)
+			throws DataBaseOperationFailedException {
+		logger.debug(" coming to check Image Registry of pass network");
+
+		HttpSession session = req.getSession(true);
+
+		ImageRegistryDAO registryDAO = new ImageRegistryDAO();
+		int id = registryDAO.getImgRegistryIdByUser_NameandTenant_Id(userName, (int) session.getAttribute("id"));
+
+		if (id > 0)
+			return "success";
+		else
+			return "failure";
+	}// end of method aClByName validation
+
 }

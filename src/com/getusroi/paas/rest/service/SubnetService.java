@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.dao.SubnetDAO;
+import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.PAASNetworkServiceException;
 import com.getusroi.paas.sdn.service.impl.SDNServiceImplException;
 import com.getusroi.paas.vo.Subnet;
@@ -30,13 +32,21 @@ public class SubnetService {
 	SubnetDAO subnetDao = null;
 	ObjectMapper mapper = null;
 	Subnet subnet = null;
+	RestServiceHelper restServHlper= null;	
 	
-	
+	/**
+	 * Rest Service to add new Subnet
+	 * @param subnetData
+	 * @param request
+	 * @throws DataBaseOperationFailedException
+	 * @throws SDNServiceImplException
+	 * @throws PAASNetworkServiceException
+	 */
 	@POST
 	 @Path("/addSubnet")
 	 @Consumes(MediaType.APPLICATION_JSON)
 	 public void addSubnet(String subnetData, @Context HttpServletRequest request) throws DataBaseOperationFailedException, SDNServiceImplException, PAASNetworkServiceException{
-		 	LOGGER.debug(".addSubnet method of PAASNetworkService"+subnetData);
+		 	LOGGER.debug(".addSubnet method of SubnetService"+subnetData);
 			ObjectMapper mapper = new ObjectMapper();
 			subnetDao= new SubnetDAO();
 			try {
@@ -56,6 +66,14 @@ public class SubnetService {
 
 		}//end of method addSubnet
 	
+	/**
+	 * Rest service to Get Subnet name using Vpc
+	 * @param subnetName
+	 * @param request
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 * @throws PAASNetworkServiceException
+	 */
 	@POST
 	@Path("/getSubnetNameByVpc")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -76,6 +94,12 @@ public class SubnetService {
 		return subnetJsonString;
 	}
 	
+	/**
+	 * Rest Service to get all Subnet
+	 * @param request
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 */
 	 @GET
 	 @Path("/getAllSubnet")
 	 @Produces(MediaType.APPLICATION_JSON)
@@ -96,31 +120,45 @@ public class SubnetService {
 			return subnetJsonString;
 	 }//end of method getAllSubnet
 	 
-	 
+	 /**
+	  * Rest Service to delete Subnet by subnet id
+	  * @param id
+	  * @return
+	  * @throws DataBaseOperationFailedException
+	  */
 	 @GET
-	 @Path("/deleteSubnetByName/{subnetName}")
+	 @Path("/deleteSubnetById/{id}")
 	 @Produces(MediaType.TEXT_PLAIN)
-	public String deleteSubnetByName(@PathParam("subnetName") String subnetName) throws DataBaseOperationFailedException {
-		 LOGGER.debug(".deleteVPCByName method of PAASNetworkService");
+	public String deleteSubnetById(@PathParam("id") String id) throws DataBaseOperationFailedException {
+		 LOGGER.debug(".deleteVPCByName method of PAASNetworkService "+id);
+		 restServHlper= new RestServiceHelper(); 
 		 subnetDao = new SubnetDAO();
-		 subnetDao.deleteSubnetBySubnetName(subnetName);
-		 return "subnet with name : "+subnetName+" is delete successfully";
+		 subnetDao.deleteSubnetById(restServHlper.convertStringToInteger(id));
+		 return "subnet with name : "+id+" is delete successfully";
 	 }//end of method deleteSubnetByName
 	 
-	 @POST
+	 /**
+	  * Rest Service to update Subnet by subnet id
+	  * @param subnetData
+	  * @return
+	  * @throws DataBaseOperationFailedException
+	  * @throws PAASNetworkServiceException
+	  */
+	 @PUT
 	 @Path("/updateSubnet")
-	 @Consumes(MediaType.APPLICATION_JSON)
-	public void updateSubnet(String subnetData) throws DataBaseOperationFailedException, PAASNetworkServiceException{
-		LOGGER.debug(".updateSubnet method of PAASNetworkService");
+	 @Produces(MediaType.TEXT_PLAIN)
+	public String updateSubnet(String subnetData) throws DataBaseOperationFailedException, PAASNetworkServiceException{
+		LOGGER.debug(".updateSubnet method of SubnetService subnetData "+subnetData);
 		ObjectMapper mapper = new ObjectMapper();
 		subnetDao = new SubnetDAO();
 		try {
-			Subnet subnet=mapper.readValue(subnetData,Subnet.class);			
-			subnetDao.updateSubnetBySubnetIDAndSubnetName(subnet);
+			Subnet subnet=mapper.readValue(subnetData,Subnet.class);
+			subnetDao.updateSubnetBySubnetID(subnet);
+			return "Success";
 		} catch (IOException e) {
 			LOGGER.error("Error in reading data : "+subnetData+" using object mapper in updateSubnet");
 			throw new PAASNetworkServiceException("Error in reading data : "+subnetData+" using object mapper in updateSubnet");
-		}		
+		}
 	}//end of method updateSubnet
 	 
 	 

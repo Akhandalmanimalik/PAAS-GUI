@@ -29,29 +29,34 @@ public class ApplicationDAO {
 	static final Logger LOGGER = LoggerFactory.getLogger(ApplicationDAO.class);
 	private static final String NETWORK_TYPE = "BRIDGE";
 
-	private static final String GET_ALL_SERVICES_BY_TENANTID_BY_SERVICE_ID = "select * from application where apps_id=? and tenant_id=?";
-	private static final String GET_ALL_APPLICATIONS_BY_TENANT_ID = "select * from applications where tenant_id=?";
 	private static final String INSERT_INTO_APPLICATION = "insert into applications(applications_name,description,tenant_id) values(?,?,?)";
+	private static final String GET_ALL_APPLICATIONS_BY_TENANT_ID = "select * from applications where tenant_id=?";
+	private static final String CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME="select apps_id from applications where applications_name=? and tenant_id=?";
+	private static final String GET_APPLICATION_ID_BY_NAME_AND_TENANT_ID = "select apps_id from applications where applications_name=? && tenant_id=?";
 	private static final String UPDATE_APPLICATION_BY_ALL_DETAILS_FOR_GIVE_ID = "UPDATE  applications set applications_name=?,description =? where apps_id=?";
+	private static final String DELETE_APPLICATION_BY_ID_AND_BY_TENANT_ID = "delete from applications where apps_id=? and tenant_id=?";	/*and apps_id=?*/
 
 	private static final String INSERT_APPLICATION_SERVICE_QUERY = "insert into application (service_name,registry_url,tag,run,host_name,host_port,container_port,protocol_type,port_index,path,interval_seconds,timeout_seconds,max_consecutive_failures,grace_period_seconds,ignore_http1xx,instance_count,host_path,container_path,volume,subnet_id,createdDTM,tenant_id,registry_id,container_id,apps_id) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?)";
 	private static final String GET_SERVICE_BY_NAME_AND_USERID = "select * from application where service_name=? && tenant_id=?";	
-	private static final String GET_ALL_APPLICATION_SERVICE_BY_TENANT_ID_QUERY_ = "select app_id,service_name,registry_id,tag,container_id from application where tenant_id=? and apps_id=?";
+	//BOTH ARE SAME QUERY
+	private static final String GET_ALL_SERVICES_BY_TENANTID_BY_SERVICE_ID = "select * from application where apps_id=? and tenant_id=?"; //CURRENTLY USED
+	private static final String GET_ALL_APPLICATION_SERVICE_BY_TENANT_ID_QUERY_ = "select * from application where tenant_id=? and apps_id=?";	//CURRENTLY  NOT USED
 	private static final String DELETE_SERVICE_BY_SERVICENAME_USER_ID_AND_APPS_ID_QUERY = "delete from application where service_name=? and tenant_id=?";	/*and apps_id=?*/
+	private static final String UPDATE_SERVICE_BY_SERVICE_ID = "update application set service_name=?,registry_url=?,tag=?,run=?,host_name=?,host_port=?,container_port=?,protocol_type=?,port_index=?,path=?,interval_seconds=?,timeout_seconds=?,max_consecutive_failures=?,grace_period_seconds=?,ignore_http1xx=?,instance_count=?,host_path=?,container_path=?,volume=?,subnet_id=?,tenant_id=?,registry_id=?,container_id=?,apps_id=? where app_id=?";
 	
-	private static final String DELETE_APPLICATION_BY_ID_AND_BY_TENANT_ID = "delete from applications where apps_id=? and tenant_id=?";	/*and apps_id=?*/
-
 	
-	private static final String GET_APPLICATION_ID_BY_NAME_AND_TENANT_ID = "select apps_id from applications where applications_name=? && tenant_id=?";
-	private static final String INSERT_ENVIRONMENT_VARIABLE_DETAILS__QUERY = "insert into application_variable (varible_name,varible_value,app_id,createdDTM) values (?,?,?,NOW())";
-	
-	private static final String CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME="select apps_id from applications where applications_name=? and tenant_id=?";
+	//Should be create EnvironmentVariableDAO and move the below query there.
 	private static final String GET_ENVIRONMENT_VARIABLE_BY_SERVICENAME = "select * from environment_variable where serviceName =?";
 	
+	private static final String INSERT_ENVIRONMENT_VARIABLE_DETAILS__QUERY = "insert into application_variable (varible_name,varible_value,app_id,createdDTM) values (?,?,?,NOW())";	
+	private static final String GET_APPLICATION_VARIABLE_BY_SERVICE_ID= "select * from application_variable where app_id =?";
+	private static final String UPDATE_APPLICATION_VARIABLE_BY_SERVICE_ID ="update application_variable set varible_name=?, varible_value=? where id=?";
+	
 	DataBaseConnectionFactory connectionFactory = null;
-	
-	
-	
+	SubnetDAO subnetDao = null;	
+	PoliciesDAO policiesDAO = null;
+	ImageRegistryDAO imRegistryDAO = null;
+	ContainerTypesDAO  containerTypesDAO=null; 
 
 	/**
 	 * This method is used to add Application to db
@@ -206,8 +211,10 @@ public class ApplicationDAO {
 			throws DataBaseOperationFailedException {
 		LOGGER.debug(".getAllServiceByAppsIdAndTenantID method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
-		ImageRegistryDAO imRegistryDAO=new ImageRegistryDAO();
-		ContainerTypesDAO containerTypesDAO=new ContainerTypesDAO();
+		imRegistryDAO = new ImageRegistryDAO();
+		containerTypesDAO = new ContainerTypesDAO();
+		subnetDao = new SubnetDAO();
+		policiesDAO = new PoliciesDAO();
 		List<Service> serviceList = new LinkedList<Service>();
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -222,14 +229,34 @@ public class ApplicationDAO {
 			if (result != null) {
 				while (result.next()) {
 					Service service = new Service();
-					service.setServiceName(result
-							.getString("service_name"));
-					service.setImageRegistry(imRegistryDAO.getImageRegistryNameById(result.getInt("registry_id"), tennat_Id)               
-							);
-					service.setContainerType(containerTypesDAO.getContainerNameByContainerId(result.getInt("container_id")));
-					service.setTag(result.getString("tag"));
-					service.setNetwork_bridge("");
-					service.setTenantId(tennat_Id);
+					service.setId(result.getInt(1));
+					service.setServiceName(result.getString(2));
+					service.setImageRepository(result.getString(3));
+					service.setTag(result.getString(4));
+					service.setRun(result.getString(5));
+					service.setHostName(result.getString(6));
+					service.setHostPort(result.getInt(7));
+					service.setContainerPort(result.getInt(8));
+					service.setProtocal(result.getString(9));
+					//port index is missing 10 index
+					service.setEnvPath(result.getString(11));
+					service.setEnvInterval(result.getInt(12));
+					//timeout seconds missing 13 index
+					service.setEnvThreshold(result.getInt(14));
+					//grace_period_seconds missing 15 index
+					service.setEnvIgnore(result.getInt(16));
+					//instance count missing 17 index
+					//host path missing 18 index
+					//container path missing 19 index
+					service.setVolume(result.getInt(20));
+					service.setSubnetName(subnetDao.getSubnetNameById(result.getInt(21)));
+					//date time index 22
+					service.setTenantId(result.getInt(23));
+					service.setImageRegistry(imRegistryDAO.getImageRegistryNameById(result.getInt(24), tennat_Id));
+					service.setType(policiesDAO.getContainerTypeNameById(result.getInt(25), service.getTenantId())); 
+					service.setAppsId(result.getInt(26));
+					service.setNetwork_bridge(NETWORK_TYPE);
+					service.setEnv(getApplicationVariableByServiceId(service.getId()));
 					serviceList.add(service);
 				}
 			} else {
@@ -271,10 +298,14 @@ public class ApplicationDAO {
 			throws DataBaseOperationFailedException {
 		LOGGER.debug(".addService method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+		imRegistryDAO = new ImageRegistryDAO();
+		subnetDao = new SubnetDAO();
+		containerTypesDAO = new ContainerTypesDAO();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		PreparedStatement pstmt2 = null;
 		int last_inserted_id =0;
+		
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
 
@@ -302,10 +333,10 @@ public class ApplicationDAO {
 			pstmt.setString(17, "hostpath1");				//HARDCODE
 			pstmt.setString(18, "contnrpath1");				//HARDCODE	
 			pstmt.setInt(19, service.getVolume());
-			pstmt.setInt(20, new SubnetDAO().getSubnetIdBySubnetName(service.getSubnetName(),service.getTenantId()));
+			pstmt.setInt(20, subnetDao.getSubnetIdBySubnetName(service.getSubnetName(),service.getTenantId()));
 			pstmt.setInt(21, service.getTenantId());
-			pstmt.setInt(22, new ImageRegistryDAO().getImageRegistryIdByName(service.getImageRegistry(), service.getTenantId()));
-			pstmt.setInt(23, new ContainerTypesDAO().getContainerTypeIdByContainerName(service.getType()));
+			pstmt.setInt(22, imRegistryDAO.getImageRegistryIdByName(service.getImageRegistry(), service.getTenantId()));
+			pstmt.setInt(23, containerTypesDAO.getContainerTypeIdByContainerName(service.getType()));
 			pstmt.setInt(24, getApplicationsIdByName(service.getApplicantionName(), service.getTenantId()));
 			pstmt.executeUpdate();
 			
@@ -366,11 +397,13 @@ public class ApplicationDAO {
 			throws DataBaseOperationFailedException {
 		LOGGER.debug(".getAllService method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+		subnetDao = new SubnetDAO();
+		policiesDAO = new PoliciesDAO();
+		imRegistryDAO = new ImageRegistryDAO();
 		List<Service> addServiceList = new LinkedList<Service>();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet result = null;
-		
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
 			pstmt = (PreparedStatement) connection.prepareStatement(GET_ALL_APPLICATION_SERVICE_BY_TENANT_ID_QUERY_);
@@ -380,11 +413,32 @@ public class ApplicationDAO {
 			if (result != null) {
 				while (result.next()) {
 					Service service = new Service();
-					service.setId(result.getInt("app_id"));
-					service.setServiceName(result.getString("service_name"));
-					service.setImageRegistry(new ImageRegistryDAO().getImageRegistryNameById(result.getInt("registry_id"), user_id));
-					service.setTag(result.getString("tag"));
-					service.setType(new PoliciesDAO().getContainerTypeNameById(result.getInt("container_id"), 7));					
+					service.setId(result.getInt(1));
+					service.setServiceName(result.getString(2));
+					service.setImageRepository(result.getString(3));
+					service.setTag(result.getString(4));
+					service.setRun(result.getString(5));
+					service.setHostName(result.getString(6));
+					service.setHostPort(result.getInt(7));
+					service.setContainerPort(result.getInt(8));
+					service.setProtocal(result.getString(9));
+					//port index is missing 10 index
+					service.setEnvPath(result.getString(11));
+					service.setEnvInterval(result.getInt(12));
+					//timeout seconds missing 13 index
+					service.setEnvThreshold(result.getInt(14));
+					//grace_period_seconds missing 15 index
+					service.setEnvIgnore(result.getInt(16));
+					//instance count missing 17 index
+					//host path missing 18 index
+					//container path missing 19 index
+					service.setVolume(result.getInt(20));
+					service.setSubnetName(subnetDao.getSubnetNameById(result.getInt(21)));
+					//date time index 22
+					service.setTenantId(result.getInt(23));
+					service.setImageRegistry(imRegistryDAO.getImageRegistryNameById(result.getInt(24), user_id));
+					service.setType(policiesDAO.getContainerTypeNameById(result.getInt(25), service.getTenantId())); 
+					service.setAppsId(result.getInt(26));
 					service.setNetwork_bridge(NETWORK_TYPE);
 					addServiceList.add(service);
 				}
@@ -700,47 +754,47 @@ public class ApplicationDAO {
 	* @throws SQLException
 	*/
 	public int checkApplicationExistByNameAndTenantId(String applicationsName,
-	int tenant_id) throws DataBaseOperationFailedException,
-	SQLException {
-	LOGGER.debug(".checkApplicationExistByNameAndTenantId Exist (.) method of ApplicationDAO with Applicationname "
-	+ applicationsName + " tenant id :" + tenant_id);
-	int isServiceExist = 0;
-	PreparedStatement statement = null;
-	ResultSet reSet = null;
-	DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
-	Connection connection = null;
-	try {
-	connection = connectionFactory.getConnection("mysql");
-	statement = (PreparedStatement) connection
-	.prepareStatement(CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME);
-	LOGGER.debug("statement ////////" + statement);
-	statement.setString(1, applicationsName);
-	statement.setInt(2, tenant_id);
-	reSet = statement.executeQuery();
-	LOGGER.debug("reSet >>>>>>>>>>>>>." + reSet);
-	if (reSet != null) {
-	while (reSet.next()) {
+			int tenant_id) throws DataBaseOperationFailedException,
+			SQLException {
+		LOGGER.debug(".checkApplicationExistByNameAndTenantId Exist (.) method of ApplicationDAO with Applicationname "
+				+ applicationsName + " tenant id :" + tenant_id);
+		int isServiceExist = 0;
+		PreparedStatement statement = null;
+		ResultSet reSet = null;
+		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+		Connection connection = null;
+		try {
+			connection = connectionFactory.getConnection("mysql");
+			statement = (PreparedStatement) connection
+					.prepareStatement(CHECK_APPLICATION_EXIST_WITH_GIVEN_APPL_NAME);
+			LOGGER.debug("statement ////////" + statement);
+			statement.setString(1, applicationsName);
+			statement.setInt(2, tenant_id);
+			reSet = statement.executeQuery();
+			LOGGER.debug("reSet >>>>>>>>>>>>>." + reSet);
+			if (reSet != null) {
+				while (reSet.next()) {
 
-	isServiceExist = reSet.getInt("apps_id");
+					isServiceExist = reSet.getInt("apps_id");
 
-	}
-	}
-	} catch (ClassNotFoundException | IOException e) {
-		LOGGER.error("Error in getting the aplication detail from db");
-	throw new DataBaseOperationFailedException(
-	"Error in fetching the aplication from db", e);
-	} catch (SQLException e) {
-		LOGGER.error("Unable to fetch application :" + applicationsName
-	+ " from db with tenant_id=" + tenant_id);
-	throw new DataBaseOperationFailedException(
-	"Unable to fetch application" + applicationsName
-	+ " from db", e);
-	} finally {
-	if (reSet != null)
-	reSet.close();
-	statement.close();
-	}
-	return isServiceExist;
+				}
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Error in getting the aplication detail from db");
+			throw new DataBaseOperationFailedException(
+					"Error in fetching the aplication from db", e);
+		} catch (SQLException e) {
+			LOGGER.error("Unable to fetch application :" + applicationsName
+					+ " from db with tenant_id=" + tenant_id);
+			throw new DataBaseOperationFailedException(
+					"Unable to fetch application" + applicationsName
+							+ " from db", e);
+		} finally {
+			if (reSet != null)
+				reSet.close();
+			statement.close();
+		}
+		return isServiceExist;
 	}
 	
 	
@@ -789,5 +843,149 @@ public class ApplicationDAO {
 		return applicationsList;
 	}
 
+	
 
+	/**
+	 * To update Service by service id only.
+	 * @param service
+	 * @throws DataBaseOperationFailedException
+	 */
+	public void updateServiceByServiceId(Service service)
+			throws DataBaseOperationFailedException {
+		LOGGER.debug(".getAllServiceByAppsIdAndTenantID method of ApplicationDAO");
+		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+		imRegistryDAO = new ImageRegistryDAO();
+		containerTypesDAO = new ContainerTypesDAO();
+		subnetDao = new SubnetDAO();
+		policiesDAO = new PoliciesDAO();
+ 		Connection connection = null;
+ 		PreparedStatement stmt = null;
+ 		PreparedStatement pstmt2 = null;
+		
+		
+		ResultSet result = null;
+		try {
+			connection = connectionFactory.getConnection(MYSQL_DB);
+			stmt = connection.prepareStatement(UPDATE_SERVICE_BY_SERVICE_ID);
+			stmt.setString(1,service.getServiceName()	);
+			stmt.setString(2,service.getImageRepository());
+			stmt.setString(3, service.getTag());
+			stmt.setString(4, service.getRun());
+			stmt.setString(5, service.getHostName());
+			stmt.setInt(6, service.getHostPort());
+			stmt.setInt(7, service.getContainerPort());
+			stmt.setString(8, service.getProtocal());
+			stmt.setInt(9, 111);
+			stmt.setString(10, service.getEnvPath());
+			stmt.setInt(11, service.getEnvInterval());
+			stmt.setInt(12, 111);
+			stmt.setInt(13, service.getEnvThreshold());
+			stmt.setInt(14, 111);
+			stmt.setInt(15, service.getEnvIgnore());
+			stmt.setInt(16, 111);	
+			stmt.setString(17, "dummy");
+			stmt.setString(18, "dummy");
+			stmt.setInt(19, service.getVolume());
+			stmt.setInt(20, subnetDao.getSubnetIdBySubnetName(service.getSubnetName(), service.getTenantId()));
+			stmt.setInt(21, service.getTenantId());
+			stmt.setInt(22, imRegistryDAO.getImageRegistryIdByName(service.getImageRegistry(), service.getTenantId()));
+			stmt.setInt(23, containerTypesDAO.getContainerTypeIdByContainerName(service.getType()));
+			stmt.setInt(24, service.getAppsId());
+			stmt.setInt(25, service.getId());
+			
+			stmt.execute();
+			
+			pstmt2 = (PreparedStatement) connection
+						.prepareStatement(UPDATE_APPLICATION_VARIABLE_BY_SERVICE_ID);
+	            List<EnvironmentVariable> listOfEnvrnmtVar = service.getEnv(); 
+	            LOGGER.debug("Number of environment variabl "+listOfEnvrnmtVar.size());
+	            EnvironmentVariable env= null;
+	            for(int i=0; i < listOfEnvrnmtVar.size(); i++){
+	            	 env=listOfEnvrnmtVar.get(i);
+	            	LOGGER.debug("Environmentvariable object  "+env);
+	            	pstmt2.setString(1, env.getEnvkey());
+	    			pstmt2.setString(2, env.getEnvvalue());
+	    			pstmt2.setInt(3, service.getId());
+	    			pstmt2.executeUpdate();
+	            }
+			
+			  
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Unable to Update service into db ");
+			throw new DataBaseOperationFailedException(
+					"Unable to fetch Service ", e);
+		} catch (SQLException e) {
+			if (e.getErrorCode() == 1064) {
+				String message = "Unable to Update Service into db because: "
+						+ PAASErrorCodeExceptionHelper
+								.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if (e.getErrorCode() == 1146) {
+				String message = "Unable to Update Service into db because: "
+						+ PAASErrorCodeExceptionHelper
+								.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException(
+						"Unable to Update Service ", e);
+		} finally {
+			DataBaseHelper.dbCleanup(connection, stmt, result);
+		}
+		 
+	}// end of method getAllServiceByAppsIdAndTenantID
+	
+	/**
+	 * To get application_variable by  service Id
+	 * @param serviceId
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 * @throws SQLException
+	 */
+	public List<EnvironmentVariable> getApplicationVariableByServiceId(int serviceId) throws DataBaseOperationFailedException,
+			SQLException {
+		 
+		List<EnvironmentVariable> listOfEnvs = new ArrayList<EnvironmentVariable>();
+		PreparedStatement pstmt = null;
+		ResultSet reSet = null;
+		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
+		Connection connection = null;
+		try {
+			connection = connectionFactory.getConnection("mysql");
+			pstmt = (PreparedStatement) connection
+					.prepareStatement(GET_APPLICATION_VARIABLE_BY_SERVICE_ID);
+			pstmt.setInt(1, serviceId);
+			reSet = pstmt.executeQuery();
+			LOGGER.debug("reSet >>>>>>>>>>>>>." + reSet);
+			if (reSet != null) {
+				while (reSet.next()) {
+					EnvironmentVariable envVar = new EnvironmentVariable();
+					envVar.setId(reSet.getInt(1));
+					envVar.setEnvkey(reSet.getString(2));
+					envVar.setEnvvalue(reSet.getString(3));
+					envVar.setAppId(reSet.getInt(4));
+					listOfEnvs.add(envVar);
+				}
+			} else {
+				LOGGER.debug("No data available for environment varible for service name : "
+						+ serviceId);
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Error in getting the aplication detail from db");
+			throw new DataBaseOperationFailedException(
+					"Error in fetching the aplication from db", e);
+		} catch (SQLException e) {
+			LOGGER.error("Unable to fetch application :" + serviceId
+					+ " from db with tenant_id=" + serviceId);
+			throw new DataBaseOperationFailedException(
+					"Unable to fetch application" + serviceId
+							+ " from db", e);
+		} finally {
+			if (reSet != null)
+				reSet.close();
+			pstmt.close();
+		}
+		return listOfEnvs;
+	}
+	
+	
 }

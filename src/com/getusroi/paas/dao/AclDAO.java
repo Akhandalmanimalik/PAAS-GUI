@@ -18,7 +18,6 @@ import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
 import com.getusroi.paas.vo.ACL;
 import com.getusroi.paas.vo.InOutBoundRule;
-import com.getusroi.paas.vo.VPCRegion;
 
 
 /**
@@ -32,13 +31,16 @@ public class AclDAO {
 	 private final String GEL_ALL_ACL_NAMES_QUERY = "select aclname from acl";
 	 private final String GEL_ALL_ACL_QUERY="select * from acl where tenant_id=?";
 	 private final String GET_ACL_ID_BY_ACLNAME_TENANT_ID="select acl_id from acl where acl_name=? and tenant_id=?";
-	 private final String UPDATE_ACL_BY_NAME_QUERY="update acl set action=?, sourceip=?, destip=? where name=?";
+	 private final String UPDATE_ACL_BY_ID_QUERY="update acl set acl_name=?, tenant_id=?, description=? where acl_id=?";
 	 private final String DELETE_ACL_BY_NAME_QUERY_Using_TenantId = "delete from acl where acl_name=? and tenant_id=?";
 	 private final String GET_ACL_NAME_BY_ACL_ID_AND_TENANT_ID="select acl_name from acl where acl_id=? and tenant_id=?";
 	  
 	 private final String INSERT_INTO_INOUT_BOUND_RULE_QUERY = "insert into inoutbound_rule (type,protocol,protocol_range,inoutbound_type,source_ip,createDTM,acl_id,action) values(?,?,?,?,?,NOW(),?,?)"; 
 	 private final String GET_ALL_INOUT_BOUND_RULES_BY_ALC_ID = "select * from inoutbound_rule where acl_id=?";
 	 private final String DELETE_INOUT_BOUND_RULE_BY_ID_QUERY = "delete from inoutbound_rule where id=?";
+	 private final String  UPDATE_INOUT_BOUND_RULE_BY_ID_QUERY="update inoutbound_rule set type=?, protocol=?, protocol_range=?, inoutbound_type=?, source_ip=?, acl_id=? where id=?";
+	 
+	 InOutBoundRule inOutBoundRule = null;
 	/**
 	 * This method is used to insert ACL in db
 	 * @param acl : ACL object conating acl data
@@ -133,6 +135,7 @@ public class AclDAO {
 			if(result !=null){
 				while(result.next()){
 					ACL acl = new ACL();
+					acl.setTenantId(result.getInt("tenant_id"));
 					acl.setId(result.getInt("acl_id"));
 					acl.setAclName(result.getString("acl_name"));
 					acl.setDescription(result.getString("description"));
@@ -158,22 +161,24 @@ public class AclDAO {
 	}//end of method getAllACL
 	
 	/**
-	 * This method is used to update acl based on name
+	 * This method is used to update acl based on Id
 	 * @param acl : ACL object contain data need to update based on name
 	 * @throws DataBaseOperationFailedException : Error on updating data
 	 */
-	public void updateACLByName(ACL acl) throws DataBaseOperationFailedException{
-		LOGGER.debug(".updateACLByName method of NetworkDAO");
+	public void updateACLById(ACL acl) throws DataBaseOperationFailedException{
+		LOGGER.debug(".updateACLById method of AclServices");
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
 		try {
 			connection=connectionFactory.getConnection("mysql");
-			pstmt=(PreparedStatement) connection.prepareStatement(UPDATE_ACL_BY_NAME_QUERY);
-			
-//			pstmt.setString(2, acl.getSrcIp());
-//			pstmt.setString(3, acl.getDestIP());
-			pstmt.setString(5, acl.getAclName());
+			pstmt=(PreparedStatement) connection.prepareStatement(UPDATE_ACL_BY_ID_QUERY);
+			//="update acl set acl_name=?, tenant_id=?, description=? where acl_id=?";
+			pstmt.setString(1, acl.getAclName());
+			pstmt.setInt(2, acl.getTenantId());
+			pstmt.setString(3, acl.getDescription());
+			pstmt.setInt(4, acl.getId());
+			pstmt.execute();
 			LOGGER.debug("ACL update successfully with data : "+acl);
 		} catch (ClassNotFoundException | IOException e) {
 			LOGGER.error("Unable to update the ACL with data : "+acl);
@@ -188,12 +193,18 @@ public class AclDAO {
 			} else
 				throw new DataBaseOperationFailedException("Unable to update the ACL with data : "+acl,e);
 		} 
-	}//end of method updateACLByName
+	}//end of method updateACLById
 	
 	
 	
 	/*
 	 * This method is to delete acl using aclname and tenantid
+	 */
+	/**
+	 * To delete acl by acl name
+	 * @param aclName
+	 * @param id
+	 * @throws DataBaseOperationFailedException
 	 */
 	public void deleteACLByName(String aclName,int id)
 			throws DataBaseOperationFailedException {
@@ -238,7 +249,13 @@ public class AclDAO {
 	
 	
 	
-	 
+	 /**
+	  * To get acl_id by acl name
+	  * @param aclname
+	  * @param tenant_id
+	  * @return
+	  * @throws DataBaseOperationFailedException
+	  */
 	public int getACLIdByACLNames(String aclname,int tenant_id) throws DataBaseOperationFailedException{
 		LOGGER.debug(".getaClIdByVPCNames method of NetworkDAO aclname: "+aclname+" tenant_id : "+tenant_id);
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
@@ -332,6 +349,7 @@ public class AclDAO {
 	
 	public void insertInOutBoundRule(InOutBoundRule inOutBndRule) throws DataBaseOperationFailedException{
 		LOGGER.debug(".insertInOutBoundRule method of AclDAO "+inOutBndRule);
+		
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
@@ -362,7 +380,7 @@ public class AclDAO {
 		} 
 	}//end of method insertACL
 	 
-	InOutBoundRule inOutBoundRule = null;
+	
 	/**
 	 * This method is used to get all InOutBound rule from db
 	 * @return List<ACL> : list of all ACL object conating acl data
@@ -384,11 +402,13 @@ public class AclDAO {
 			if(result !=null){
 				while(result.next()){
 					inOutBoundRule = new InOutBoundRule();
+					inOutBoundRule.setId(result.getInt("id"));
 					inOutBoundRule.setType(result.getString("type"));
 					inOutBoundRule.setProtocol(result.getString("protocol"));
 					inOutBoundRule.setProtocolRange(result.getString("protocol_range"));
 					inOutBoundRule.setRuleType(result.getString("inoutbound_type"));
 					inOutBoundRule.setSourceIp(result.getString("source_ip"));
+					inOutBoundRule.setAclId(result.getInt("acl_id"));
 					inOutBoundRule.setAclName(getACLNameByAclIdAndTenantId(result.getInt("acl_id"), tenantId));
 					inOutBoundRule.setAction(result.getString("action"));
 					aclList.add(inOutBoundRule);
@@ -456,5 +476,46 @@ public class AclDAO {
 			DataBaseHelper.dbCleanUp(connection, pstmt);
 		}
 	}
+	
+	
+	/**
+	 * This method is used to update InOutBoundRule based on id
+	 * @param acl : ACL object contain data need to update based on name
+	 * @throws DataBaseOperationFailedException : Error on updating data
+	 */
+	public void updateInOutBoundRuleById(InOutBoundRule inoutBndrule) throws DataBaseOperationFailedException{
+		LOGGER.debug(". updateInOutBoundRuleById method of AclDAO "+inoutBndrule);
+		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
+		Connection connection=null;
+		PreparedStatement pstmt=null;
+		LOGGER.debug(">>>>>>>>>>>>>> "+ inoutBndrule.getAction());
+		try {
+			connection=connectionFactory.getConnection("mysql");
+			pstmt=(PreparedStatement) connection.prepareStatement(UPDATE_INOUT_BOUND_RULE_BY_ID_QUERY);
+			
+			pstmt.setString(1, inoutBndrule.getType());
+			pstmt.setString(2, inoutBndrule.getProtocol());
+			pstmt.setString(3, inoutBndrule.getProtocolRange());
+			pstmt.setString(4, inoutBndrule.getRuleType());
+			pstmt.setString(5, inoutBndrule.getSourceIp());
+			pstmt.setInt(6, inoutBndrule.getAclId());
+			pstmt.setInt(7, inoutBndrule.getId());
+			pstmt.execute();
+			LOGGER.debug("InOutBoundrule update successfully with data : "+inoutBndrule);
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Unable to update the InOutBoundrule with data : "+inoutBndrule);
+			throw new DataBaseOperationFailedException("Unable to update the ACL with data : "+inoutBndrule,e);
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Unable to update the InOutBoundrule because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Unable to update the InOutBoundrule because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else
+				throw new DataBaseOperationFailedException("Unable to update the InOutBoundrule with data : "+inoutBndrule,e);
+		} 
+	}//end of method updateInOutBoundRuleById
+
 	
 }

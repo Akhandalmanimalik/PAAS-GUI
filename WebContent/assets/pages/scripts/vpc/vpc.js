@@ -1,26 +1,83 @@
-var myvpc = angular.module('VpcApp', []);
+var app = angular.module('VpcApp', ['ngRoute']);
 
-myvpc.controller('VpcCtrl', function ($scope,$http) {
-	
-	$scope.field = {};
-	
-    $scope.showModal = false;
-    $scope.toggleModal = function(){
-        $scope.showModal = !$scope.showModal;
-    };
+app.config(["$routeProvider", "$locationProvider", function($routeProvider, $locationProvider){
+	$routeProvider
+	.when("/", {
+		templateUrl: "newController.html",
+		controller: "MainCtrl"
+	})
+	.when("/page2", {
+		templateUrl: "secondController.html",
+		controller: "createNewAcl"
+	})
+	// .otherwise({ redirectTo: '/'})
+	;
+}]);
+
+//Controller1: VpcCtrl
+app.controller('VpcCtrl', function($scope, srvShareData, $location,$http) {
+  
+  $scope.dataToShare = [];
+  
+ 
+  
+  /*This method is used to share data within multiple controller*/
+  $scope.shareVpcObject = function (vpcObject) {
+    $scope.dataToShare = vpcObject;
+    srvShareData.addData($scope.dataToShare);
     
-      /*================VPC REGISTRATION===================*/
+    window.location.href = "edit-vpc-wizard.html";
+  }
+  /*End of shareMyData method*/
+  
+  
+  	 /*  selectVpc to retrieve all vpc associated with tenant id  */
+  	 $scope.selectVpc = function() {
+     	var response = $http.get('/paas-gui/rest/vpcService/getAllVPC');
+     	response.success(function(data){
+     		$scope.fields = data;
+     	});
+     	response.error(function(data, status, headers, config) {
+                 alert("Error in Fetching Data");
+         });
+     };
+     /* End of selectVpc */
+     
+     $scope.deleteData = function(data) {
+      	var response = $http.get('/paas-gui/rest/vpcService/deleteVPCByName/'+data);
+      	response.success(function(data){
+      		 window.location.href = "vpc-interface.html";
+      	});
+      	response.error(function(data, status, headers, config) {
+                  alert("Error in Fetching Data");
+          });
+      	
+      };
+  
+      
+});
+//End of MainCtrl controller
+
+
+
+
+//Controller2: createNewAcl 
+app.controller('createNewVpc', function($scope, srvShareData,$http) {
+	$scope.vpc = {};
+
+	
+ /*================VPC REGISTRATION===================*/
     
     $scope.regVpc = function() {
       if ($scope.vpcWizardForm.$valid) {
-  	  console.log($scope.field);
+  	  console.log($scope.vpc);
   	  
-  	  var userData = JSON.stringify($scope.field);
+  	  var userData = JSON.stringify($scope.vpc);
   	  var res = $http.post('/paas-gui/rest/vpcService/addVPC', userData);
   	  console.log(userData);
   	  res.success(function(data, status, headers, config) {
   	    $scope.message = data;
-  	    
+  	  window.location.href = "vpc-interface.html"; 
   	  $scope.selectVpc();
   	    
   	  });
@@ -31,171 +88,128 @@ myvpc.controller('VpcCtrl', function ($scope,$http) {
   	  });
     }
   	};
-  	
-  	           /*POPULATE DATA TO TABLE*/
-  
-  	 $scope.selectVpc = function() {
-     	var response = $http.get('/paas-gui/rest/vpcService/getAllVPC');
-     	response.success(function(data){
-     		$scope.fields = data;
-     	});
-     	response.error(function(data, status, headers, config) {
-                 alert("Error in Fetching Data");
-         });
-     };
-     
-   
-     //ACL
-     $scope.getAcl = function() {
-      	var response = $http.get('/paas-gui/rest/aclService/getAllACL');
-      	response.success(function(data){
-      		
-      		$scope.aclist = data;
-      		console.log("sddd"+$scope.aclist);
-      		
-      		
-      
-      	});
-      	response.error(function(data, status, headers, config) {
-                  alert("Error in Fetching Data");
-          });
-      };
-     
-  	         /*DELETE POPULATED DATA*/
-  	
+	  	/* End of regVpc */
+	  	
 
-     $scope.deleteData = function(data) {
-     	var response = $http.get('/paas-gui/rest/vpcService/deleteVPCByName/'+data);
-     	response.success(function(data){
-     		$scope.select();
-     	});
-     	response.error(function(data, status, headers, config) {
-                 alert("Error in Fetching Data");
-         });
-     	
-     };
-     
-              /*EDIT VPC DATA*/
-     $scope.update = function(data) {
-     	var response = $http.get('/paas-gui/rest/vpcService/updateVPC/'+data);
-     	response.success(function(data){
-     		$scope.select();
-     	});
-     	response.error(function(data, status, headers, config) {
-                 alert("Error in Fetching Data");
-         });
-     };
-     
-     
-     
+});
+//End of createNewAcl controller
+
+ 
+//Controller5: editVpc 
+app.controller('editVpc', function($scope, srvShareData,$http) {
+	
+	$scope.sharedData = srvShareData.getData();
+	$scope.vpc = $scope.sharedData[0];
+	
+	$scope.updateVpc = function(vpc){
+		
+		var userData = JSON.stringify($scope.vpc);
+		var res = $http.put('/paas-gui/rest/vpcService/updateVPC/', userData);
+		  console.log(userData);
+		  res.success(function(data, status, headers, config) {
+			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+			  if(data!='failed'){
+					console.log("login success");
+					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+					window.location.href = "vpc-interface.html";
+				}else{
+					console.log("Login Error Please Enter Proper Details");
+					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
+					 window.location.href = "edit_acl.html"; 
+				}
+			
+		  });
+		  res.error(function(data, status, headers, config) {
+			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+		    alert("failure message: " + JSON.stringify({
+		      data : data
+		    }));
+		  });
+	}
 
 	 /*===============Add vpc validation details==============*/
   	
-  	 $scope.vpcValidation = function(vpc) {
-  		 
-     	
-     	  console.log("vpc "+vpc);
-     	  var res = $http.get('/paas-gui/rest/vpcService/checkVPC/'+vpc);
-     	  res.success(function(data, status, headers, config) {
-   
-     	    	
-     		  if(data == 'success'){
-     	    	document.getElementById('errfn').innerHTML="data exist enter different name";
-     	    	document.getElementById("myvpcbtn").disabled = true;
-     	    	
-     		  }
-     		  else{
-     			 document.getElementById('errfn').innerHTML="";
-     			 if(document.getElementById('ACL').value != ''){
-     			document.getElementById("myvpcbtn").disabled =false;
-     			 }
-     		  }
-     	    
-     	  });
-     	  res.error(function(data, status, headers, config) {
-     		 
-     	    alert("failure message: " + JSON.stringify({
-     	      data : data
-     	    }));
-     	  });
-     };
-     /*===============END of VPC validation==============*/
-
-     
-     
-     /*===============ACL validation==============*/
-	    $scope.aclValidation = function(acl) {
-	    	
-	    
-		  	  console.log("acl >>>>>>>>>>>>>>>>>>. "+acl);
-		  	  var res = $http.get('/paas-gui/rest/aclService/checkAcl/'+acl);
-		  	  res.success(function(data, status, headers, config) {
-		  		  
-		  		if(data == 'success'){
-		   	    	document.getElementById('aclerr').innerHTML="data exist enter different name";
-		   	    	document.getElementById("myvpcbtn").disabled = true;
-		   	    	
-		   		  }
-		   		  else{
-		   			 document.getElementById('aclerr').innerHTML="";
-		   			document.getElementById("myvpcbtn").disabled =false;
-		   		  }
-	 	  		 
-		  	  });
-		  	  res.error(function(data, status, headers, config) {
-		  	    alert("failure message: " + JSON.stringify({
-		  	      data : data
-		  	    }));
-		  	  });
-		  	 
-		  	};
-		    /*===============END Add ACL validation==============*/
-		  	
-  	
-  	
-
-    
-});  /*end of controller*/
-
-
-myvpc.directive('modal', function () {
-    return {
-      template: '<div class="modal fade">' + 
-          '<div class="modal-dialog">' + 
-            '<div class="modal-content">' + 
-              '<div class="modal-header">' + 
-                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
-                '<h4 class="modal-title">{{ title }}</h4>' + 
-              '</div>' + 
-              '<div class="modal-body" ng-transclude></div>' + 
-            '</div>' + 
-          '</div>' + 
-        '</div>',
-      restrict: 'E',
-      transclude: true,
-      replace:true,
-      scope:true,
-      link: function postLink(scope, element, attrs) {
-        scope.title = attrs.title;
-
-        scope.$watch(attrs.visible, function(value){
-          if(value == true)
-            $(element).modal('show');
-          else
-            $(element).modal('hide');
-        });
-
-        $(element).on('shown.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = true;
-          });
-        });
-
-        $(element).on('hidden.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = false;
-          });
-        });
-      }
+ 	 $scope.vpcValidation = function(vpc) {
+ 		 
+    	
+    	  console.log("vpc "+vpc);
+    	  var res = $http.get('/paas-gui/rest/vpcService/checkVPC/'+vpc);
+    	  res.success(function(data, status, headers, config) {
+  
+    	    	
+    		  if(data == 'success'){
+    	    	document.getElementById('errfn').innerHTML="data exist enter different name";
+    	    	document.getElementById("myvpcbtn").disabled = true;
+    	    	
+    		  }
+    		  else{
+    			 document.getElementById('errfn').innerHTML="";
+    			 if(document.getElementById('ACL').value != ''){
+    			document.getElementById("myvpcbtn").disabled =false;
+    			 }
+    		  }
+    	    
+    	  });
+    	  res.error(function(data, status, headers, config) {
+    		 
+    	    alert("failure message: " + JSON.stringify({
+    	      data : data
+    	    }));
+    	  });
     };
-  });
+    /*===============END of VPC validation==============*/
+	
+    /*===============ACL validation==============*/
+    $scope.aclValidation = function(acl) {
+    	
+    
+	  	  console.log("acl >>>>>>>>>>>>>>>>>>. "+acl);
+	  	  var res = $http.get('/paas-gui/rest/aclService/checkAcl/'+acl);
+	  	  res.success(function(data, status, headers, config) {
+	  		  
+	  		if(data == 'success'){
+	   	    	document.getElementById('aclerr').innerHTML="data exist enter different name";
+	   	    	document.getElementById("myvpcbtn").disabled = true;
+	   	    	
+	   		  }
+	   		  else{
+	   			 document.getElementById('aclerr').innerHTML="";
+	   			document.getElementById("myvpcbtn").disabled =false;
+	   		  }
+ 	  		 
+	  	  });
+	  	  res.error(function(data, status, headers, config) {
+	  	    alert("failure message: " + JSON.stringify({
+	  	      data : data
+	  	    }));
+	  	  });
+	  	 
+	  	};
+	    /*===============END Add ACL validation==============*/
+	
+});
+//End of createNewInOutBoundRule controller
+
+
+app.service('srvShareData', function($window) {
+        var KEY = 'App.SelectedValue';
+
+        var addData = function(newObj) {
+        	mydata = [];
+            mydata.push(newObj);
+            $window.sessionStorage.setItem(KEY, JSON.stringify(mydata));
+        };
+
+        var getData = function(){
+            var mydata = $window.sessionStorage.getItem(KEY);
+            if (mydata) {
+                mydata = JSON.parse(mydata);
+            }
+            return mydata || [];
+        };
+
+        return {
+            addData: addData,
+            getData: getData
+        };
+    });

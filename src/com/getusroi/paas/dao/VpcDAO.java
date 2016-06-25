@@ -26,13 +26,16 @@ import com.getusroi.paas.vo.VPC;
  */
 public class VpcDAO {
 	static final Logger LOGGER = LoggerFactory.getLogger(VpcDAO.class);
+	
 	private final String REGISTER_VPC_QUERY="insert into vpc(vpc_name,tenant_id,createdDTM,acl_id) values(?,?,NOW(),?)";
+	private final String GET_ALL_VPC_QUERY="select * from vpc where tenant_id=?";
 	private final String GET_VPC_NAME_USING_VPCID_TENANTID = "select vpc_name from vpc where vpc_id =? and tenant_id=?";
 	private final String GET_VPCID_BY_VPCNAME_AND_TENANT_ID_QUERY="select vpc_id from vpc where vpc_name=? and tenant_id=?";
 	private final String DELETE_VPC_BY_NAME_QUERY="delete from vpc where vpc_name=?";
-	private final String UPDATE_VPC_BY_NAME_AND_VPCID_QUERY="update vpc set vpc_region=? , cidr=?, acl=? where vpcId=? AND vpc_name=?";
+	private final String UPDATE_VPC_BY_VPCID_QUERY="update vpc set vpc_name=?,tenant_id=?,acl_id=? where vpc_id=?";
 	
-	AclDAO netwrkDAO = null;
+	AclDAO aclDAO = null;
+	
 	/**
 	 * This method is used to get vpc name by using vpcId and tenantId from db
 	 * @param vpcid
@@ -42,7 +45,7 @@ public class VpcDAO {
 	 */
 	public String getVPCNameByVpcIdAndTenantId(int vpcid, int tenantId)
 			throws DataBaseOperationFailedException {
-		LOGGER.debug(".getAllVPCRegionName method of NetworkDAO");
+		LOGGER.debug(".getVPCNameByVpcIdAndTenantId method of VpckDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -143,13 +146,13 @@ public class VpcDAO {
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
-		netwrkDAO = new AclDAO();   
+		aclDAO = new AclDAO();   
 		try {
 			connection=connectionFactory.getConnection("mysql");
 			pstmt=(PreparedStatement) connection.prepareStatement(REGISTER_VPC_QUERY);
 			pstmt.setString(1, vpc.getVpc_name());
 			pstmt.setInt(2, vpc.getTenant_id());
-			pstmt.setInt(3, netwrkDAO.getACLIdByACLNames(vpc.getAclName(), vpc.getTenant_id()));
+			pstmt.setInt(3, aclDAO.getACLIdByACLNames(vpc.getAclName(), vpc.getTenant_id()));
 			pstmt.executeUpdate();
 			LOGGER.debug("VPC registerd successfully with data : "+vpc);
 		} catch (ClassNotFoundException | IOException e) {
@@ -170,7 +173,7 @@ public class VpcDAO {
 	}//end of method registerVPC
 	
 	
-	 private final String GET_ALL_VPC_QUERY="select * from vpc where tenant_id=?";
+	 
 		/**
 		 * This method is used to get list of all the vpc store in db
 		 * @return List<VPC> : list of VPC object containg vpc information
@@ -183,7 +186,7 @@ public class VpcDAO {
 			Connection connection=null;
 			PreparedStatement pstmt=null;
 			ResultSet result=null;
-			netwrkDAO = new AclDAO();
+			aclDAO = new AclDAO();
 			try {
 				connection=connectionFactory.getConnection("mysql");
 				pstmt=(PreparedStatement) connection.prepareStatement(GET_ALL_VPC_QUERY);
@@ -193,8 +196,9 @@ public class VpcDAO {
 					while(result.next()){
 						VPC vpc = new VPC();
 						vpc.setVpc_name(result.getString("vpc_name"));
-						vpc.setAclName(netwrkDAO.getACLNameByAclIdAndTenantId(result.getInt("acl_id"), tenant_id));
-						vpc.setVpcId(result.getString("vpc_id"));
+						vpc.setTenant_id(result.getInt("tenant_id"));
+						vpc.setAclName(aclDAO.getACLNameByAclIdAndTenantId(result.getInt("acl_id"), tenant_id));
+						vpc.setVpcId(result.getInt("vpc_id"));
 						vpcList.add(vpc);
 					}
 				}else{
@@ -254,22 +258,24 @@ public class VpcDAO {
 
 		
 		/**
-		 * This method is used to update vpc based on vpcid and vpc name
-		 * @param vpc : VPC object
-		 * @throws DataBaseOperationFailedException : Unable to update the vpc error
+		 * This method is used to update vpc based on vpcid.
+		 * @param vpc
+		 * @throws DataBaseOperationFailedException
 		 */
-		public void updateVPCByNameAndVPCId(VPC vpc) throws DataBaseOperationFailedException{
-			LOGGER.debug(".updateVPCByNameAndVPCId method of NetworkDAO");
+		public void updateVPCByVPCId(VPC vpc) throws DataBaseOperationFailedException{
+			LOGGER.debug(".updateVPCByVPCId method of VpckDAO");
 			DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 			Connection connection=null;
 			PreparedStatement pstmt=null;
+			aclDAO = new AclDAO();
 			try {
 				connection=connectionFactory.getConnection("mysql");
-				pstmt=(PreparedStatement) connection.prepareStatement(UPDATE_VPC_BY_NAME_AND_VPCID_QUERY);
-				
-				pstmt.setString(3, vpc.getAclName());
-				pstmt.setString(4,vpc.getVpcId());
-				pstmt.setString(5,vpc.getVpc_name());
+				pstmt=(PreparedStatement) connection.prepareStatement(UPDATE_VPC_BY_VPCID_QUERY);
+				pstmt.setString(1, vpc.getVpc_name());
+				pstmt.setInt(2,vpc.getTenant_id());
+				pstmt.setInt(3,aclDAO.getACLIdByACLNames(vpc.getAclName(), vpc.getTenant_id()));
+				pstmt.setInt(4, vpc.getVpcId());
+				pstmt.execute();
 				LOGGER.debug("VPC update with data : "+vpc+" successfully");
 			} catch (ClassNotFoundException | IOException e) {
 				LOGGER.error("Unable to update VPC with data :  "+ vpc);
@@ -288,5 +294,4 @@ public class VpcDAO {
 			}
 		}//end of method updateVPCByNameAndVPCId
 		
-		
-}
+	}

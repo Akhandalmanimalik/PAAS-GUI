@@ -1,15 +1,19 @@
 package com.getusroi.paas.vo;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class VPC {
-	private String vpcId;
+	private int vpcId;
 	private String vpc_name;
 	private String aclName; 
-	private String aclId;
+	private int aclId;
 	private int tenant_id;
+	
 	public VPC() {
 		// TODO Auto-generated constructor stub
 	}
-	public VPC(String vpcId, String vpc_name, String aclName, String aclId,
+	public VPC(int vpcId, String vpc_name, String aclName, int aclId,
 			int tenant_id) {
 		super();
 		this.vpcId = vpcId;
@@ -24,10 +28,10 @@ public class VPC {
 				+ aclName + ", aclId=" + aclId + ", tenant_id=" + tenant_id
 				+ "]";
 	}
-	public String getVpcId() {
+	public int getVpcId() {
 		return vpcId;
 	}
-	public void setVpcId(String vpcId) {
+	public void setVpcId(int vpcId) {
 		this.vpcId = vpcId;
 	}
 	public String getVpc_name() {
@@ -42,10 +46,10 @@ public class VPC {
 	public void setAclName(String aclName) {
 		this.aclName = aclName;
 	}
-	public String getAclId() {
+	public int getAclId() {
 		return aclId;
 	}
-	public void setAclId(String aclId) {
+	public void setAclId(int aclId) {
 		this.aclId = aclId;
 	}
 	public int getTenant_id() {

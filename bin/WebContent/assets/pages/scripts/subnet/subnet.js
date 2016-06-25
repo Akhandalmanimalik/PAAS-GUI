@@ -15,7 +15,7 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
     	console.log($scope.field);
     	//var userData = JSON.stringify($scope.field);
     	var userData = angular.toJson($scope.field);
-    	var res = $http.post('/paas-gui/rest/networkservice/addSubnet', userData);
+    	var res = $http.post('/paas-gui/rest/subnetService/addSubnet', userData);
     	console.log(userData);
     	
     	res.success(function(data, status, headers, config) {
@@ -32,7 +32,7 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
     /*============ To get all vpc with current user ======================*/
     $scope.getAllVpc = function() {
     							  
-    	var response = $http.get('/paas-gui/rest/networkservice/getAllVPC');
+    	var response = $http.get('/paas-gui/rest/vpcService/getAllVPC');
     	
     	response.success(function(data){
     	
@@ -50,7 +50,7 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
     $scope.selectSubnetnew = function() {
     
   	//var response = $http.get('/PAAS-GUI/rest/fetchData/selectVpc');
-  	var response = $http.get('/paas-gui/rest/networkservice/getAllSubnet');
+  	var response = $http.get('/paas-gui/rest/subnetService/getAllSubnet');
   	response.success(function(data){
   	
   		$scope.subnet = data;
@@ -84,7 +84,7 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
 /*===================== TO GET ALL ACL NAME WITH CURRENT USER ============================*/
  
  $scope.selectACL_name = function() {
-	var response = $http.get('/paas-gui/rest/networkservice/getAllACL');
+	var response = $http.get('/paas-gui/rest/aclService/getAllACL');
 	
 	//var response = $http.get('/PAAS-GUI/rest/fetchData/selectSubnet');
 	
@@ -103,7 +103,7 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
   
   /*======================== TO DELETE THE SUBNET BY SUBNET NAME ==============================*/
     $scope.deleteSubnet = function(data) {
-     	var response = $http.get('/paas-gui/rest/networkservice/deleteSubnetByName/'+data);
+     	var response = $http.get('/paas-gui/rest/subnetService/deleteSubnetByName/'+data);
      	response.success(function(data){
    		 $scope.selectSubnetnew();
 
@@ -121,7 +121,7 @@ mysubnet.controller('SubnetCtrl', function ($scope,$http) {
 	  	/*=============== Add SUBNET validation==============*/
 	  	$scope.subnetValidation = function(subnet) {
 		  	  console.log("subnet "+subnet);
-		  	  var res = $http.get('/paas-gui/rest/networkservice/checkSubnet/'+subnet);
+		  	  var res = $http.get('/paas-gui/rest/subnetService/checkSubnet/'+subnet);
 		  	  res.success(function(data, status, headers, config) {
 		  		  
 		  		if(data == 'success'){

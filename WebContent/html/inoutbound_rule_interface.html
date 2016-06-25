@@ -43,7 +43,7 @@ caption {
 <body
 	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
 
-	<div data-ng-app="myAcl" data-ng-controller="InOutBoundRuleCtrl" data-ng-init="get">
+	<div data-ng-app="myAcl" data-ng-controller="InOutBoundRuleCtrl" data-ng-init="getInOutBoundRuleByAclId(selectedAclId);">
 	
 		<div class="page-head">
 			<!-- BEGIN PAGE TITLE -->
@@ -74,20 +74,22 @@ caption {
 					</thead>
 				 	
 				<tbody>
-				<tr data-ng-repeat="val in rule">
-					<td data-ng-click="deleteEnvironmentTypes(val.name)"> {{val.type}}</td>
-					<td>{{val.protocol}}</td>
-					<td>{{val.protocolRange}}</td>
-					<td>{{val.sourceIp}}</td>
-					<td>{{val.action}}</td>
-					<td align="center"><a data-ng-click="deleteEnvironmentTypes(val.name)"
-									class="btn btn-danger"><i class="fa fa-remove"></a></td>
-					 <td align="center"><a data-ng-click="updateEnvironmentTypes(field.name)"
-									class="btn btn-primary"><i class="fa fa-undo"></a></td>
+				<tr data-ng-repeat="val in inOutBndRule">
+				 
+					<td data-ng-if="val.ruleType == 'In Bound'"> {{val.type}}</td>
+					<td data-ng-if="val.ruleType == 'In Bound'">{{val.protocol}}</td>
+					<td data-ng-if="val.ruleType == 'In Bound'">{{val.protocolRange}}</td>
+					<td data-ng-if="val.ruleType == 'In Bound'">{{val.sourceIp}}</td>
+					<td data-ng-if="val.ruleType == 'In Bound'">{{val.action}}</td>
+					 <td align="center" data-ng-if="val.ruleType == 'In Bound'"><a data-ng-click="deleteInOutBoundById(val.id)"
+									 ><i class="fa fa-remove"></a></td>
+					 <td align="center" data-ng-if="val.ruleType == 'In Bound'"><a data-ng-click="shareInOutBoundId(val)"
+									 ><i class="fa fa-undo"></a></td>
 				</tr>
 				</tbody>
 				</table>
 <br><br>
+  
 			<table class="table table-bordered table-hover">
 				<caption> Out Bound Type </caption>
 				<thead>
@@ -103,18 +105,17 @@ caption {
 				</thead>
 
 				<tbody>
-					<tr data-ng-repeat="val in field">
-					<td>{{val.type}}</td>
-					<td>{{val.protocol}}</td>
-					<td>{{val.protocolRange}}</td>
-					<td>{{val.sourceIp}}</td>
-					<td>{{val.action}}</td>
-						<td align="center"><a
-							data-ng-click="deleteEnvironmentTypes(val.name)"
-							class="btn btn-danger"><i class="fa fa-remove"></a></td>
-						<td align="center"><a
-							data-ng-click="updateEnvironmentTypes(field.name)"
-							class="btn btn-primary"><i class="fa fa-undo"></a></td>
+					<tr data-ng-repeat="val2 in inOutBndRule">
+					<td data-ng-if="val2.ruleType == 'Out Bound'">{{val2.type}}</td>
+					<td data-ng-if="val2.ruleType == 'Out Bound'">{{val2.protocol}}</td>
+					<td data-ng-if="val2.ruleType == 'Out Bound'">{{val2.protocolRange}}</td>
+					<td data-ng-if="val2.ruleType == 'Out Bound'">{{val2.sourceIp}}</td>
+					<td data-ng-if="val2.ruleType == 'Out Bound'">{{val2.action}}</td>
+					<td align="center" data-ng-if="val2.ruleType == 'Out Bound'"><a data-ng-click="deleteInOutBoundById(val2.id)"
+									 ><i class="fa fa-remove"></a></td>
+					 <td align="center" data-ng-if="val2.ruleType == 'Out Bound'"><a data-ng-click="shareInOutBoundId(val2)"
+									 ><i class="fa fa-undo"></a></td>
+						
 					</tr>
 				</tbody>
 			</table>

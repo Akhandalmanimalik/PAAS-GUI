@@ -73,6 +73,7 @@ public class ImageRegistryService {
 			logger.error("Error in reading value from image registry  : "+imageRegistryData+" using object mapper in addImageRegistry",e);
 			throw new ImageRegistryServiceException("Error in reading value from image registry  : "+imageRegistryData+" using object mapper in addImageRegistry");
 		}
+		
 		return responseMessage;
 	}//end of method addImageRegistry
 
@@ -137,6 +138,7 @@ public class ImageRegistryService {
 		}else{
 			logger.debug("No image repository availabel with name : "+repositoryName);
 		}		
+		response="{\"name\":\"paas\",\"tags\":[\"qatomcat07\",\"devtomcat04\",\"prodtomcat06\",\"qatomcat08\",\"prodtomcat05\",\"devtomcat03\"]}";
 		return response;
 	}//end of method getApplicationSummary
 	

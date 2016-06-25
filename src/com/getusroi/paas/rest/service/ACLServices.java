@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.AclDAO;
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
+import com.getusroi.paas.marathon.service.MarathonServiceException;
 import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.PAASNetworkServiceException;
 import com.getusroi.paas.sdn.service.impl.SDNServiceImplException;
@@ -116,6 +118,31 @@ public class ACLServices {
 			return "acl with name : " + aclName + " is delete successfully";
 		}// end 
 	 
+	 	/**
+	 	 * To update Acl By using Id
+	 	 * @param acl
+	 	 * @param req
+	 	 * @return
+	 	 * @throws MarathonServiceException
+	 	 */
+	 	@PUT
+		@Path("/updateAclById")
+		@Produces(MediaType.TEXT_PLAIN)
+
+		public String updateAclById(String acl,@Context HttpServletRequest req) throws MarathonServiceException{
+			LOGGER.debug(".updateAclById method of AclServices "+acl);
+			ObjectMapper mapper = new ObjectMapper();
+			aclDAO = new AclDAO();
+			try{
+				ACL inOutBoundRule=mapper.readValue(acl, ACL.class);
+				aclDAO.updateACLById(inOutBoundRule);
+				return "Success";
+			}catch(Exception e){
+				LOGGER.error("Error updating acl ",e);
+			}
+			return "failed";
+		}
+	 	
 	 	
 		/**
 		 * To chckAcl name exist or not
@@ -151,7 +178,8 @@ public class ACLServices {
 			 ObjectMapper mapper = new ObjectMapper();
 			 aclDAO =new AclDAO();
 			 try {
-				 inOutBoundRule = mapper.readValue(aclData, InOutBoundRule.class);			
+				 inOutBoundRule = mapper.readValue(aclData, InOutBoundRule.class);
+				 
 				if(inOutBoundRule != null)
 					aclDAO.insertInOutBoundRule(inOutBoundRule);
 				
@@ -170,17 +198,17 @@ public class ACLServices {
 		 * @throws DataBaseOperationFailedException
 		 */
 		@GET
-		@Path("/getAllInOutBoundRuleByAclId/{aclId}")
+		@Path("/getAllInOutBoundRuleByAclId/{selectedAclId}")
 		@Produces(MediaType.APPLICATION_JSON)
-		public String getAllInOutBoundRuleByAclId(@PathParam("aclId") int aclId,@Context HttpServletRequest req)
+		public String getAllInOutBoundRuleByAclId(@PathParam("selectedAclId") String selectedAclId,@Context HttpServletRequest req)
 				throws DataBaseOperationFailedException {
-			LOGGER.debug("Inside (.) getAllInOutBoundRuleByAclId of ACLServices "+aclId);
+			LOGGER.debug("Inside (.) getAllInOutBoundRuleByAclId of ACLServices "+selectedAclId);
 			aclDAO = new AclDAO();
 			String aclInJsonString = null;
 			try {
-				LOGGER.debug("BEFORE SESSION");
+				 
 				HttpSession session = req.getSession(true);
-				List<InOutBoundRule> aclList = aclDAO.getAllInOutBoundRules(aclId, (int) session.getAttribute("id"));
+				List<InOutBoundRule> aclList = aclDAO.getAllInOutBoundRules(Integer.parseInt(selectedAclId), (int) session.getAttribute("id"));
 				Gson gson = new Gson();
 				aclInJsonString = gson.toJson(aclList);
 				LOGGER.debug("" + aclInJsonString);
@@ -190,16 +218,50 @@ public class ACLServices {
 			return aclInJsonString;
 		}// end of method getAllACL
 		
-		
+		/**
+		 * This method is to call delete In Out bound rule mehtod of jdbc.
+		 * @param id
+		 * @param req
+		 * @return
+		 * @throws DataBaseOperationFailedException
+		 */
 		@GET
 		@Path("/deleteInOutBoundRuleById/{id}")
 		@Produces(MediaType.TEXT_PLAIN)
 		public String deleteInOutBoundRuleById(@PathParam("id") int id,@Context HttpServletRequest req)
 				throws DataBaseOperationFailedException {
-	 		LOGGER.debug(".deleteAclByName method of PAASNetworkService id "+id);
+	 		LOGGER.debug(".deleteInOutBoundRuleById method of AclServices id "+id);
 			aclDAO = new AclDAO();
 			aclDAO.deleteInOutBoundRuleById(id);
 			return "acl with name : " + id + " is delete successfully";
 		}// end 
+		
+		/**
+		 * To update In Out Bound rule By using id
+		 * @param inOutBndRule
+		 * @param req
+		 * @return
+		 * @throws MarathonServiceException
+		 */
+		
+		@PUT
+		@Path("/updateInOutBoundRuleById")
+		@Produces(MediaType.TEXT_PLAIN)
+		public String updateInOutBoundRuleById(String inOutBndRule,@Context HttpServletRequest req) throws MarathonServiceException{
+			LOGGER.debug(".updateInOutBoundRuleById method of AclServices "+inOutBndRule);
+			ObjectMapper mapper = new ObjectMapper();
+			aclDAO = new AclDAO();
+			
+			try{
+				
+				InOutBoundRule inOutBoundRule=mapper.readValue(inOutBndRule, InOutBoundRule.class);
+				LOGGER.debug(">>>>>>>>>>>>>> "+ inOutBoundRule.getAction());
+				aclDAO.updateInOutBoundRuleById(inOutBoundRule);
+				return "Success";
+			}catch(Exception e){
+				LOGGER.error("Error updating InOutBoundRule ",e);
+			}
+			return "failed";
+		}
 		
 }

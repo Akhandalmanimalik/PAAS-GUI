@@ -144,7 +144,6 @@ angular.module('formApp', ['ngAnimate', 'ui.router'])
 	    /*================== To get the Dockerhub data ==================*/
 	    //NEED TO SHOW IN DROP-DOWN LIST OF TAGS FIELD IN THE IMAGERESISTRY.HTML PAGE
 	   	 $scope.selectSummary = function(reponame) {
-	   		 alert("   >>"+reponame);
 	  	 $scope.reponames;
 		//JSON.stringify(data);
 	   		$scope.isImg=true;

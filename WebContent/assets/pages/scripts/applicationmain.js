@@ -166,30 +166,56 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 	
 	//Controller to update Service
 	app.controller('serviceUpdateCtrl', function($scope, srvShareData,$http) {
-		  
-		  $scope.sharedData = srvShareData.getData();
-		  
-			$scope.field = $scope.sharedData[0];
-
+		$scope.service = {env:[]};
+		$scope.env = [{envkey:'',envvalue:''}];
+		
+		 $scope.sharedData = srvShareData.getData();
+			$scope.service = $scope.sharedData[0];
+			
+		
+		
+	     
+		 
+			
+			
+			/* TO ADD DYNAMICA TABLE ROW FOR ENVIRONMENT VARIABLE */
+		     $scope.addNewEnvirnament = function() {
+		   	    $scope.env.push({envkey:'',envvalue:''});
+		     };
+		     /*TO REMOVE THE SPECIFIC NEWLY ADDED ENVIRONMENT VARIABLE */
+		     $scope.removeEnvirnament = function(index) {
+		  		  $scope.env.splice(index,1);
+		     };
+			 
+			 
 		  
 		     /*Edit Service script  */
-		     $scope.updateService = function() {
-		    var applictaionUpdatedData=	$scope.field;
-		     	var response = $http.put('/paas-gui/rest/applicationService/updateService',	applictaionUpdatedData);
-		     	response.success(function(data){
-		     		 var mydata = [];
+		     $scope.updateService = function(servie) {
+		    	 
+		    	 angular.forEach($scope.env,function(value){
+		     		 $scope.service.env.push(value);            
+		            })    
+		    	 
 		             
-		             mydata.push($scope.field.apps_id);
-		     		 $scope.sharedData=mydata;
-		     		window.location.href = "applicationWizard.html";
-		     	});
-		     	response.error(function(data, status, headers, config) {
-		                 alert("Error in Fetching Data");
-		         });
 		     };//end of edit script
 		     
 			     
+
+		     /*======================= To get all Subnet details with current user  =========================*/
+		     $scope.selectAllSubnet = function() {
 		     
+		   	//var response = $http.get('/PAAS-GUI/rest/fetchData/selectVpc');
+		   	var response = $http.get('/paas-gui/rest/subnetService/getAllSubnet');
+		   	response.success(function(data){
+		   	
+		   		$scope.subnetObj = data;
+		   		console.log("data given>>>"+$scope.subnet);
+		   	});
+		   	response.error(function(data, status, headers, config) {
+		         alert("Error in Fetching subnet Data"+data);
+		       });
+		   };  
+		   /*======================= END OF selectSubnetnew =========================*/
 		     
 		     $scope.selectSubnetnew = function() {
 		    	    var vpcName = $scope.service.vpc_name;

@@ -37,7 +37,7 @@
         </head>
     <!-- END HEAD -->
 
-    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo" data-ng-app="myAcl" data-ng-controller="createNewInOutBoundRule" data-ng-init="selectAcl()">
+    <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo" data-ng-app="myAcl" data-ng-controller="editInOutBoundController" data-ng-init="selectAcl()">
         <!-- BEGIN HEADER -->
         
 		
@@ -50,7 +50,7 @@
                 <!-- BEGIN CONTENT BODY -->
                 <div class="page-content">
                     <!-- Progress Bar -->  
-                    <div class="page-content">  <h4><b> In Out Bound Form </b></h4>    </div>
+                    <div class="page-content">  <h4><b> In Out Bound Edit Form </b></h4>    </div>
                     <hr>            
                      <div style="width: 99%;">
 						  <div class="progress">
@@ -185,8 +185,13 @@
 											<option value="Deny"> Deny </option>
 										</select>
 									</div>
+									
+									
+									
+									
+									
 								</div>
-					{{rule}}
+					
 								
 							</div>
                                       	<div class="form-actions">
@@ -194,9 +199,9 @@
                                                 <div class="col-md-offset-3 col-md-9">
                            
                                                     <button type="submit" class="btn green" id="btn-login" 
-                                                    data-ng-disabled="vpcWizardForm.$invalid"  data-ng-click="regRule(selectedAclId)">Submit</button>
+                                                    data-ng-disabled="vpcWizardForm.$invalid"  data-ng-click="updateInOutBoundRule(rule)"> Update </button>
                                                     <!-- <button type="button" class="btn grey-salsa btn-outline">Cancel</button> -->                                                    
-                                                    <a href="vpc-interface.html" class="btn grey-salsa btn-outline">Cancel</a>
+                                                    <a href="inoutbound_rule_interface.html" class="btn grey-salsa btn-outline">Cancel</a>
                                                 </div>
                                             </div>
                                         </div>

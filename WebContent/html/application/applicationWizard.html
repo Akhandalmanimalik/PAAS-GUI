@@ -83,10 +83,8 @@
                                                     <td> {{sevc.tag}} </td>
                                                     <td> {{sevc.type}} </td>
                                                     <td> NOT NOW </td>
-                                                   <td align="center"><button data-ng-click="deleteApplicationByApplName(sevc.serviceName)"
-															class="btn btn-danger"><i class="fa fa-remove"></i></button></td>
-													<td align="center"><button data-ng-click="update(field.vpc_name)"
-															class="btn btn-primary"><i class="fa fa-undo"></i></button></td>
+                                                   <td align="center"><a data-ng-click="deleteApplicationByApplName(sevc.serviceName)"><i class="fa fa-remove"></i></a></td>
+													<td align="center"><a data-ng-click="update(field.vpc_name)"><i class="fa fa-undo"></i></a></td>
                                                 </tr>
                                             </tbody>
                                             

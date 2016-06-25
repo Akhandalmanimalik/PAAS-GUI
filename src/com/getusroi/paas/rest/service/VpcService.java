@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,10 +20,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.getusroi.paas.dao.AclDAO;
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.dao.VpcDAO;
+import com.getusroi.paas.marathon.service.MarathonServiceException;
 import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.PAASNetworkServiceException;
+import com.getusroi.paas.vo.ACL;
 import com.getusroi.paas.vo.VPC;
 import com.google.gson.Gson;
 
@@ -38,7 +42,7 @@ public class VpcService {
 	 @Path("/addVPC")
 	 @Consumes(MediaType.APPLICATION_JSON)
 	 public void addVPC(String vpcData,@Context HttpServletRequest req) throws DataBaseOperationFailedException, PAASNetworkServiceException{
-		LOGGER.debug(".addVPC method of PAASNetworkService");
+		LOGGER.debug(".addVPC method of VpcService");
 		ObjectMapper mapper = new ObjectMapper();
 		vpcDAO = new VpcDAO();
 		RestServiceHelper restServiceHelper = new RestServiceHelper();
@@ -68,6 +72,7 @@ public class VpcService {
 		 List<VPC> vpcList = vpcDAO.getAllVPC((int)session.getAttribute("id"));
 		 Gson gson=new Gson();
 		 String vpcInJsonString=gson.toJson(vpcList);
+		 LOGGER.debug("vpcList SIZE "+vpcList.size()+"DATA : "+vpcList);
 		 return vpcInJsonString;
 	 }//end of method getAllVPC
 	 
@@ -88,31 +93,55 @@ public class VpcService {
 		return "vpc with name : " + vpcName + " is delete successfully";
 	}// end of method deleteVPCByName
 
+	@PUT
+	@Path("/updateVPC")
+	@Produces(MediaType.TEXT_PLAIN)
+
+	public String updateAclById(String vpcObject,@Context HttpServletRequest req) throws MarathonServiceException{
+		LOGGER.debug(".updateVPC method of VpcService "+ vpcObject);
+		ObjectMapper mapper = new ObjectMapper();
+		vpcDAO = new VpcDAO();
+		try{
+			VPC vpc = mapper.readValue(vpcObject, VPC.class);
+			vpcDAO.updateVPCByVPCId(vpc);
+			LOGGER.debug("Updated Successfully.");
+			return "Success";
+		}catch(Exception e){
+			LOGGER.error("Error updating acl ",e);
+		}
+		return "failed";
+	}
+	
+	
 	/**
 	 * 
 	 * @param vpcData
 	 * @throws DataBaseOperationFailedException
 	 * @throws PAASNetworkServiceException
 	 */
-	@POST
+	/*@PUT
 	@Path("/updateVPC")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateVPC(String vpcData)
+	@Produces(MediaType.TEXT_PLAIN)
+	
+	public String updateVPC(String vpcData,@Context HttpServletRequest req)
 			throws DataBaseOperationFailedException,
 			PAASNetworkServiceException {
-		LOGGER.debug(".updateVPC method of PAASNetworkService");
+		
+		LOGGER.debug(".updateVPC method of VpcService");
 		ObjectMapper mapper = new ObjectMapper();
 		vpcDAO = new VpcDAO();
-		try {
+		try{
 			VPC vpc = mapper.readValue(vpcData, VPC.class);
-			vpcDAO.updateVPCByNameAndVPCId(vpc);
+			vpcDAO.updateVPCByVPCId(vpc);
+			return "Success";
 		} catch (IOException e) {
 			LOGGER.error("Error in reading data : " + vpcData
 					+ " using object mapper in updateVPC");
 			throw new PAASNetworkServiceException("Error in reading data : "
 					+ vpcData + " using object mapper in updateVPC");
 		}
-	}// end of method updateVPC
+		
+	}*/// end of method updateVPC
 	
 	 	/**
 	 	 * To check vpc name exist or not in database.

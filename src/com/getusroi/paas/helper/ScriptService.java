@@ -22,11 +22,11 @@ public class ScriptService  {
 	 private static String host = "54.86.181.80"; // remote host address
 	 private static int port=22;
 	 
-	 private static final String NETWORK_SCRIPT_PATH_FOR_CREATION="/home/ubuntu/network.sh";
-	 private static final String NETWORK_SCRIPT_PATH_FOR_DELETION="/home/ubuntu/delete_subnet.sh";
+	 private static final String NETWORK_SCRIPT_PATH_FOR_CREATION="/home/bizruntime/network.sh";
+	 private static final String NETWORK_SCRIPT_PATH_FOR_DELETION="/home/bizruntime/delete_subnet.sh";
 	 
-	 private static final String MESSOS_SCRIPT_PATH_FOR_GET_TASK_ID="/home/ubuntu/get_mesos_containerid.sh";
-	 private static final String MESSOS_SCRIPT_PATHE_FOR_UPDATE_NETWORK="/home/ubuntu/attach_dockernet_container.sh";
+	 private static final String MESSOS_SCRIPT_PATH_FOR_GET_TASK_ID="/home/bizruntime/get_mesos_containerid.sh";
+	 private static final String MESSOS_SCRIPT_PATHE_FOR_UPDATE_NETWORK="/home/bizruntime/attach_dockernet_container.sh";
 
 	public  void callScript(String conainerName,String ip) throws InterruptedException, IOException {
 		  logger.debug(".callScript method of ScriptService");

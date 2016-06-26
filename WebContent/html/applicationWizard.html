@@ -57,8 +57,9 @@
                     <!-- END PAGE HEAD-->
                     <hr>
                     <a href="../ServiceWizards.html" class="btn green"> Add Service </a>
+                  
+                    <a href="../html/applicantmain.html" class="btn green"> Cancel</a>
                     <hr>
-                    {{sharedData[0]}}
                     
                     <br>
                     <!-- BEGIN PAGE BASE CONTENT -->
@@ -84,7 +85,7 @@
                                                     <td> {{sevc.tag}} </td>
                                                     <td> {{sevc.type}} </td>
                                                     <td> {{sevc.network_bridge}} </td>
-                                                   <td align="center"><a data-ng-click="deleteApplicationByApplName(sevc.serviceName)"><i class="fa fa-remove"></i></a></td>
+                                                   <td align="center"><a data-ng-click="deleteServiceById(sevc.id,sharedData[0])"><i class="fa fa-remove"></i></a></td>
 													<td align="center"><a data-ng-click="editService(sevc)"><i class="fa fa-undo"></i></a></td>
                                                 </tr>
                                             </tbody>

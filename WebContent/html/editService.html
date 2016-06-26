@@ -57,16 +57,17 @@ script src="../assets/pages/scripts/application/applicationWizard.js" type="text
 	<div class="page-content" style="height: 100%">
 		<!-- BEGIN PAGE HEAD-->
 		<div class="page-head">
-			<!-- BEGIN PAGE TITLE -->
-			<div class="page-title">
-				<h1>Update service</h1>
-			</div>
-			<!-- END PAGE TITLE -->
-
+			  <div class="page-content">  <h4><b>Update Service  </b></h4>    </div>
+                    <hr>            
+                     <div style="width: 99%;">
+						  <div class="progress">
+						    <div class="progress-bar" role="progressbar" style="width:100%; background-color: #9bd7e1;">
+						    </div>
+						  </div>
+						</div>
+                    <!-- End Progress Bar -->
 		</div>
 		<!-- END PAGE HEAD-->
-		<hr>
-		<!-- BEGIN PAGE BASE CONTENT -->
 
 
 
@@ -75,7 +76,6 @@ script src="../assets/pages/scripts/application/applicationWizard.js" type="text
 
 		<div ng-app="application" ng-controller="serviceUpdateCtrl">
 		
-		ss:{{service}}
 			<div class="row">
 				 <div class="col-md-12">
 					 <div id="spacer"></div>
@@ -390,16 +390,7 @@ script src="../assets/pages/scripts/application/applicationWizard.js" type="text
 
 											</div>
 										</div>
-										<div class="col-md-12">
-											<hr>
-											<div id="spacer"></div>
-											<a href="#" class="btn grey-salsa btn-outline pull-left">Cancel</a>
-											<button class="btn green pull-right"
-												ng-click="updateService(service)">Update</button>
-											<a ui-sref="form.volume" class="btn green pull-right"> <
-												Back </a> <br>
-											<div id="spacer"></div>
-										</div>
+										
 									</div>
 
 								</div>
@@ -409,7 +400,16 @@ script src="../assets/pages/scripts/application/applicationWizard.js" type="text
 						</div>
 
 					</div>
-
+<div class="col-md-12">
+											<hr>
+											<div id="spacer"></div>
+											<a href="#" ng-click="cancelServiceApp(service.appsId)" class="btn grey-salsa btn-outline pull-left">Cancel</a>
+											<button class="btn green pull-right"
+												ng-click="updateService(service)">Update</button>
+											<a ui-sref="form.volume" class="btn green pull-right"> <
+												Back </a> <br>
+											<div id="spacer"></div>
+										</div>
 											<modal title="update Service" visible="showModal">
 
 

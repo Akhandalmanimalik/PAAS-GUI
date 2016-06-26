@@ -41,7 +41,7 @@ public class ApplicationDAO {
 	//BOTH ARE SAME QUERY
 	private static final String GET_ALL_SERVICES_BY_TENANTID_BY_SERVICE_ID = "select * from application where apps_id=? and tenant_id=?"; //CURRENTLY USED
 	private static final String GET_ALL_APPLICATION_SERVICE_BY_TENANT_ID_QUERY_ = "select * from application where tenant_id=? and apps_id=?";	//CURRENTLY  NOT USED
-	private static final String DELETE_SERVICE_BY_SERVICENAME_USER_ID_AND_APPS_ID_QUERY = "delete from application where service_name=? and tenant_id=?";	/*and apps_id=?*/
+	private static final String DELETE_SERVICE_BY_SERVICE_ID = "delete from application where app_id=?";	/*and apps_id=?*/
 	private static final String UPDATE_SERVICE_BY_SERVICE_ID = "update application set service_name=?,registry_url=?,tag=?,run=?,host_name=?,host_port=?,container_port=?,protocol_type=?,port_index=?,path=?,interval_seconds=?,timeout_seconds=?,max_consecutive_failures=?,grace_period_seconds=?,ignore_http1xx=?,instance_count=?,host_path=?,container_path=?,volume=?,subnet_id=?,tenant_id=?,registry_id=?,container_id=?,apps_id=? where app_id=?";
 	
 	
@@ -66,14 +66,13 @@ public class ApplicationDAO {
 	 * @throws DataBaseOperationFailedException
 	 *             : Error in adding application to db
 	 */
-	public String updateApplication(Applications applications)
+	public void updateApplication(Applications applications)
 			throws DataBaseOperationFailedException {
 		LOGGER.debug(".updateApplication method of ApplicationDAO");
 		JSONObject jsonObject=new JSONObject();
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
-		int apps_id=0;
 		LOGGER.debug(" Applications Details =  "+applications);
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
@@ -85,7 +84,7 @@ public class ApplicationDAO {
 			pstmt.setInt(3, applications.getApps_id());
 			pstmt.executeUpdate();
 			
-			LOGGER.debug("Application updated sucessfull with Id="+apps_id);		
+			LOGGER.debug("Application updated sucessfull with Id="+applications.getApps_id());		
 			} catch (ClassNotFoundException | IOException e) {
 			LOGGER.error( "Unable to update data for applications into db with data : " + applications, e);
 			throw new DataBaseOperationFailedException(
@@ -114,7 +113,7 @@ public class ApplicationDAO {
 		} finally {
 			DataBaseHelper.dbCleanUp(connection, pstmt);
 		}
-		return apps_id+"";
+	
 		//return jsonObject.toString();
 	}// end of method addApplication
 	
@@ -337,7 +336,7 @@ public class ApplicationDAO {
 			pstmt.setInt(21, service.getTenantId());
 			pstmt.setInt(22, imRegistryDAO.getImageRegistryIdByName(service.getImageRegistry(), service.getTenantId()));
 			pstmt.setInt(23, containerTypesDAO.getContainerTypeIdByContainerName(service.getType()));
-			pstmt.setInt(24, getApplicationsIdByName(service.getApplicantionName(), service.getTenantId()));
+			pstmt.setInt(24, service.getAppsId());
 			pstmt.executeUpdate();
 			
 			ResultSet rs = pstmt.getGeneratedKeys();
@@ -470,26 +469,24 @@ public class ApplicationDAO {
 	}// end of method getAllService
 
 	/**
-	 * This method is used to delete service from db by service name
+	 * This method is used to delete service from db by service Id
 	 * 
-	 * @param serviceName
-	 *            : service name in String
+	 * @param serviceId
+	 *            : service id in String
 	 * @throws DataBaseOperationFailedException
-	 *             : Unable to delete service from db using service name
+	 *             : Unable to delete service from db using service Id
 	 */
-	public void deleteServiceByServiceName(Service service)
+	public void deleteServiceByServiceId(Service service)
 			throws DataBaseOperationFailedException {
-		LOGGER.debug(".deleteServiceByServiceName method of ApplicationDAO");
+		LOGGER.debug(".deleteServiceByServiceId method of ApplicationDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
 			// "delete from application where service_name=? and tenant_id=? and apps_id=?";
-			pstmt = (PreparedStatement) connection.prepareStatement(DELETE_SERVICE_BY_SERVICENAME_USER_ID_AND_APPS_ID_QUERY);
-			pstmt.setString(1, service.getServiceName());
-			pstmt.setInt(2, service.getTenantId());
-			//pstmt.setInt(3, service.getAppsId());
+			pstmt = (PreparedStatement) connection.prepareStatement(DELETE_SERVICE_BY_SERVICE_ID);
+			pstmt.setInt(1, service.getId());
 			pstmt.executeUpdate();
 		} catch (ClassNotFoundException | IOException e) {
 			LOGGER.error("Unable to delete   data for service from db : "
@@ -660,7 +657,7 @@ public class ApplicationDAO {
 	 * @throws DataBaseOperationFailedException
 	 * @throws SQLException
 	 */
-	private int getApplicationsIdByName(String applicationName, int tenantId) throws DataBaseOperationFailedException,
+	public  int getApplicationsIdByName(String applicationName, int tenantId) throws DataBaseOperationFailedException,
 			SQLException {
 		LOGGER.debug(".getApplicationsIdByName (.) of ApplicationDAO   : applicationName "+ applicationName+" tenantId  "+tenantId);
 		connectionFactory = new DataBaseConnectionFactory();
@@ -697,6 +694,7 @@ public class ApplicationDAO {
 		}
 		return apps_id;
 	}
+	
 	
 	/**
 	 * This method used for check servicename is exist for given userId or not 

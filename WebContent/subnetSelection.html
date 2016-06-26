@@ -75,10 +75,17 @@
                     <div class="form-group">
                       <label class="control-label col-md-4">Subnet<span class="required"> * </span> </label>
                       <div class="col-md-6">
-                         <select id="subnetName" name="subnetName" data-ng-model="field.subnetName" aria-required="true" aria-describedby="select-error" class="form-control">
+                        <!--  <select id="subnetName" name="subnetName" data-ng-model="field.subnetName" aria-required="true" aria-describedby="select-error" class="form-control">
                           <option value="1.0">Type 1</option>
                         
-                        </select>
+                        </select> -->
+                        
+                        	<select class="form-control" id="subnet"  aria-required="true" aria-describedby="select-error" class="form-control" data-ng-init="selectAllSubnet()"
+												ng-model="field.subnetName" name="subnetid"
+												ng-change="selectCidrforSubent(field.subnetName)"
+												ng-options="group.subnetName  as group.subnetName for group in  subnetObj">
+
+											</select>
                         <span class="help-block"> Select Type</span> </div>
                     </div>
                     <div class="form-group">

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -39,7 +40,9 @@ import com.google.gson.Gson;
 public class ApplicationService {
 	 static final Logger LOGGER = LoggerFactory.getLogger(ApplicationService.class);
 	 static final String TENANT="tenant";
-	
+	 static final String SUCESS="sucess";
+	 static final String FAILUR="failed";
+
 	 private ApplicationDAO applicationDAO=null;
 	
 	@POST
@@ -78,8 +81,8 @@ public class ApplicationService {
 		}*/
 			LOGGER.debug("----------Network  script  called------------------------");
 		} catch (IOException e) {
-			LOGGER.error("Error in reading data "+applicationServiceData+" using object mapper in addService");
-			throw new ApplicationServiceException("Error in reading data "+applicationServiceData+" using object mapper in addService");
+			LOGGER.error("Error in reading data "+applicationServiceData+" using object mapper in addService" + e);
+			//throw new ApplicationServiceException("Error in reading data "+applicationServiceData+" using object mapper in addService");
 		}
 	}//end of method addService
 	
@@ -133,21 +136,19 @@ public class ApplicationService {
 */	
 	
 	@GET
-	@Path("/deleteServiceByName/{serviceName}")
+	@Path("/deleteServiceById/{serviceId}")
 	
-	public void deleteServiceByName(@PathParam("serviceName") String serviceName,@Context HttpServletRequest request) throws DataBaseOperationFailedException, MarathonServiceException{
+	public void deleteServiceById(@PathParam("serviceId") String serviceId,@Context HttpServletRequest request) throws DataBaseOperationFailedException, MarathonServiceException{
 		LOGGER.debug(".deleteServiceByName method of ApplicationService ");
-		String appsid="25";
-		LOGGER.debug("ServiceNAme : "+serviceName  +" apps_id : "+appsid);
+		LOGGER.debug("ServiceNAme : "+serviceId  );
 		applicationDAO = new ApplicationDAO();
 		HttpSession session=request.getSession(false);
 		//String appid=TENANT+user_id+"-"+envirnoment;
 		//new MarathonService().deletInstanceformMarathan(appid);
 		Service service = new Service();
-		service.setServiceName(serviceName);
+		service.setId(Integer.parseInt(serviceId));
 		service.setTenantId((int)session.getAttribute("id"));
-		service.setAppsId(new RestServiceHelper().convertStringToInteger(appsid));
-		applicationDAO.deleteServiceByServiceName(service);
+		applicationDAO.deleteServiceByServiceId(service);
 	}//end of method deleteServiceByName
 	
 	@PUT
@@ -217,17 +218,42 @@ public class ApplicationService {
 		LOGGER.info("Inside  (.)storeApplicationsDetails  ApplicationService");
 		ObjectMapper mapper = new ObjectMapper();
 		applicationDAO=new ApplicationDAO();
-		String  id="";
+	
 		try{
 			HttpSession session=req.getSession(false);
 			Applications apps=mapper.readValue(application, Applications.class);
 				apps.setTenant_id( (int)session.getAttribute("id"));
-				id=applicationDAO.addApplication(apps);
+				applicationDAO.addApplication(apps);
+				return SUCESS;
 		}catch(Exception e){
 			LOGGER.error("Error when deleting application ",e);
 		}
 		
-		return id;
+		return FAILUR;
+	}
+	
+	@GET
+	@Path("/checkApplication/{applictionName}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String checkApplicationExistOrNotByName(@PathParam("applictionName") String applicationName,@Context HttpServletRequest req) throws JSONException {
+		LOGGER.info("Inside  (.)checkApplicationExistOrNotByName  ApplicationService");
+		ObjectMapper mapper = new ObjectMapper();
+		applicationDAO=new ApplicationDAO();
+		int  id=0;
+		try{
+			HttpSession session=req.getSession(false);
+		
+				id=applicationDAO.getApplicationsIdByName(applicationName, (int)session.getAttribute("id"));
+		 if(id==0)
+			 return FAILUR;
+			 
+		 return SUCESS;
+			 
+		}catch(Exception e){
+			LOGGER.error("Error when deleting application ",e);
+		}
+		
+		return FAILUR;
 	}
 	
 	/**
@@ -239,23 +265,27 @@ public class ApplicationService {
 	 */
 	@PUT
 	@Path("/updateApplication")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-
-	public String updateApplication(String application,@Context HttpServletRequest req) throws MarathonServiceException{
+	public String  updateApplication(String application,@Context HttpServletRequest req,@Context HttpServletResponse response) throws MarathonServiceException{
 		LOGGER.debug(".updateApplication method of ApplicationService "+application);
 		ObjectMapper mapper = new ObjectMapper();
 		applicationDAO=new ApplicationDAO();
 	
-		String  status="sucess";
+		
 		try{
 			HttpSession session=req.getSession(false);
 			Applications apps=mapper.readValue(application, Applications.class);
 				apps.setTenant_id( (int)session.getAttribute("id"));
 				applicationDAO.updateApplication(apps);
+
+				
+				return SUCESS;
 		}catch(Exception e){
 			LOGGER.error("Error updating pplication ",e);
 		}
-		return status;
+		
+	return FAILUR;
 	}
 	
 	/**
@@ -337,11 +367,11 @@ public class ApplicationService {
 			service.setTenantId((int)session.getAttribute("id"));
 			
 				applicationDAO.updateServiceByServiceId(service);
-				return "success";
+				return SUCESS;
 		}catch(Exception e){
 			LOGGER.error("Error updating pplication ",e);
 		}
-		return "failed";
+		return FAILUR;
 	}	
 	
 }

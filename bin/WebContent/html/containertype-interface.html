@@ -56,7 +56,7 @@
                     </div>
                     <!-- END PAGE HEAD-->
                     <hr>
-                    <button type="button" OnClick=" location.href='container-wizard.html' " class="btn green "> Add Container Type </button>
+                    <button type="button" OnClick=" location.href='container-wizard2.html' " class="btn green "> Add Container Type </button>
                     <hr>
                     
                     <!-- BEGIN PAGE BASE CONTENT -->
@@ -77,10 +77,10 @@
 													<td onclick="window.document.location='../html/applicationWizard.html'">{{field.name}}</td>
 													<td>{{field.memory}}</td>
 													<td>{{field.description}}</td>
-													<td align="center"><button data-ng-click="deleteContainerTypes(field.name)"
-															class="btn btn-danger"><i class="fa fa-remove"></i></button></td>
-													<td align="center"><button data-ng-click="updateContainerTypes(field.name)"
-															class="btn btn-primary"><i class="fa fa-undo"></i></button></td>
+													<td align="center"><a data-ng-click="deleteContainerTypes(field.name)"
+															><i class="fa fa-remove"></i></a></td>
+													<td align="center"><a data-ng-click="shareMyData(field)"
+															><i class="fa fa-undo"></a></td>
 												</tr>
 											</tbody>
                                         </table>

@@ -71,10 +71,11 @@
         
                 <form action="#" id="step-1" class="form-horizontal">
                   <div class="form-body">
-                  
+                    
                   <!-- Service Name -->
                     <div class="form-group">
                       <label class="control-label col-md-4">Service Name <span class="required"> * </span> </label>
+                    
                       <div class="col-md-6">
                         <input  type="text" id="serviceName" name="serviceName" data-ng-model="field.serviceName" class="form-control" />
                         <span class="help-block"> Enter Service Name</span> </div>
@@ -87,7 +88,7 @@
                         <select name="type" id="type" data-ng-model="field.type" aria-required="true" aria-describedby="select-error" class="form-control" data-ng-init="getAllRelatedContainerTypes()" 
 											data-ng-options="choice.name as choice.name  for choice in image">
                         </select>
-                        <span class="help-block"> Select Type</span> </div>
+                        <span class="help-block"> Select Type </span> </div>
                     </div>
                   </div>
                   

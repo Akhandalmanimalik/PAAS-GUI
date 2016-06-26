@@ -49,7 +49,7 @@
 		</div>
 
 		<hr>
-		<button OnClick=" location.href='environment_wizard.html' " class="btn green">Add Environment Type</button>
+		<button OnClick=" location.href='create-new-environment.html' " class="btn green">Add Environment Type</button>
 		<br>
 		<hr />
 		<div class="table-scrollable">
@@ -67,7 +67,7 @@
 				<tr data-ng-repeat="val in field">
 					<td>{{val.name}}</td>
 					<td>{{val.description}}</td>
-					<td align="center"><a data-ng-click="deleteEnvironmentTypes(val.name)"
+					<td align="center"><a data-ng-click="deleteEnvironmentTypes(val.id)"
 									><i class="fa fa-remove"></a></td>
 					 <td align="center"><a data-ng-click="shareMyData(val)"
 									><i class="fa fa-undo"></a></td>

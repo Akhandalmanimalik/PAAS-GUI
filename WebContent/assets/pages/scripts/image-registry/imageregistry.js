@@ -88,9 +88,8 @@ myimageregistry.controller('MainCtrl', function ($scope,$http,srvShareData) {
     
    /**START DELETE IMAGE REGISTRY*/
     $scope.deleteImageRegistry = function(data,username) {
-    	alert(username);
-    	alert("coming delete"+username);
-    	alert(data+" "+username);
+    	
+    
      	var response = $http.get('/paas-gui/rest/imageRegistry/deleteImageRegistry/'+data+'/'+username);
      	response.success(function(data){
      		$scope.selectImageRegistry();
@@ -220,7 +219,6 @@ myimageregistry.controller('imageUpdateCtrl', function($scope, srvShareData,$htt
 	
 	 $scope.registryValidation1 = function(name) {
 	    	
-	    	alert("comingREG2");
 		  	 console.log("<<<<<< acl validation >>>>>>>>>" +name);
 		  	  var res = $http.get('/paas-gui/rest/imageRegistry/checkimageRegistry/'+name);
 		  	  res.success(function(data, status, headers, config) {

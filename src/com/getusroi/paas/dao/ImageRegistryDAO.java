@@ -29,11 +29,12 @@ public class ImageRegistryDAO {
 	 private final String INSERT_IMAGEREGISTRY_QUERY="insert into image_registry (registory_name,registory_url,version,user_name,password,tenant_id,createDTM) VALUES (?,?,?,?,?,?,NOW())";
 	 private final String GET_ALL_IMAGEREGISTRY_QUERY="select * from image_registry where tenant_id=?";
 	 private final String GET_IMAGE_REGISTRY_BY_NAME_AND_TENANT_ID="select * from image_registry where registory_name=? and tenant_id=?";
-	 private final String DELETE_IMAGEREGISTRY_BY_IMAGENAME_AND_USERNAME_QUERY="delete from image_registry where registory_name=? AND user_name=?";
+	 
 	 private final String GET_IMAGE_REGISTRY_ID_BY_NAME = "select id from image_registry where registory_name=?";
 	 private final String GET_IMAGE_REGISTRY_NAME_BY_ID_AND_TENANT_ID = "select registory_name from image_registry where tenant_id=? and id=?";
 	 private final String GET_IMAGE_REGISTRY_ID_BY_UserNAME = "select id from image_registry where  user_name=? and tenant_id=?";
 	 private final String UPDATE_IMAGE_REGISTRY_BY_ID="UPDATE  image_registry set registory_name=?,registory_url =?,version=?,user_name=?,password=?,tenant_id=? where id=?";
+	 private final String DELETE_IMAGEREGISTRY_BY_IMAGEID_AND_USERNAME_QUERY="delete from image_registry where id=? AND user_name=?";
 	 /**
 	  * This method is used to store imageRegistry in db
 	  * @param imageRegistryVO : ImageRegistryVO 
@@ -76,8 +77,7 @@ public class ImageRegistryDAO {
 		}
 	}//end of method addImageRegistry
 	
-public int updateImageRegistry(ImageRegistry imageRegistryVO)throws DataBaseOperationFailedException
-{
+public int updateImageRegistry(ImageRegistry imageRegistryVO)throws DataBaseOperationFailedException{
 
 	
 	LOGGER.debug(".updateImageRegistry method of ImageRegistryDAO");
@@ -236,20 +236,20 @@ return updateImage;
 	 * @param userName : name of user in String
 	 * @throws DataBaseOperationFailedException 
 	 */
-	public void deleteImageRegistryByNameAndUserName(String imageName,String userName) throws DataBaseOperationFailedException{
+	public void deleteImageRegistryById(int imageId,String userName) throws DataBaseOperationFailedException{
 		LOGGER.debug(".deleteImageRegistryByNameAndUserName method of ImageRegistryDAO");
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		Connection connection=null;
 		PreparedStatement pstmt=null;
 		try {
 			connection=connectionFactory.getConnection(MYSQL_DB);
-			pstmt=(PreparedStatement) connection.prepareStatement(DELETE_IMAGEREGISTRY_BY_IMAGENAME_AND_USERNAME_QUERY);
-			pstmt.setString(1,imageName);
+			pstmt=(PreparedStatement) connection.prepareStatement(DELETE_IMAGEREGISTRY_BY_IMAGEID_AND_USERNAME_QUERY);
+			pstmt.setInt(1,imageId);
 			pstmt.setString(2,userName);
 			pstmt.executeUpdate();
 		} catch (ClassNotFoundException | IOException e) {
-			LOGGER.error("Unable to delete image registry from db using image name : "+imageName+" and user name : "+userName);
-			throw new DataBaseOperationFailedException("Unable to delete image registry from db using image name : "+imageName+" and user name : "+userName,e);
+			LOGGER.error("Unable to delete image registry from db using image name : "+imageId+" and user name : "+userName);
+			throw new DataBaseOperationFailedException("Unable to delete image registry from db using image name : "+imageId+" and user name : "+userName,e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
 				String message = "Unable to delete image registry from db using image name because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
@@ -258,7 +258,7 @@ return updateImage;
 				String message = "Unable to delete image registry from db using image name because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
 				throw new DataBaseOperationFailedException(message, e);
 			} else
-				throw new DataBaseOperationFailedException("Unable to delete image registry from db using image name : "+imageName+" and user name : "+userName,e);
+				throw new DataBaseOperationFailedException("Unable to delete image registry from db using image name : "+imageId+" and user name : "+userName,e);
 		} finally{
 			DataBaseHelper.dbCleanUp(connection, pstmt);			
 		}

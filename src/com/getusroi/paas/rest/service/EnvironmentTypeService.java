@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.dao.EnvironmentDAO;
 import com.getusroi.paas.dao.ImageRegistryDAO;
+import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.EnvironmentTypeServiceException;
 import com.getusroi.paas.rest.service.exception.ImageRegistryServiceException;
 import com.getusroi.paas.sdn.service.impl.SDNServiceImplException;
@@ -42,31 +43,29 @@ public class EnvironmentTypeService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnvironmentTypeService.class);
 
+	private EnvironmentDAO envDao= null;
 	@POST
 	@Path("/insertEnvironmentType")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void insertEnvironmentType(String environmentTypeData,@Context HttpServletRequest req)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String insertEnvironmentType(String environmentTypeData,@Context HttpServletRequest req)
 			throws EnvironmentTypeServiceException, DataBaseOperationFailedException {
-
 		LOGGER.debug(".insertEnvironmentType method of EnvironmentTypeService");
 		ObjectMapper mapper = new ObjectMapper();
-		EnvironmentDAO environmentDAO = new EnvironmentDAO();
+		envDao = new EnvironmentDAO();
 
 		try {
 			HttpSession session = req.getSession(true);
-			LOGGER.debug(".before>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			EnvironmentType environmentTypes = mapper.readValue(environmentTypeData, EnvironmentType.class);
-			LOGGER.debug(".after>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-
 			if(environmentTypes != null)
 				environmentTypes.setTenantId((int)session.getAttribute("id"));
-			environmentDAO.insertEnvironmentType(environmentTypes);
+			envDao.insertEnvironmentType(environmentTypes);
+			return "success";
 		} catch (IOException e) {
 			LOGGER.error("Error in reading data : " + environmentTypeData + " using object mapper in environmentType");
 			throw new EnvironmentTypeServiceException(
 					"Error in reading data : " + environmentTypeData + " using object mapper in insertEnvironmentType");
 		}
-
 	} // end of insertEnvironmentType method
 
 	
@@ -78,20 +77,20 @@ public class EnvironmentTypeService {
 		LOGGER.debug(".getEnvironmentType of EnvironmentTypeService");
 		HttpSession session = req.getSession(true);
 		List<EnvironmentType> environmentTypeList = new ArrayList<EnvironmentType>();
-		EnvironmentDAO environmentDAO = new EnvironmentDAO();
-		environmentTypeList = environmentDAO.getAllEnvironmentType((int)session.getAttribute("id"));
+		envDao = new EnvironmentDAO();
+		environmentTypeList = envDao.getAllEnvironmentType((int)session.getAttribute("id"));
 		Gson gson = new Gson();
 		String environmentList = gson.toJson(environmentTypeList);
 		return environmentList;
 	} // end of getEnvironmentType method
 
 	@POST
-	@Path("/deleteEnvironmentByName/{name}")
-	public void deleteEnvironment(@PathParam("name") String name)
+	@Path("/deleteEnvironmentById/{envId}")
+	public void deleteEnvironment(@PathParam("envId") String envId)
 			throws DataBaseOperationFailedException, EnvironmentTypeServiceException {
-		LOGGER.debug(".deleteEnvironment of EnvironmentTypeService");
-		EnvironmentDAO environmentDAO = new EnvironmentDAO();
-		environmentDAO.deleteEnvironmentTypeByName(name);
+		LOGGER.debug(".deleteEnvironment of EnvironmentTypeService envId "+envId);
+		envDao = new EnvironmentDAO();
+		envDao.deleteEnvironmentTypeById(new RestServiceHelper().convertStringToInteger(envId));
 	} // end of deleteEnvironment method
 
 	@GET
@@ -100,8 +99,8 @@ public class EnvironmentTypeService {
 	public String getEnvironmentList() throws DataBaseOperationFailedException {
 		LOGGER.debug(".getEnvironmentList of EnvironmentTypeService");
 		List<Environments> customers = new ArrayList<Environments>();
-		EnvironmentDAO environmentDAO = new EnvironmentDAO();
-		customers = environmentDAO.getAllEnvironmentsList();
+		envDao = new EnvironmentDAO();
+		customers = envDao.getAllEnvironmentsList();
 		Gson gson = new Gson();
 		String customersList = gson.toJson(customers);
 		return customersList;
@@ -112,8 +111,8 @@ public class EnvironmentTypeService {
 	@Path("/insertEnvironmentsData")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String insertEnvironmentsData(String environmentData) throws DataBaseOperationFailedException {
-		
 		LOGGER.debug(".insertEnvironmentsData of EnvironmentsTypeService: " + environmentData);
+		envDao = new EnvironmentDAO();
 		List<Environments> environmentsList = new ArrayList<>();
 		JSONObject jsonObject =new JSONObject(environmentData);
 		jsonObject.put("containername", "dev.fuse");
@@ -126,8 +125,7 @@ public class EnvironmentTypeService {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			environments = mapper.readValue(jsonObject.toString(), Environments.class);
-			EnvironmentDAO environmentDAO = new EnvironmentDAO();
-			environmentDAO.insertAllEnvironmentsData(environments);
+			envDao.insertAllEnvironmentsData(environments);
 		} catch (IOException e) {
 			LOGGER.debug("Unable to read value");
 		}
@@ -144,24 +142,15 @@ public class EnvironmentTypeService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String updateEnvironmentType(String updateEnviromentType,@Context HttpServletRequest req) throws DataBaseOperationFailedException, SDNServiceImplException, ImageRegistryServiceException{
 		LOGGER.debug(".update EnvironmentType method of EnvironmentTypeService"+updateEnviromentType);
-		EnvironmentDAO environmentDAO = new EnvironmentDAO();
 		ObjectMapper mapper = new ObjectMapper();
-		
-		
-		
+		envDao = new EnvironmentDAO();
 		try {
 			//HttpSession session =req.getSession();
-			
 			EnvironmentType invironmentType = mapper.readValue(updateEnviromentType, EnvironmentType.class);
-	
-				
-			environmentDAO.updateEnvironmentType(invironmentType);
+			envDao.updateEnvironmentType(invironmentType);
 			String username = invironmentType.getName();
 			String pass =invironmentType.getDescription();		
-			
 			LOGGER.debug("username : "+username+ " pass: "+pass);			
-			
-		
 	return "Success";
 		} catch (IOException e) {
 			LOGGER.error("Error in reading value from image registry  : "+updateEnviromentType+" using object mapper in addImageRegistry",e);
@@ -184,11 +173,11 @@ public class EnvironmentTypeService {
 			@Context HttpServletRequest req)
 			throws DataBaseOperationFailedException {
 		LOGGER.debug(" coming to check environment of pass network"+envName);
-
+		envDao = new EnvironmentDAO();
 		HttpSession session = req.getSession(true);
 		LOGGER.debug("hhhhhh " + (int) session.getAttribute("id"));
-		EnvironmentDAO networkDAO = new EnvironmentDAO();
-		int id = networkDAO.getEnvironmentIdByEnvName(envName,
+		
+		int id = envDao.getEnvironmentIdByEnvName(envName,
 				(int) session.getAttribute("id"));
 
 		if (id > 0)

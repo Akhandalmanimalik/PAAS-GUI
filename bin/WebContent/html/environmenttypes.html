@@ -15,6 +15,10 @@
 <script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
 <script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="../assets/global/scripts/angular.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js"
+	type="text/javascript"></script>
+
+
 <script src="../assets/pages/scripts/environmenttype/environmenttype.js" type="text/javascript"></script>
 
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
@@ -64,9 +68,9 @@
 					<td>{{val.name}}</td>
 					<td>{{val.description}}</td>
 					<td align="center"><a data-ng-click="deleteEnvironmentTypes(val.name)"
-									class="btn btn-danger"><i class="fa fa-remove"></a></td>
-					 <td align="center"><a data-ng-click="updateEnvironmentTypes(field.name)"
-									class="btn btn-primary"><i class="fa fa-undo"></a></td>
+									><i class="fa fa-remove"></a></td>
+					 <td align="center"><a data-ng-click="shareMyData(val)"
+									><i class="fa fa-undo"></a></td>
 				</tr>
 				</tbody>
 				</table>

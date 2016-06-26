@@ -33,11 +33,11 @@ public class EnvironmentDAO {
 
 	private static final String INSERT_ENVIRONMENT_SERVICE_QUERY = "INSERT INTO  environments (environment_name,description,tenant_id, createdDTM) VALUES(?,?,?,now())";
 	private static final String GET_ALL_ENVIRONMENT_QUERY = "SELECT * FROM environments where tenant_id=?";
-	private static final String DELETE_ENVIRONMENT_BY_NAME = "DELETE FROM environments WHERE  environment_name = ?";
 	private static final String SELECT_ALL_ENVIRONMENTS_LIST = "SELECT * FROM envirnament";
-		private static final String INSERT_ENVIRONMENTS_QUERY = "INSERT INTO envirnament VALUES(?,?,?,?,?,?)";
-	 private final String GET_ENVIRONMENT_NAME_USING_ID_AND_TENANTID="select environment_name from environments where id =? and tenant_id=?";
-	 private final String 	UPDATE_ENVIRONMENT_TYPE_BYID="UPDATE  environments set environment_name=?,description =? where id=? ";
+	private static final String INSERT_ENVIRONMENTS_QUERY = "INSERT INTO envirnament VALUES(?,?,?,?,?,?)";
+	private final String GET_ENVIRONMENT_NAME_USING_ID_AND_TENANTID="select environment_name from environments where id =? and tenant_id=?";
+	private final String 	UPDATE_ENVIRONMENT_TYPE_BYID="UPDATE  environments set environment_name=?,description =? where id=? ";
+	private static final String DELETE_ENVIRONMENT_BY_ID = "DELETE FROM environments WHERE  id = ?";
 	//private static final String SELECT_ADD_SERVICE_QUERY = "SELECT * FROM addService";
 	//private static final String READ_ENVIRONMENT_VARIABLE = "SELECT * FROM environment_variable WHERE serviceName =?";
 	//private static final String READ_ROUTE = "SELECT * FROM route WHERE serviceName =?";
@@ -149,8 +149,6 @@ public class EnvironmentDAO {
 				while (resultSet.next()) {
 					
 					EnvironmentType environmentType = new EnvironmentType();
-					
-					
 					environmentType.setId(resultSet.getInt("id"));
 					environmentType.setName(resultSet.getString("environment_name"));
 					environmentType.setDescription(resultSet.getString("description"));
@@ -188,18 +186,18 @@ public class EnvironmentDAO {
 	 *             : Unable to delete EnvironmentTypes
 	 */
 
-	public void deleteEnvironmentTypeByName(String name) throws DataBaseOperationFailedException {
-		LOGGER.debug(".deleteEnvironmentTypeByName of EnvironmentDAO");
+	public void deleteEnvironmentTypeById(int envId) throws DataBaseOperationFailedException {
+		LOGGER.debug(".deleteEnvironmentTypeByName of EnvironmentDAO envId  "+envId);
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 
 		try {
 			connection = connectionFactory.getConnection(MYSQL_DB);
-			preparedStatement = (PreparedStatement) connection.prepareStatement(DELETE_ENVIRONMENT_BY_NAME);
-			preparedStatement.setString(1, name);
+			preparedStatement = (PreparedStatement) connection.prepareStatement(DELETE_ENVIRONMENT_BY_ID);
+			preparedStatement.setInt(1, envId);
 			preparedStatement.executeUpdate();
-			LOGGER.debug("Environment deleted successfully with name "+name+"Successfully");
+			LOGGER.debug("Environment deleted successfully with id "+envId+"Successfully");
 		} catch (ClassNotFoundException | IOException e) {
 			LOGGER.error("Unable to delete environment from db ");
 			throw new DataBaseOperationFailedException("Unable to delete environment from db ", e);

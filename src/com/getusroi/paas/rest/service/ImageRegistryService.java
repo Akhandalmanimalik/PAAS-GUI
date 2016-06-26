@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -42,13 +43,23 @@ import com.google.gson.Gson;
 public class ImageRegistryService {
 	 static final Logger logger = LoggerFactory.getLogger(ImageRegistryService.class);
 
-	
+	 private ImageRegistryDAO imgRegistryDAO = new ImageRegistryDAO();
+	 
+	 /**
+	  * Rest Service to insert imager Registry details into DB
+	  * @param imageRegistryData
+	  * @param req
+	  * @return
+	  * @throws DataBaseOperationFailedException
+	  * @throws SDNServiceImplException
+	  * @throws ImageRegistryServiceException
+	  */
 	@POST
 	@Path("/addImageRegistry")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String addImageRegistry(String imageRegistryData,@Context HttpServletRequest req) throws DataBaseOperationFailedException, SDNServiceImplException, ImageRegistryServiceException{
 		logger.debug(".addImageRegistry method of ImageRegistryService");
-		ImageRegistryDAO imageRegistryDAO = new ImageRegistryDAO();
+		imgRegistryDAO = new ImageRegistryDAO();
 		ObjectMapper mapper = new ObjectMapper();
 		SDNInterface sdnService=new SDNServiceWrapperImpl();
 		String responseMessage=null;
@@ -58,7 +69,7 @@ public class ImageRegistryService {
 			HttpSession session = req.getSession(true);
 			if(session != null && imageRegistry != null)
 				imageRegistry.setTenant_id(restServcHelper.convertStringToInteger(session.getAttribute("id")+""));
-			imageRegistryDAO.addImageRegistry(imageRegistry);
+			imgRegistryDAO.addImageRegistry(imageRegistry);
 			String username = imageRegistry.getUser_name();
 			String pass = imageRegistry.getPassword();
 			String url = imageRegistry.getLocation();
@@ -77,17 +88,23 @@ public class ImageRegistryService {
 		return responseMessage;
 	}//end of method addImageRegistry
 
+	/**
+	 * Rest Service To Get All Image Registry By using Tenant id
+	 * @param req
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 */
 	@GET
 	@Path("/getAllImageRegistry")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllImageRegistry(@Context HttpServletRequest req) throws DataBaseOperationFailedException{
 		logger.debug(".selectImageRegistry method of ImageRegistryService");
-		ImageRegistryDAO imageRegistryDAO=new ImageRegistryDAO();
+		imgRegistryDAO = new ImageRegistryDAO();
 		RestServiceHelper restServcHelper= new RestServiceHelper();
 		HttpSession session = req.getSession(true);
 		if(session != null){
 			int tenantId = restServcHelper.convertStringToInteger(session.getAttribute("id")+"");
-			List<ImageRegistry> imageRegistryList=imageRegistryDAO.getAllImageRegistry(tenantId);
+			List<ImageRegistry> imageRegistryList=imgRegistryDAO.getAllImageRegistry(tenantId);
 			Gson gson = new Gson();
 			String imageRegistryListInJSON=gson.toJson(imageRegistryList);
 			
@@ -98,17 +115,32 @@ public class ImageRegistryService {
 		
 		
 	}//end of method getAllImageRegistry
-	
+	 
+	/**
+	 * Rest Service to Delete image Registry by image registry id
+	 * @param imageId
+	 * @param userName
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 */
 	@GET
-	@Path("/deleteImageRegistry/{imageName}/{userName}")
+	@Path("/deleteImageRegistry/{imageId}/{userName}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String deleteImageRegistry(@PathParam("imageName") String imageName,@PathParam("userName") String userName) throws DataBaseOperationFailedException{
-		logger.debug(".deleteImageRegistry method of ImageRegistryService");
-		ImageRegistryDAO imageRegistryDAO=new ImageRegistryDAO();
-		imageRegistryDAO.deleteImageRegistryByNameAndUserName(imageName, userName);	
-		return "delete successful for image registry with image name : "+imageName+" and user name : "+userName;
+	public String deleteImageRegistry(@PathParam("imageId") String imageId,@PathParam("userName") String userName) throws DataBaseOperationFailedException{
+		logger.debug(".deleteImageRegistry method of ImageRegistryService imageId >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>. "+imageId +" userName "+userName);
+		imgRegistryDAO = new ImageRegistryDAO();
+		imgRegistryDAO.deleteImageRegistryById(new RestServiceHelper().convertStringToInteger(imageId), userName);	
+		return "delete successful for image registry with image name : "+imageId+" and user name : "+userName;
 	}//end of method deleteImageRegistry
 	
+	/**
+	 * Rest Service to get Docker Hub Registry Tags from the web
+	 * @param repositoryName
+	 * @param req
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 * @throws ApplicationServiceException
+	 */
 	@POST
 	@Path("/getDockerHubRegistryTags")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -116,11 +148,11 @@ public class ImageRegistryService {
 		logger.debug(".getApplicationSummary method of ApplicationService "+repositoryName);
 		JSONObject jsonObject =new JSONObject(repositoryName);
 		RestServiceHelper restServcHelper= new RestServiceHelper();
-		ImageRegistryDAO imageRegistryDAO = new ImageRegistryDAO();
+		imgRegistryDAO = new ImageRegistryDAO();
 		HttpSession session = req.getSession(true);
 		
 		int tenantId = restServcHelper.convertStringToInteger(session.getAttribute("id")+"");
-		ImageRegistry imageRegistry = imageRegistryDAO.getImageRegistryByName(jsonObject.getString("imageRegistry"),tenantId);
+		ImageRegistry imageRegistry = imgRegistryDAO.getImageRegistryByName(jsonObject.getString("imageRegistry"),tenantId);
 		logger.debug("imageRegistry>>>>>>>>>>>>>>>>>> "+imageRegistry);
 		String response=null;
 		if(imageRegistry != null ){
@@ -176,14 +208,21 @@ public class ImageRegistryService {
         return result.toString();
 	}//end of method getHttpResponse
 	 
+	/**
+	 * Rest Service to check image registry with provided name exist or not with tenant id
+	 * @param registryName
+	 * @param req
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 */
 	 @GET
 	 @Path("/checkimageRegistry/{registryName}")
 	 @Produces(MediaType.TEXT_PLAIN)
 	public String imgRegistryValidation(@PathParam("registryName") String registryName,@Context HttpServletRequest req) throws DataBaseOperationFailedException {
 		 logger.debug(" coming to check Image Registry of pass network");
 		 HttpSession session = req.getSession(true);
-		 ImageRegistryDAO registryDAO=new ImageRegistryDAO();
-		 int id = registryDAO.getImageRegistryIdByName(registryName,(int)session.getAttribute("id"));
+		 imgRegistryDAO = new ImageRegistryDAO();
+		 int id = imgRegistryDAO.getImageRegistryIdByName(registryName,(int)session.getAttribute("id"));
 		
 		if(id>0)
 			return "success";
@@ -206,17 +245,42 @@ public class ImageRegistryService {
 			@Context HttpServletRequest req)
 			throws DataBaseOperationFailedException {
 		logger.debug(" coming to check Image Registry of pass network");
-
 		HttpSession session = req.getSession(true);
-
-		ImageRegistryDAO registryDAO = new ImageRegistryDAO();
-		int id = registryDAO.getImgRegistryIdByUser_NameandTenant_Id(userName,
+		imgRegistryDAO = new ImageRegistryDAO();
+		int id = imgRegistryDAO.getImgRegistryIdByUser_NameandTenant_Id(userName,
 				(int) session.getAttribute("id"));
-
 		if (id > 0)
 			return "success";
 		else
 			return "failure";
 	}// end of method aClByName validation
 	 
+	/**
+	 * Rest Service To update image Registry by image registry id
+	 * @param updateEnviromentType
+	 * @param req
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 * @throws SDNServiceImplException
+	 * @throws ImageRegistryServiceException
+	 */
+	@PUT
+	@Path("/updateImageRegistry")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String updateImageRegistry(String updateEnviromentType,@Context HttpServletRequest req) throws DataBaseOperationFailedException, SDNServiceImplException, ImageRegistryServiceException{
+		logger.debug(".update EnvironmentType method of EnvironmentTypeService"+updateEnviromentType);
+		ObjectMapper mapper = new ObjectMapper();
+		imgRegistryDAO = new ImageRegistryDAO();
+		try {
+			//HttpSession session =req.getSession();
+			ImageRegistry imageRegistryVO = mapper.readValue(updateEnviromentType, ImageRegistry.class);
+			imgRegistryDAO.updateImageRegistry(imageRegistryVO);
+			logger.debug("username : "+imageRegistryVO.getName()+ " pass: "+imageRegistryVO.getPassword());			
+			return "Success";
+		} catch (IOException e) {
+			logger.error("Error in reading value from image registry  : "+updateEnviromentType+" using object mapper in addImageRegistry",e);
+			throw new ImageRegistryServiceException("Error in reading value from image registry  : "+updateEnviromentType+" using object mapper in addImageRegistry");
+		}
+	}
 }

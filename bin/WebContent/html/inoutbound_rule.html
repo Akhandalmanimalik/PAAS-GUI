@@ -65,7 +65,7 @@
                         <div class="col-md-12">
                                     <!-- BEGIN FORM-->
                                     <form action="#" id="vpcWizardForm" class="form-horizontal" name="vpcWizardForm" 
-                                    data-ng-submit="regVpc()" method="post" novalidate>
+                                   method="post" novalidate>
                                         <div class="form-body">
                                             <div class="alert alert-danger display-hide">
                                                 <button class="close" data-close="alert"></button> You have some form errors. Please check below. </div>
@@ -128,7 +128,7 @@
 									</label>
 									<div class="col-md-4">
 										<select name="protocolRange" id="protocolRange" aria-required="true"
-											data-ng-model="rule.protocolRange	" aria-describedby="select-error"
+											data-ng-model="rule.protocolRange" aria-describedby="select-error"
 											class="form-control">
 											<option value="All"> All </option>
 											<option value="0-6555"> 0 - 6555 </option>
@@ -137,7 +137,7 @@
 								</div>
 								
 								<!-- SOURCE IP -->                                                
-								<div data-ng-if="rule.ruleType == 'In Bound'" class="form-group"
+								<div data-ng-show="rule.ruleType == 'In Bound'" class="form-group"
 									data-ng-class="{ 'has-error' : vpcWizardForm.sourceIp.$invalid && !vpcWizardForm.sourceIp.$pristine }">
 									<!-- ie8, ie9 does not support html5 placeholder, so we just show field	title for that -->
 									<label class="control-label col-md-3"> Source IP <span
@@ -147,7 +147,7 @@
 									<div class="col-md-4">
 										<input type="text" id="sourceIp" name="sourceIp"
 											data-ng-model="rule.sourceIp" data-required="1"
-											class="form-control placeholder-no-fix" data-ng-minlength="15"
+											class="form-control placeholder-no-fix" data-ng-minlength="9"
 											data-ng-maxlength="17" required />
 									</div>
 									<p data-ng-show="vpcWizardForm.sourceIp.$error.maxlength"
@@ -155,7 +155,7 @@
 								</div>
 								 
 								<!-- DESTINATION IP -->                                                
-								<div data-ng-if="rule.ruleType == 'Out Bound'" class="form-group"
+								<div data-ng-show="rule.ruleType == 'Out Bound'" class="form-group"
 									data-ng-class="{ 'has-error' : vpcWizardForm.sourceIp.$invalid && !vpcWizardForm.sourceIp.$pristine }">
 									<!-- ie8, ie9 does not support html5 placeholder, so we just show field	title for that -->
 									<label class="control-label col-md-3"> Destination IP <span
@@ -165,7 +165,7 @@
 									<div class="col-md-4">
 										<input type="text" id="sourceIp" name="sourceIp"
 											data-ng-model="rule.sourceIp" data-required="1"
-											class="form-control placeholder-no-fix" data-ng-minlength="15"
+											class="form-control placeholder-no-fix" data-ng-minlength="9"
 											data-ng-maxlength="17" required />
 									</div>
 									<p data-ng-show="vpcWizardForm.sourceIp.$error.maxlength"
@@ -186,7 +186,7 @@
 										</select>
 									</div>
 								</div>
-					{{rule}}
+					
 								
 							</div>
                                       	<div class="form-actions">
@@ -196,10 +196,14 @@
                                                     <button type="submit" class="btn green" id="btn-login" 
                                                     data-ng-disabled="vpcWizardForm.$invalid"  data-ng-click="regRule(selectedAclId)">Submit</button>
                                                     <!-- <button type="button" class="btn grey-salsa btn-outline">Cancel</button> -->                                                    
-                                                    <a href="vpc-interface.html" class="btn grey-salsa btn-outline">Cancel</a>
+                                                    <!-- <a href="" class="btn grey-salsa btn-outline">Cancel</a> -->
+                                                    <a href="/paas-gui/html/inoutbound_rule_interface.html"
+												class="btn grey-salsa btn-outline">Cancel</a>
                                                 </div>
                                             </div>
+                                            {{rule}}
                                         </div>
+                                        
                                     </form>
                                     <!-- END FORM-->
                         </div>

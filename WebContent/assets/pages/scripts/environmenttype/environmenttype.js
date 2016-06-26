@@ -25,8 +25,15 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http,srvShareData) {
     	console.log(userData);
 
     	res.success(function(data, status, headers, config) {
-    		$scope.message = data;
-    		window.location.href ="/paas-gui/html/environmenttypes.html";
+    		if(data =='success'){
+				console.log("login success");
+				/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+				window.location.href = "environmenttypes.html";
+			}else{
+				console.log("Login Error Please Enter Proper Details");
+				/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
+				window.location.href = "create-new-environment.html";
+			}
     	});
     	res.error(function(data, status, headers, config) {
     		alert("failure message: " + JSON.stringify({
@@ -76,7 +83,7 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http,srvShareData) {
     /**=================== delete*====================// DONE */ 
    
     $scope.deleteEnvironmentTypes = function(data) {
-     	var response = $http.post('/paas-gui/rest/environmentTypeService/deleteEnvironmentByName/'+data);
+     	var response = $http.post('/paas-gui/rest/environmentTypeService/deleteEnvironmentById/'+data);
      	response.success(function(data){
      		$scope.selectEnvironmentTypes();
      	});

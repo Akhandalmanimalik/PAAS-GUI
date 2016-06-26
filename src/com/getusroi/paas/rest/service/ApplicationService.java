@@ -2,6 +2,7 @@ package com.getusroi.paas.rest.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,13 +25,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.ApplicationDAO;
+import com.getusroi.paas.dao.ContainerTypesDAO;
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
+import com.getusroi.paas.helper.ScriptService;
 import com.getusroi.paas.marathon.service.IMarathonService;
 import com.getusroi.paas.marathon.service.MarathonServiceException;
 import com.getusroi.paas.marathon.service.impl.MarathonService;
 import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.ApplicationServiceException;
 import com.getusroi.paas.vo.Applications;
+import com.getusroi.paas.vo.ContainerTypes;
+import com.getusroi.paas.vo.MessosTaskInfo;
 import com.getusroi.paas.vo.Service;
 import com.google.gson.Gson;
 
@@ -53,18 +58,22 @@ public class ApplicationService {
 		ObjectMapper mapper = new ObjectMapper();
 		applicationDAO=new ApplicationDAO();
 		IMarathonService marathonService=new MarathonService();
+		ContainerTypesDAO contianer=new ContainerTypesDAO();
+		//defulat value 
+		int containerVlaue=500;
 		try {
 			HttpSession session=request.getSession(false);
 			int userId=(int)session.getAttribute("id");
 			Service service = mapper.readValue(applicationServiceData,Service.class);
-			/*for(EnvironmentVariable env:service.getEnv()){
-				LOGGER.debug("env key : "+env.getEnvkey()+"env value : "+env.getEnvvalue());
-			}*/
 			LOGGER.debug("service "+service);
 			service.setTenantId(userId);
-			applicationDAO.addService(service);			
+			applicationDAO.addService(service);	
+		List<ContainerTypes> containerTypesList=	contianer.getContainerTypeIdByName(service.getType(),userId);
+		if(!containerTypesList.isEmpty())
+			containerVlaue=containerTypesList.get(0).getMemory();
+			
 			//create instance in marathon using service object
-		/*String appID=	marathonService.postRequestToMarathon(service);
+		String appID=	marathonService.postRequestToMarathon(service,containerVlaue);
 		
 		LOGGER.debug("----------Before  ContianerScript  script  called------------------------");			
 			Thread.sleep(60000);
@@ -78,7 +87,7 @@ public class ApplicationService {
 				iterator .hasNext();) {
 			MessosTaskInfo messosTaskInfo = (MessosTaskInfo) iterator.next();
 			new ScriptService().updateSubnetNetworkInMessos(messosTaskInfo, service.getSubnetName());
-		}*/
+		}
 			LOGGER.debug("----------Network  script  called------------------------");
 		} catch (IOException e) {
 			LOGGER.error("Error in reading data "+applicationServiceData+" using object mapper in addService" + e);

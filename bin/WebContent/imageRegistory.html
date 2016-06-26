@@ -93,7 +93,7 @@
                       <div class="col-md-6">
 								<select class="form-control ng-pristine ng-valid ng-touched"
 									id="tag" data-ng-model="field.tag"
-									data-ng-options="choice.name as choice.name  for choice in reponames"><option
+									data-ng-options="choice as choice  for choice in reponames.tags"><option
 										selected="selected" value="?"></option>
 								</select> 
 						 
@@ -112,7 +112,7 @@
                 </form>
             
             <br>
-            Service Wizards Data :{{field}}
+            
             <!-- END TAB CONTENT --> 
             
           </div>

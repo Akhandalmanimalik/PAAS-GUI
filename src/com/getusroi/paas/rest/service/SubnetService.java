@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import com.getusroi.paas.dao.DataBaseOperationFailedException;
 import com.getusroi.paas.dao.SubnetDAO;
+import com.getusroi.paas.helper.PAASConstant;
+import com.getusroi.paas.helper.ScriptService;
 import com.getusroi.paas.rest.RestServiceHelper;
 import com.getusroi.paas.rest.service.exception.PAASNetworkServiceException;
 import com.getusroi.paas.sdn.service.impl.SDNServiceImplException;
@@ -49,21 +51,24 @@ public class SubnetService {
 		 	LOGGER.debug(".addSubnet method of SubnetService"+subnetData);
 			ObjectMapper mapper = new ObjectMapper();
 			subnetDao= new SubnetDAO();
+			ScriptService scriptService=new ScriptService();
 			try {
 				subnet = mapper.readValue(subnetData, Subnet.class);
 				if (subnet != null) {
 					HttpSession session = request.getSession(true);
 					subnet.setTenantId((int)session.getAttribute("id"));
-					subnetDao.addSubnet(subnet);
+				int id=	subnetDao.addSubnet(subnet);
+					scriptService.createSubnetNetwork(subnet.getCidr(),PAASConstant.TENANT+subnet.getTenantId()+"-"+PAASConstant.SUBNET_PREFIX+id);
+					
 				} 
-			} catch (IOException e) {
+			} catch (IOException  e) {
 				 LOGGER.error(""+e);
-				 LOGGER.debug("Error in reading data : " + subnetData
-						+ " using object mapper in addSubnet");
+				 
 				throw new PAASNetworkServiceException("Error in reading data : "
 						+ subnetData + " using object mapper in addSubnet");
+			}catch ( InterruptedException e) {
+				LOGGER.error("Error In Excuting subnetCrearion Script ",e);
 			}
-
 		}//end of method addSubnet
 	
 	/**
@@ -125,15 +130,24 @@ public class SubnetService {
 	  * @param id
 	  * @return
 	  * @throws DataBaseOperationFailedException
+	 * @throws IOException 
+	 * @throws InterruptedException 
 	  */
 	 @GET
 	 @Path("/deleteSubnetById/{id}")
 	 @Produces(MediaType.TEXT_PLAIN)
-	public String deleteSubnetById(@PathParam("id") String id) throws DataBaseOperationFailedException {
-		 LOGGER.debug(".deleteVPCByName method of PAASNetworkService "+id);
+	public String deleteSubnetById(@PathParam("id") String id,@Context HttpServletRequest request) throws DataBaseOperationFailedException, InterruptedException, IOException {
+		 LOGGER.debug(".deleteSubnetById method of PAASNetworkService "+id);
 		 restServHlper= new RestServiceHelper(); 
 		 subnetDao = new SubnetDAO();
-		 subnetDao.deleteSubnetById(restServHlper.convertStringToInteger(id));
+			HttpSession session = request.getSession(true);
+
+	
+				new ScriptService().deleteSubnetNetwork(PAASConstant.TENANT+(int)session.getAttribute("id")+"-"+PAASConstant.SUBNET_PREFIX+id);
+				 subnetDao.deleteSubnetById(restServHlper.convertStringToInteger(id));
+
+		
+			LOGGER.debug("Subnet  : "+id+" delete successubnetNamesfully");
 		 return "subnet with name : "+id+" is delete successfully";
 	 }//end of method deleteSubnetByName
 	 

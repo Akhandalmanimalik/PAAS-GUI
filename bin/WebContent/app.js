@@ -4,11 +4,11 @@
 
 // create our angular app and inject ngAnimate and ui-router 
 // =============================================================================
-angular.module('formApp', ['ngAnimate', 'ui.router'])
+var app=angular.module('application', ['ngAnimate', 'ui.router']);
 
 // configuring our routes 
 // =============================================================================
-.config(function($stateProvider, $urlRouterProvider) {
+app.config(function($stateProvider, $urlRouterProvider) {
     
     $stateProvider
     
@@ -68,14 +68,13 @@ angular.module('formApp', ['ngAnimate', 'ui.router'])
     // send users to the form page 
     $urlRouterProvider.otherwise('/form/service');
 })
-
+;
 // our controller for the form
 // =============================================================================
-.controller('formController', function($scope,$http) {
-    
+app.controller('formController', function($scope,$http) {
 	
     // we will store all of our form data in this object
-	
+
 	$scope.field={env:[]};
 	$scope.env = [{envkey:'',envvalue:''}];
 	$scope.image = {};
@@ -83,10 +82,14 @@ angular.module('formApp', ['ngAnimate', 'ui.router'])
     
     
     // function to process the form
-   $scope.processForm = function() {        
+   $scope.processForm = function() { 
+	   var apps_id=document.getElementById("appsid").value;
+	  
         angular.forEach($scope.env,function(value){
    		 $scope.field.env.push(value);            
-          })       
+          })      
+          
+          $scope.field.appsId=apps_id;
         userData = angular.toJson($scope.field);
         var res = $http.post('/paas-gui/rest/applicationService/addService', userData);
         console.log(userData);
@@ -177,8 +180,34 @@ angular.module('formApp', ['ngAnimate', 'ui.router'])
 		    /*delete this method*/
 		    $scope.selectImageRegistry2 = function() {
 		    	 alert("comming to dddd"); 	
-		    	 };   
+		    	 }; 
+		    	 
+		    	   /*======================= To get all Subnet details with current user  =========================*/
+			     $scope.selectAllSubnet = function() {
+			     
+			   	//var response = $http.get('/PAAS-GUI/rest/fetchData/selectVpc');
+			   	var response = $http.get('/paas-gui/rest/subnetService/getAllSubnet');
+			   	response.success(function(data){
+			   	
+			   		$scope.subnetObj = data;
+			   		console.log("data given>>>"+$scope.subnet);
+			   	});
+			   	response.error(function(data, status, headers, config) {
+			         alert("Error in Fetching subnet Data"+data);
+			       });
+			   };  
 		    
+			   
+			   $scope.selectCidrforSubent = function(subnet_name) {
+				   	 $scope.field.cidr;
+				  		 angular.forEach($scope.subnetObj,function(item){
+				   			   if(item.subnetName == subnet_name){
+				   				  
+				   				   $scope.field.cidr = item.cidr;
+				   				   console.log("tag"+$scope.field.cidr);
+				   }
+				   });
+				    }
     
 });
 

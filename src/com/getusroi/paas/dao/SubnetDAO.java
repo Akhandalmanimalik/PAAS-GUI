@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,7 +132,7 @@ public class SubnetDAO {
 	 * @param subnet : Subnet Object need to be added
 	 * @throws DataBaseOperationFailedException : Error in adding subnet to db
 	 */
-	public void addSubnet(Subnet subnet) throws DataBaseOperationFailedException{
+	public int addSubnet(Subnet subnet) throws DataBaseOperationFailedException{
 		LOGGER.debug(".addSubnet method in NetworkDAO");
 		LOGGER.info("indie addSubnetmethod with subnetName>>>>>>>>>>>>>>>>>>>>>>>." +subnet);
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
@@ -140,9 +141,10 @@ public class SubnetDAO {
 		Connection connection=null;
 		PreparedStatement pstmt=null;
 		aclDAO = new AclDAO(); 
+		int subnetIdGenerted=0;
 		try {
 			connection=connectionFactory.getConnection("mysql");
-			pstmt=(PreparedStatement) connection.prepareStatement(INSERT_SUBNET_QUERY);
+			pstmt=(PreparedStatement) connection.prepareStatement(INSERT_SUBNET_QUERY,Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, subnet.getSubnetName());
 			pstmt.setString(2, subnet.getCidr());
 			pstmt.setInt(3, subnet.getTenantId());
@@ -150,6 +152,11 @@ public class SubnetDAO {
 			pstmt.setInt(5, envDAO.getEnvironmentIdByEnvName(subnet.getEnvironmentName(),subnet.getTenantId()));
 			pstmt.setInt(6,aclDAO.getACLIdByACLNames(subnet.getAclName(), subnet.getTenantId()));
 			pstmt.executeUpdate();
+			
+			ResultSet resultSet=pstmt.getGeneratedKeys();
+			if(resultSet.next()){
+				subnetIdGenerted=resultSet.getInt(1);
+			}
 			LOGGER.debug("Inserting subnet : "+subnet+" is successfull");
 		} catch (ClassNotFoundException | IOException e) {
 			LOGGER.error("Error in inserting subnet : "+subnet+" in db");
@@ -166,6 +173,7 @@ public class SubnetDAO {
 		} finally{
 			DataBaseHelper.dbCleanUp(connection, pstmt);
 		}
+		return subnetIdGenerted;
 	}//end of method addSubnet
 	
 	
@@ -279,9 +287,8 @@ public class SubnetDAO {
 			stmt=connection.prepareStatement(DELETE_SUBNET_BY_SUBNET_NAME_QUERY);
 			stmt.setInt(1,subnetId);
 			stmt.executeUpdate();
-			new ScriptService().deleteSubnetNetwork(getSubnetNameById(subnetId));
-			LOGGER.debug("Subnet  : "+subnetId+" delete successubnetNamesfully");
-		} catch (ClassNotFoundException | IOException | InterruptedException e) {
+		
+		} catch (ClassNotFoundException | IOException  e) {
 			LOGGER.error("Error in deleteing the subnet using subnet ID : "+subnetId);
 			throw new DataBaseOperationFailedException("Error in deleteing the subnet using subnet name : "+subnetId,e);
 		} catch(SQLException e) {
@@ -293,7 +300,7 @@ public class SubnetDAO {
 				throw new DataBaseOperationFailedException(message, e);
 			} else
 				throw new DataBaseOperationFailedException("Error in deleteing the subnet using subnet id : "+subnetId,e);
-		} finally{
+		}  finally{
 			DataBaseHelper.close(stmt);
 			DataBaseHelper.close(connection);
 		}		

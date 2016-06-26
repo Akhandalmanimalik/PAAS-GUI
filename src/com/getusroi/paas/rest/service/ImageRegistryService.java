@@ -161,7 +161,10 @@ public class ImageRegistryService {
 			logger.debug(">>>>>>>>>>>>>>>>>>>>>>>>"+baseURL);
 			String authentication=imageRegistry.getUser_name() + ":" + imageRegistry.getPassword();
 			try {
-				 response=getHttpResponse(baseURL, authentication, "GET");
+				// response=getHttpResponse(baseURL, authentication, "GET");
+				 authentication="";
+
+				 response=getHttpResponse(baseURL,authentication , "GET");
 				logger.debug("http response  : "+response);				
 			} catch (IOException e) {
 				logger.error("Unable to get the http response using base url :"+baseURL+", authentication : "+authentication);

@@ -1,5 +1,8 @@
 var app = angular.module('application', []);
 
+
+
+
 app.controller('appCtrl', function($scope,$http, srvShareData) {
 	  
 	  $scope.dataToShare = [];
@@ -20,6 +23,7 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 	 
 	      /*================Application REGISTRATION===================*/
 	    
+		
 	    
 	    
 	    /*to store application deatils */
@@ -47,6 +51,25 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 	  	  }*/
 	  	 
 	  	};//store application  
+	  	
+	  	
+	  	
+	  	
+	  	
+	    /*To Check Application name Exist or Not   */
+	  	 $scope.checkAppsName = function(applicationName) {
+	  		 $scope.sucess=false;
+	     	var response = $http.get('/paas-gui/rest/applicationService/checkApplication/'+applicationName);
+	     	response.success(function(data){
+	     		if(data=='sucess')
+	     			$scope.sucess=true;
+	     		 
+	     	});
+	     	response.error(function(data, status, headers, config) {
+	                 alert("Error in Fetching Data");
+	         });
+	     };//end of CheckApplications script
+	  	
 	  	
 	  	   /*To Get Application Details */
 	  	 $scope.getApplications = function() {
@@ -95,6 +118,17 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 
 	  
 	   $scope.getAllServiceByAppsId = function(id) {
+		
+		    (function (global) {
+		    	 global.localStorage.setItem("applicationId", id);
+		         
+		    }(window));
+		    
+	      
+			
+	
+		   
+		   
 		   	 var response = $http.get('/paas-gui/rest/applicationService/getAllServiceByAppsId/'+id);
 			     	response.success(function(data){
 			     		$scope.field = data;
@@ -121,14 +155,11 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 		 
 		    /*=================== delete*====================*/
 		   
-		    $scope.deleteApplicationByApplName = function(serviceName) {
-		     	alert("coming applicationName>>>"+serviceName);
-		     	//25 is hardcode value for apps_id
-		     	$scope.appsid=25;
-		     	alert("coin");
-		     	var response = $http.get('/paas-gui/rest/applicationService/deleteServiceByName/'+serviceName);
+		    $scope.deleteServiceById = function(ServiceId,appid) {
+		     	var response = $http.get('/paas-gui/rest/applicationService/deleteServiceById/'+ServiceId);
 		     	response.success(function(data){
-		     		
+			    	 $scope.getAllServiceByAppsId(appid); 
+
 		     	});
 		     	response.error(function(data, status, headers, config) {
 		                 alert("Error in Fetching Data"+data);
@@ -136,6 +167,9 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 		     	
 		     };
 		     
+		     
+		 
+		
 
 	});
 	
@@ -147,20 +181,46 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 			$scope.field = $scope.sharedData[0];
 
 		  
-		     /*Edit application script  */
+		  /*   Edit application script  
 		     $scope.updateApplication = function() {
 		    var applictaionUpdatedData=	$scope.field;
-		     	var response = $http.put('/paas-gui/rest/applicationService/updateApplication',	applictaionUpdatedData);
-		     	response.success(function(data){
-		     		
-		     		window.location.href = "applicantmain.html";
+		     	var response = $http.put('/paas-gui/rest/applicationService/updateApplication/',	applictaionUpdatedData);
+	     		console.log("Response:  "+JSON.stringify(response));
+
+		     	response.success(function(data, status, headers, config){
+		     		console.log("sucessData:  "+data);
+		     	window.location.href = "applicantmain.html";
 		     	});
 		     	response.error(function(data, status, headers, config) {
 		                 alert("Error in Fetching Data");
 		         });
 		     };//end of to update Application
-		     
-			     
+		     */
+
+		 	$scope.updateApplication = function(){
+		 		
+		 		  var applictaionUpdatedData=	$scope.field;
+		 		var res = $http.put('/paas-gui/rest/applicationService/updateApplication/', applictaionUpdatedData);
+		 		  res.success(function(data, status, headers, config) {
+		 			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+		 			  if(data!='failed'){
+		 					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+		 					window.location.href = "applicantmain.html";
+		 				}else{
+		 					console.log("Login Error Please Enter Proper Details");
+		 					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
+		 					 window.location.href = "editApplication.html"; 
+		 				}
+		 			
+		 		  });
+		 		  res.error(function(data, status, headers, config) {
+		 			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
+		 		    alert("failure message: " + JSON.stringify({
+		 		      data : data
+		 		    }));
+		 		  });
+		 	}
+		 	
 
 		});
 	
@@ -194,12 +254,38 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 		    	 
 		    	 angular.forEach($scope.env,function(value){
 		     		 $scope.service.env.push(value);            
-		            })    
+		            });    
 		    	 
-		             
+		         userData = angular.toJson($scope.service);
+		         var res = $http.put('/paas-gui/rest/applicationService/updateService', userData);
+		         console.log(userData);
+		     	  res.success(function(data, status, headers, config) {
+		     		 if(data!='failed'){
+		 					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+		 					window.location.href = "applicationWizard.html";
+		 				}else{
+		 					console.log(" update sucessfull for service ");
+		 					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
+		 					 window.location.href = "editService.html"; 
+		 				}
+		 			
+		     	    
+		     	    
+		     	  });
+		     	  res.error(function(data, status, headers, config) {
+//		     	  	    alert("Error in storing Application Summary "+data);
+		     	  });
 		     };//end of edit script
 		     
 			     
+		     $scope.cancelServiceApp=function(serviceId ){
+		    	 $scope.dataToShare =serviceId;
+			 	    srvShareData.addData($scope.dataToShare);
+ 					window.location.href = "applicationWizard.html";
+
+		     };
+		     
+		     
 
 		     /*======================= To get all Subnet details with current user  =========================*/
 		     $scope.selectAllSubnet = function() {

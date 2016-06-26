@@ -30,6 +30,8 @@ public class ContainerTypesDAO {
 	
 	private static final String INSERT_CONTAINER_TYPES_QUERY = "INSERT INTO container_type (container_type,memory,description,tenan_id,createdDTM) VALUES(?,?,?,?,NOW())";
 	public static final String GET_CONTAINER_ID_BY_CONTAINER_NAME_QUERY = "SELECT id FROM container_type where container_type=?";
+	public static final String GET_CONTAINERS_BY_CONTAINER_NAME_QUERY = "SELECT * FROM container_type where container_type=? and tenan_id=?";
+
 	public static final String GET_CONTAINER_NAME_BY_CONTIANER_ID = "SELECT * FROM container_type where id=?";
 	private static final String SELECT_ALL_CONTAINER_TYPE_QUERY = "SELECT * FROM container_type";
 	private static final String GET_CONTAINER_TYPE_BY_TENANT_ID_QUERY = "SELECT * FROM container_type where tenan_id=?";
@@ -78,6 +80,54 @@ public class ContainerTypesDAO {
 		return containerTypeId;
 	} // end of getAllContainerTypesData
 	
+	/**
+	 * this method is used to get all data from container_type table
+	 * @return : it return list of data from container_table
+	 * @throws DataBaseOperationFailedException : Unable to fetch data from db
+	 */
+	public List<ContainerTypes> getContainerTypeIdByName(String containerName,int id) throws DataBaseOperationFailedException {
+		LOGGER.debug(".getContainerTypeIdByName (.) of ContainerTypesDAO");
+		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		List<ContainerTypes> containerTypesList = new ArrayList<ContainerTypes>();
+
+		try {
+			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
+			preparedStatement = (PreparedStatement) connection.prepareStatement(GET_CONTAINERS_BY_CONTAINER_NAME_QUERY);
+			preparedStatement.setString(1, containerName);
+			preparedStatement.setInt(2, id);
+			resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				ContainerTypes containerTypes = new ContainerTypes();
+				containerTypes.setId(resultSet.getInt("id"));
+				containerTypes.setName(resultSet.getString("container_type"));
+				containerTypes.setMemory(resultSet.getInt("memory"));
+				containerTypes.setTenantId(resultSet.getInt("tenan_id"));
+				containerTypes.setDescription(resultSet.getString("description"));
+				containerTypesList.add(containerTypes);
+			}
+
+		} catch (ClassNotFoundException | IOException e) {
+			LOGGER.error("Unable to get container types from db ");
+			throw new DataBaseOperationFailedException("Unable to get container types from db",e);
+		} catch(SQLException e) {
+			if(e.getErrorCode() == 1064) {
+				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
+				throw new DataBaseOperationFailedException(message, e);
+			} else if(e.getErrorCode() == 1146) {
+				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
+				throw new DataBaseOperationFailedException(message, e);
+			} else {
+				throw new DataBaseOperationFailedException("Unable to get container types from db ", e);
+			}
+		} finally {
+			DataBaseHelper.dbCleanup(connection, preparedStatement, resultSet);
+		}
+
+		return containerTypesList;
+	} // end of getAllContainerTypesData
 	
 	/**
 	 * to get container type name by 
@@ -120,6 +170,8 @@ public class ContainerTypesDAO {
 
 		return containerType;
 	} // end of getAllContainerTypesData
+	
+	
 	
 	
 	public int updateContainerType(ContainerTypes containerTypes) throws DataBaseOperationFailedException {

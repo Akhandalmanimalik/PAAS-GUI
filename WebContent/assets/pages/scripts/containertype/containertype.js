@@ -20,7 +20,7 @@ mycontainertype.controller('MainCtrl', function ($scope,$http,srvShareData) {
     	console.log("inside the regContainerTypes");
     	console.log($scope.field);
     	var userData = JSON.stringify($scope.field);
-    	var res = $http.put('/paas-gui/rest/policiesService/insertContainerTypes/', userData);
+    	var res = $http.put('/paas-gui/rest/containersService/insertContainerTypes/', userData);
     	
 
     	res.success(function(data, status, headers, config) {
@@ -42,7 +42,7 @@ mycontainertype.controller('MainCtrl', function ($scope,$http,srvShareData) {
     
  	 $scope.selectContainerTypes = function() {
  		 console.log("hiii");
-    	var response = $http.get('/paas-gui/rest/policiesService/getAllContainerTypesData');
+    	var response = $http.get('/paas-gui/rest/containersService/getAllContainerTypesData');
     	response.success(function(data){
     		$scope.fields = data;
     		console.log("data given");
@@ -55,7 +55,7 @@ mycontainertype.controller('MainCtrl', function ($scope,$http,srvShareData) {
     /**=================== delete*====================*/
    
     $scope.deleteContainerTypes = function(data) {
-     	var response = $http.get('/paas-gui/rest/policiesService/deleteContainerTypes/'+data);
+     	var response = $http.get('/paas-gui/rest/containersService/deleteContainerTypes/'+data);
      	response.success(function(data){
      		$scope.select();
      	});

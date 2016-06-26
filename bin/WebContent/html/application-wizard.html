@@ -55,7 +55,6 @@
                     <!-- End Progress Bar -->
                     <!-- BEGIN PAGE BASE CONTENT -->
                     <div class="row">
-                       
                         <div class="col-md-12">
                                     <!-- BEGIN FORM-->
                                     <form action="#" id="appWizardForm" class="form-horizontal" name="appWizardForm" 
@@ -69,15 +68,17 @@
 						
 											<div class="form-group">
 												
-												
+												      
 												<div class="col-xs-4">
 												 <label for="ex2"> Name <span
 													class="required"> * </span>
 												</label>
-													<input type="text"  placeholder="Name" data-ng-model="field.applicantionName" name="applicantName"
+													<input type="text"  placeholder="Name" data-ng-model="field.applicantionName" ng-blur="checkAppsName(field.applicantionName)" name="applicantName"
 														  data-required="1" class="form-control placeholder-no-fix" data-ng-minlength="6" data-ng-maxlength="20" required />
 													 	<span class="error" data-ng-show="appWizardForm.applicantName.$error.maxlength" class="help-block" style="color: red;" >Application name Shouldn't exceed 20 chars.</span>
 													 	<span class="error" data-ng-show="appWizardForm.applicantName.$error.minlength" class="help-block" style="color: red;" >Application name Should greater than 6 chars.</span>
+													<span class="error" data-ng-show="sucess" class="help-block" style="color: red;" >Application name already exist with enterd name  Please enter new one.</span>
+											
 												</div>											                      
 											</div>
 								 
@@ -95,7 +96,7 @@
                                       	<div class="form-actions">
                                             <div class="row">
                                                 <div class="col-md-offset-3 col-md-9">
-                                                    <button type="submit" class="btn green" id="btn-login" data-ng-disabled="appWizardForm.$invalid">Submit</button>
+                                                    <button type="submit" class="btn green" id="btn-login" data-ng-disabled="appWizardForm.$invalid || sucess">Submit</button>
                                                     <!-- <button type="button" class="btn grey-salsa btn-outline">Cancel</button> -->                                                    
                                                     <a href="applicantmain.html" class="btn grey-salsa btn-outline">Cancel</a>
                                                 </div>

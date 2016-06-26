@@ -116,7 +116,7 @@ app.controller('formController', function($scope,$http) {
     //NEED TO SHOW IN DROP-DOWN LIST OF CONTAINER_TYPE FIELD IN THE SERVICE.HTML PAGE
     $scope.getAllRelatedContainerTypes = function() {
     	console.log("getAllRelatedContainerTypes ");
-	    	var response = $http.get('/paas-gui/rest/policiesService/getContainerTypesByTenantId');
+	    	var response = $http.get('/paas-gui/rest/containersService/getContainerTypesByTenantId');
 	    	response.success(function(data){
 	    		$scope.image = data;
 	    		console.log("return data from db: "+$scope.image);

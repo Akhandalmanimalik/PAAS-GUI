@@ -172,7 +172,7 @@ public class ContainersService {
 		LOGGER.debug(".getAllContainerTypesData of PoliciesService");
 		List<ContainerTypes> containerTypesList = new ArrayList<ContainerTypes>();
 		containerTypeDao = new ContainerTypesDAO();
-		containerTypesList = containerTypeDao.getAllContainerTypesData();
+		containerTypesList = containerTypeDao.getAllContainerTypesData( );
 
 		Gson gson = new Gson();
 		String list = gson.toJson(containerTypesList);
@@ -188,14 +188,16 @@ public class ContainersService {
 	@GET
 	@Path("/getContainerTypesByTenantId")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getContainerTypesByTenantId()
+	public String getContainerTypesByTenantId(@Context HttpServletRequest request)
 			throws DataBaseOperationFailedException {
 		LOGGER.debug(".getContainerTypesByTenantId of PoliciesService");
 		List<ContainerTypes> containerTypesList = new ArrayList<ContainerTypes>();
 		containerTypeDao = new ContainerTypesDAO();
-		int tenantId = 7;
+		HttpSession session = request.getSession(true);
+
 		containerTypesList = containerTypeDao
-				.getAllContainerTypesByTenantId(tenantId);
+				.getAllContainerTypesByTenantId((int)session
+						.getAttribute("id"));
 		LOGGER.debug(" LLKKJJ " + containerTypesList);
 		Gson gson = new Gson();
 		String list = gson.toJson(containerTypesList);

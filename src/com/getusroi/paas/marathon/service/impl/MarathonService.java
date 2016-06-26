@@ -13,6 +13,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASGenericHelper;
 import com.getusroi.paas.helper.UnableToLoadPropertyFileException;
 import com.getusroi.paas.marathon.service.IMarathonService;
@@ -157,39 +158,38 @@ public class MarathonService implements IMarathonService {
 	 * @param addService : AddService object
 	 * @throws MarathonServiceException : Error in reuesting data to marathon
 	 */
-	public String postRequestToMarathon(Service addService) throws MarathonServiceException{
+	public String postRequestToMarathon(Service addService,int memomry) throws MarathonServiceException{
 		logger.debug(".postRequestToMarathon method of MarathonService");
 		ObjectMapper objectMapper = new ObjectMapper();
-		String appId=addService.getSubnetName()+"-"+PAASGenericHelper.getCustomUUID();
+		String appId=PAASGenericHelper.getCustomUUID();
 		String id=addService.getTenantId()+"/"+appId;
 		String script=addService.getRun();
 		int instances=1;
-		String [] array=addService.getSubnetName().split("-");
-		String memory=addService.getType();
-		String image=addService.getImageRegistry()+":"+addService.getTag();
+/*		String [] array=addService.getSubnetName().split("-");
+*/		String memory=memomry+"";
+		
+		//#TODO need  change to get  values from confuig file
+		String image=PAASConstant.IMAGE_RESISTRY_NAME+"/"+addService.getImageRepository()+":"+   addService.getTag();
 		logger.debug("Image  is"+image);
 		String protocol=addService.getProtocal();		
 		String  failure=addService.getEnvThreshold()+"";
 		String  timeOut=addService.getEnvtimeout();
 		String  inteval=addService.getEnvInterval()+"";		
-		String environment=array[1];
+		String environment="dev";
 		Integer containerport =0;
 		String network=NETWORK;
 		Map<String,String> env=setEnvironment(addService);
 		String hostpath=null;
 		String hostkey=null;
 		String containervalue=null;
-		if(addService.getVolume()+"" !=null){
+		/*if(addService.getVolume()+"" !=null){
 			 hostpath=addService.getVolume()+"";
 			 String host[] = hostpath.split(":");
 				 hostkey =host[0].toString();
 				containervalue =host[1].toString();
-		}		
-		List<Scale> scales = addService.getScales();
-		for(Scale scale:scales){
-			//environment=scale.getPortname();
-			containerport=Integer.valueOf(scale.getContainerport());			
-		}		
+		}		*/
+	
+			containerport=Integer.valueOf(addService.getContainerPort());			
 		logger.debug("env name : "+environment);
 	    StringWriter stringWriter = new StringWriter();
 	    try {

@@ -65,7 +65,7 @@
                         <div class="col-md-12">
                                     <!-- BEGIN FORM-->
                                     <form action="#" id="vpcWizardForm" class="form-horizontal" name="vpcWizardForm" 
-                                    data-ng-submit="regVpc()" method="post" novalidate>
+                                   method="post" novalidate>
                                         <div class="form-body">
                                             <div class="alert alert-danger display-hide">
                                                 <button class="close" data-close="alert"></button> You have some form errors. Please check below. </div>
@@ -186,7 +186,7 @@
 										</select>
 									</div>
 								</div>
-					{{rule}}
+					
 								
 							</div>
                                       	<div class="form-actions">
@@ -196,10 +196,14 @@
                                                     <button type="submit" class="btn green" id="btn-login" 
                                                     data-ng-disabled="vpcWizardForm.$invalid"  data-ng-click="regRule(selectedAclId)">Submit</button>
                                                     <!-- <button type="button" class="btn grey-salsa btn-outline">Cancel</button> -->                                                    
-                                                    <a href="vpc-interface.html" class="btn grey-salsa btn-outline">Cancel</a>
+                                                    <!-- <a href="" class="btn grey-salsa btn-outline">Cancel</a> -->
+                                                    <a href="/paas-gui/html/inoutbound_rule_interface.html"
+												class="btn grey-salsa btn-outline">Cancel</a>
                                                 </div>
                                             </div>
+                                            {{rule}}
                                         </div>
+                                        
                                     </form>
                                     <!-- END FORM-->
                         </div>

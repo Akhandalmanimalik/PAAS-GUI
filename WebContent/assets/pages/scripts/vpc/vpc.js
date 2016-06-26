@@ -44,7 +44,7 @@ app.controller('VpcCtrl', function($scope, srvShareData, $location,$http) {
      /* End of selectVpc */
      
      $scope.deleteData = function(data) {
-      	var response = $http.get('/paas-gui/rest/vpcService/deleteVPCByName/'+data);
+      	var response = $http.get('/paas-gui/rest/vpcService/deleteVPCById/'+data);
       	response.success(function(data){
       		 window.location.href = "vpc-interface.html";
       	});
@@ -76,9 +76,10 @@ app.controller('createNewVpc', function($scope, srvShareData,$http) {
   	  var res = $http.post('/paas-gui/rest/vpcService/addVPC', userData);
   	  console.log(userData);
   	  res.success(function(data, status, headers, config) {
-  	    $scope.message = data;
-  	  window.location.href = "vpc-interface.html"; 
+  	  $scope.message = data;
   	  $scope.selectVpc();
+  	  window.location.href = "vpc-interface.html"; 
+  	  
   	    
   	  });
   	  res.error(function(data, status, headers, config) {
@@ -87,10 +88,65 @@ app.controller('createNewVpc', function($scope, srvShareData,$http) {
   	    }));
   	  });
     }
-  	};
-	  	/* End of regVpc */
-	  	
+  	};/* End of regVpc */
+  	
+  	/*==================POPULATE DATA TO TABLE===================*/
+	 $scope.selectAcl = function() {
+		
+   	var response = $http.get('/paas-gui/rest/aclService/getAllACL');
+   	response.success(function(data){
+   		$scope.aclObj = data;
+   		console.log($scope.aclObj);
+   		 
+   		console.log("data given");
+   	});
+   	response.error(function(data, status, headers, config) {
+               alert("Error in Fetching Data");
+       });
+   };           
 
+   /*===============Add vpc validation details==============*/
+	 $scope.vpcValidation = function(vpc) {
+  	  console.log("vpc "+vpc);
+  	  var res = $http.get('/paas-gui/rest/vpcService/checkVPC/'+vpc);
+  	  res.success(function(data, status, headers, config) {
+
+  	    	
+  		  if(data == 'success'){
+  	    	document.getElementById('errfn').innerHTML="data exist enter different name";
+  	    	document.getElementById("myvpcbtn").disabled = true;
+  	    	
+  		  }
+  		  else{
+  			 document.getElementById('errfn').innerHTML="";
+  			 document.getElementById("myvpcbtn").disabled =false;
+  			 /*if(document.getElementById('ACL').value != ''){
+  			document.getElementById("myvpcbtn").disabled =false;
+  			 }*/
+  		  }
+  	    
+  	  });
+  	  res.error(function(data, status, headers, config) {
+  		 
+  	    alert("failure message: " + JSON.stringify({
+  	      data : data
+  	    }));
+  	  });
+  };
+  /*===============END of VPC validation==============*/
+   
+  /*  selectVpc to retrieve all vpc associated with tenant id  */
+	 $scope.selectVpc = function() {
+  	var response = $http.get('/paas-gui/rest/vpcService/getAllVPC');
+  	response.success(function(data){
+  		$scope.fields = data;
+  	});
+  	response.error(function(data, status, headers, config) {
+              alert("Error in Fetching Data");
+      });
+  };
+  /* End of selectVpc */
+  
 });
 //End of createNewAcl controller
 
@@ -128,8 +184,7 @@ app.controller('editVpc', function($scope, srvShareData,$http) {
 	}
 
 	 /*===============Add vpc validation details==============*/
-  	
- 	 $scope.vpcValidation = function(vpc) {
+ 	 $scope.vpcValidationForUpdate = function(vpc) {
  		 
     	
     	  console.log("vpc "+vpc);
@@ -144,9 +199,10 @@ app.controller('editVpc', function($scope, srvShareData,$http) {
     		  }
     		  else{
     			 document.getElementById('errfn').innerHTML="";
-    			 if(document.getElementById('ACL').value != ''){
+    			 document.getElementById("myvpcbtn").disabled =false;
+    			 /*if(document.getElementById('ACL').value != ''){
     			document.getElementById("myvpcbtn").disabled =false;
-    			 }
+    			 }*/
     		  }
     	    
     	  });
@@ -159,7 +215,22 @@ app.controller('editVpc', function($scope, srvShareData,$http) {
     };
     /*===============END of VPC validation==============*/
 	
-    /*===============ACL validation==============*/
+    /*==================POPULATE DATA TO TABLE===================*/
+	 $scope.selectAcl = function() {
+		
+  	var response = $http.get('/paas-gui/rest/aclService/getAllACL');
+  	response.success(function(data){
+  		$scope.aclObj = data;
+  		console.log($scope.aclObj);
+  		 
+  		console.log("data given");
+  	});
+  	response.error(function(data, status, headers, config) {
+              alert("Error in Fetching Data");
+      });
+  };
+    
+    /*===============ACL validation CURRENTLY NOT USED ==============*/
     $scope.aclValidation = function(acl) {
     	
     

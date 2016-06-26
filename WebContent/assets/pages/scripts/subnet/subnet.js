@@ -69,7 +69,7 @@ $scope.deleteSubnet = function(id) {
 
 
 
-//Controller2: createNewAcl 
+//Controller2: createSubnetCtrl 
 app.controller('createSubnetCtrl', function($scope, srvShareData,$http) {
 	$scope.subnet = {};
 	 /*===================== To add subnet details into db =========================*/
@@ -141,6 +141,36 @@ app.controller('createSubnetCtrl', function($scope, srvShareData,$http) {
   };   
   /*======================= END OF selectACL_name =========================*/
 
+  /*=============== Add SUBNET validation==============*/
+	$scope.subnetValidation = function(subnet) {
+	  	  console.log("subnet "+subnet);
+	  	  var res = $http.get('/paas-gui/rest/subnetService/checkSubnet/'+subnet);
+	  	  res.success(function(data, status, headers, config) {
+	  		  
+	  		if(data == 'success'){
+	   	    	document.getElementById('subneterror').innerHTML="data exist enter different name";
+	   	    	document.getElementById("mysubnetbtn").disabled = true;
+	   	    	
+	   		  }
+	   		  else{
+	   			 document.getElementById('subneterror').innerHTML="";
+	   			document.getElementById("mysubnetbtn").disabled =false;
+	   			/* if(document.getElementById('cidr').value !=''){
+	   			document.getElementById("mysubnetbtn").disabled =false;
+	   		  }*/
+	   		  }
+	  		 
+	  		  
+	  		 
+	  	  });
+	  	  res.error(function(data, status, headers, config) {
+	  	    alert("failure message: " + JSON.stringify({
+	  	      data : data
+	  	    }));
+	  	  });
+	  	 
+	  	};
+/*===============END Add SUBNET validation==============*/
 });
 //End of createNewAcl controller
 

@@ -87,7 +87,7 @@
 
 								<!-- ACL Name -->
 								<div class="form-group"
-									ng-class="{ 'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
+									data-ng-class="{ 'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
 									<label class="control-label col-md-3"> Vpc name <span
 										class="required"> * </span>
 									</label>
@@ -95,30 +95,28 @@
 
 										<input type="text" name="name" id="name" data-required="1"
 											class="form-control" data-ng-model="vpc.vpc_name" 
-											ng-maxlength="30" ng-minlength="2"  required/>
-										<p ng-show="userForm.name.$error.minlength"
-										class="help-block" style="color: red;">Acl name
+											data-ng-maxlength="30" data-ng-minlength="2"  data-ng-change="vpcValidationForUpdate(vpc.vpc_name)" required/>
+										<p data-ng-show="userForm.name.$error.minlength"
+										class="help-block" style="color: red;"> VPC name
 										Shouldn't below 2 chars.</p>
 										
-										<p ng-show="userForm.name.$error.maxlength"
-										class="help-block" style="color: red;">Acl name
+										<p data-ng-show="userForm.name.$error.maxlength"
+										class="help-block" style="color: red;"> VPC name
 										Shouldn't exceed 30 chars.</p>	
-										<span id="aclerror" style="color: red;"></span>
+										<span id="errfn" style="color: red;"></span>
 									</div>
 								</div>
 								<!-- DESCRIPTION -->
 
 								
-								<div class="form-group"
-									data-ng-class="{ 'has-error' : userForm.description.$invalid && !userForm.description.$pristine }">
-									<label class="control-label col-md-3"> Acl nm <span
-										class="required"> * </span>
-									</label>
+								<div class="form-group">
+									<label class="control-label col-md-3"> Acl </label>
 									<div class="col-xs-4">
-
-										<textarea rows="3" cols="9" class="form-control"
-											data-ng-model="vpc.aclName">
-									</textarea>
+										<select class="form-control ng-pristine ng-valid ng-touched" id="tag" 
+														data-ng-model="vpc.aclName" id="ACL"  name="aclName" data-ng-init="selectAcl()"
+														data-ng-options="choice.aclName as choice.aclName  for choice in aclObj"><option
+														selected="selected" value="?"></option>
+													</select> 
 									</div>
 
 								</div>
@@ -126,16 +124,14 @@
 									<div class="row">
 										<div class="col-md-offset-3 col-md-9">
 											<button type="submit" class="btn green btn-success"
-												ng-disabled="userForm.$invalid" ng-click="updateVpc(vpc);" id="myaclbtn"> Update </button>
+												data-ng-disabled="userForm.$invalid" data-ng-click="updateVpc(vpc);" id="myvpcbtn"> Update </button>
 											<!-- <button type="button" class="btn grey-salsa btn-outline">Cancel -->
-											<a href="/paas-gui/html/acl.html"
-												class="btn grey-salsa btn-outline">Cancel</a>
+											<a href="vpc-interface.html" class="btn grey-salsa btn-outline">Cancel</a>
 										</div>
 									</div>
 								</div>
 							</div>
 						</form>
-						{{acl}}
 						<!-- END FORM-->
 					</div>
 				</div>

@@ -37,7 +37,13 @@ public class ACLServices {
 	 
 	 AclDAO aclDAO = null;
 	 InOutBoundRule inOutBoundRule = null;
-			 
+	 
+	/**
+	 * Rest Service to Get all Acl		 
+	 * @param req
+	 * @return
+	 * @throws DataBaseOperationFailedException
+	 */
 	 @GET
 	 @Path("/getAllACL")
 	 @Produces(MediaType.APPLICATION_JSON)
@@ -58,7 +64,15 @@ public class ACLServices {
 			return aclInJsonString;
 		}//end of method getAllACL
 	  
-	 
+	 /**
+	  * Rest Service to add new Acl into Db
+	  * @param aclData
+	  * @param req
+	  * @return
+	  * @throws SDNServiceImplException
+	  * @throws DataBaseOperationFailedException
+	  * @throws PAASNetworkServiceException
+	  */
 	 @POST
 	 @Path("/addACLRule")
 	 @Consumes(MediaType.APPLICATION_JSON)
@@ -87,13 +101,19 @@ public class ACLServices {
 		 return "failed";
 	 }//end of method addACLRule
 	 
+	 /**
+	  * Rest Service to Get All Acl names
+	  * @return
+	  * @throws DataBaseOperationFailedException
+	  */
 	 @GET
 	 @Path("/getAllACLNames")
 	 @Produces(MediaType.APPLICATION_JSON)
-	 public String getAllACLNames() throws DataBaseOperationFailedException{
+	 public String getAllACLNames(@Context HttpServletRequest req) throws DataBaseOperationFailedException{
 		 LOGGER.debug(".getAllACL method of ACLServices");
+		 HttpSession session = req.getSession(true);
 		 aclDAO=new AclDAO();
-		 List<String> aclList=aclDAO.getAllACLNames();
+		 List<String> aclList=aclDAO.getAllACLNames((int)session.getAttribute("id"));
 		 Gson gson=new Gson();
 		 String aclInJsonString=gson.toJson(aclList);
 		 return aclInJsonString;
@@ -169,25 +189,37 @@ public class ACLServices {
 		}// end of method aClByName validation
 		
 		
+	/**
+	 * Rest Service to Insert In Out Bound rule into the DB	
+	 * @param aclData
+	 * @param req
+	 * @throws SDNServiceImplException
+	 * @throws DataBaseOperationFailedException
+	 * @throws PAASNetworkServiceException
+	 */
+	@POST
+	@Path("/addInOutBoundRule")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String addInOutBoundRule(String aclData,
+			@Context HttpServletRequest req) throws SDNServiceImplException,
+			DataBaseOperationFailedException, PAASNetworkServiceException {
+		LOGGER.debug("Inside (.) addInOutBoundRule of ACLServices");
+		ObjectMapper mapper = new ObjectMapper();
+		aclDAO = new AclDAO();
+		try {
+			inOutBoundRule = mapper.readValue(aclData, InOutBoundRule.class);
+			if (inOutBoundRule != null)
+				aclDAO.insertInOutBoundRule(inOutBoundRule);
+				return "Success";
+		} catch (IOException e) {
+			LOGGER.error("Error in reading data : " + aclData
+					+ " using object mapper in addACLRule");
+			throw new PAASNetworkServiceException("Error in reading data : "
+					+ aclData + " using object mapper in addACLRule");
+		}
 		
-		@POST
-		 @Path("/addInOutBoundRule")
-		 @Consumes(MediaType.APPLICATION_JSON)
-		 public void addInOutBoundRule(String aclData,@Context HttpServletRequest req) throws SDNServiceImplException, DataBaseOperationFailedException, PAASNetworkServiceException{
-			 LOGGER.debug("Inside (.) addACLRule of ACLServices");
-			 ObjectMapper mapper = new ObjectMapper();
-			 aclDAO =new AclDAO();
-			 try {
-				 inOutBoundRule = mapper.readValue(aclData, InOutBoundRule.class);
-				 
-				if(inOutBoundRule != null)
-					aclDAO.insertInOutBoundRule(inOutBoundRule);
-				
-			} catch (IOException e) {
-				LOGGER.error("Error in reading data : "+aclData+" using object mapper in addACLRule");
-				throw new PAASNetworkServiceException("Error in reading data : "+aclData+" using object mapper in addACLRule");
-			}
-		 }//end of method addACLRule
+	}// end of method addACLRule
 		
 		
 		/**

@@ -28,7 +28,7 @@ import com.getusroi.paas.vo.InOutBoundRule;
 public class AclDAO {
 	 static final Logger LOGGER = LoggerFactory.getLogger(SubnetDAO.class);
 	 private final String INSERT_ACL_QUERY="insert into acl (acl_name,description,tenant_id,createdDTM) values(?,?,?,NOW())";
-	 private final String GEL_ALL_ACL_NAMES_QUERY = "select aclname from acl";
+	 private final String GEL_ALL_ACL_NAMES_QUERY = "select aclname from acl where tenant_id=?";
 	 private final String GEL_ALL_ACL_QUERY="select * from acl where tenant_id=?";
 	 private final String GET_ACL_ID_BY_ACLNAME_TENANT_ID="select acl_id from acl where acl_name=? and tenant_id=?";
 	 private final String UPDATE_ACL_BY_ID_QUERY="update acl set acl_name=?, tenant_id=?, description=? where acl_id=?";
@@ -79,17 +79,18 @@ public class AclDAO {
 	 * @return List<String> : list of all ACL name in String
 	 * @throws DataBaseOperationFailedException : Error in fetching data  for acl names in db
 	 */
-	public List<String> getAllACLNames() throws DataBaseOperationFailedException{
+	public List<String> getAllACLNames(int tenantId) throws DataBaseOperationFailedException{
 		LOGGER.debug(".getAllACLNames method of NetworkDAO");
 		DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 		List<String> aclList=new ArrayList<>();
 		Connection connection=null;
-		Statement stmt=null;
+		PreparedStatement pstmt=null;
 		ResultSet result=null;
 		try {
 			connection=connectionFactory.getConnection("mysql");
-			stmt=connection.createStatement();
-			result=stmt.executeQuery(GEL_ALL_ACL_NAMES_QUERY);
+			pstmt=(PreparedStatement) connection.prepareStatement(GEL_ALL_ACL_NAMES_QUERY);
+			pstmt.setInt(1, tenantId);
+			result=pstmt.executeQuery();
 			if(result !=null){
 				while(result.next()){				
 					String aclname=result.getString("acl_name");
@@ -135,6 +136,7 @@ public class AclDAO {
 			if(result !=null){
 				while(result.next()){
 					ACL acl = new ACL();
+					acl.setId(result.getInt(1));
 					acl.setTenantId(result.getInt("tenant_id"));
 					acl.setId(result.getInt("acl_id"));
 					acl.setAclName(result.getString("acl_name"));

@@ -31,7 +31,7 @@ public class VpcDAO {
 	private final String GET_ALL_VPC_QUERY="select * from vpc where tenant_id=?";
 	private final String GET_VPC_NAME_USING_VPCID_TENANTID = "select vpc_name from vpc where vpc_id =? and tenant_id=?";
 	private final String GET_VPCID_BY_VPCNAME_AND_TENANT_ID_QUERY="select vpc_id from vpc where vpc_name=? and tenant_id=?";
-	private final String DELETE_VPC_BY_NAME_QUERY="delete from vpc where vpc_name=?";
+	private final String DELETE_VPC_BY_NAME_QUERY="delete from vpc where vpc_id=?";
 	private final String UPDATE_VPC_BY_VPCID_QUERY="update vpc set vpc_name=?,tenant_id=?,acl_id=? where vpc_id=?";
 	
 	AclDAO aclDAO = null;
@@ -195,6 +195,7 @@ public class VpcDAO {
 				if(result !=null){
 					while(result.next()){
 						VPC vpc = new VPC();
+						vpc.setVpcId(result.getInt(1));
 						vpc.setVpc_name(result.getString("vpc_name"));
 						vpc.setTenant_id(result.getInt("tenant_id"));
 						vpc.setAclName(aclDAO.getACLNameByAclIdAndTenantId(result.getInt("acl_id"), tenant_id));
@@ -228,7 +229,7 @@ public class VpcDAO {
 		 * @param vpcName : name of the vpc to be delete in String
 		 * @throws DataBaseOperationFailedException : Unable to delete the vpc by vpc name
 		 */
-		public void deleteVPCByName(String vpcName) throws DataBaseOperationFailedException{
+		public void deleteVPCById(int vpcId) throws DataBaseOperationFailedException{
 			LOGGER.debug(".deleteVPCByName method of NetworkDAO");
 			DataBaseConnectionFactory connectionFactory=new DataBaseConnectionFactory();
 			Connection connection=null;
@@ -236,12 +237,12 @@ public class VpcDAO {
 			try {
 				connection=connectionFactory.getConnection("mysql");
 				pstmt=(PreparedStatement) connection.prepareStatement(DELETE_VPC_BY_NAME_QUERY);
-				pstmt.setString(1, vpcName);
+				pstmt.setInt(1, vpcId);
 				pstmt.executeUpdate();
-				LOGGER.debug("vpc : "+vpcName+" deleted from db successfully");
+				LOGGER.debug("vpc : "+vpcId+" deleted from db successfully");
 			} catch (ClassNotFoundException | IOException e) {
-				LOGGER.error("Error in deleting the vpc from table using vpc name : "+vpcName);
-				throw new DataBaseOperationFailedException("Error in deleting the vpc from table using vpc name : "+vpcName,e);
+				LOGGER.error("Error in deleting the vpc from table using vpc name : "+vpcId);
+				throw new DataBaseOperationFailedException("Error in deleting the vpc from table using vpc name : "+vpcId,e);
 			} catch(SQLException e) {
 				if(e.getErrorCode() == 1064) {
 					String message = "Error in deleting the vpc from table using vpc name because " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
@@ -250,7 +251,7 @@ public class VpcDAO {
 					String message = "Error in deleting the vpc from table using vpc name because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
 					throw new DataBaseOperationFailedException(message, e);
 				} else
-					throw new DataBaseOperationFailedException("Error in deleting the vpc from table using vpc name : "+vpcName,e);
+					throw new DataBaseOperationFailedException("Error in deleting the vpc from table using vpc name : "+vpcId,e);
 			} finally{
 				DataBaseHelper.dbCleanUp(connection, pstmt);
 			}

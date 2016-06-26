@@ -19,7 +19,7 @@ app.controller('MainCtrl', function($scope, srvShareData, $location,$http) {
   
   $scope.dataToShare = [];
   
-  /* To get all the acl from the table associated with tenant id*/
+  	// To get all the acl from the table associated with tenant id
 	$scope.selectAcl = function() {
  	var response = $http.get('/paas-gui/rest/aclService/getAllACL');
  	response.success(function(data){
@@ -31,10 +31,9 @@ app.controller('MainCtrl', function($scope, srvShareData, $location,$http) {
  	response.error(function(data, status, headers, config) {
              alert("Error in Fetching Data");
      });
- };      
- /*End of selectAcl method*/
+ };      //End of selectAcl method
  
- /*deleteAcl is to delete the acl by id*/
+ //deleteAcl is to delete the acl by id
  $scope.deleteAcl = function(data) {
  	 
   	var response = $http.get('/paas-gui/rest/aclService/deleteACLByNameUsingTenantId/'+data);
@@ -45,20 +44,18 @@ app.controller('MainCtrl', function($scope, srvShareData, $location,$http) {
               alert("Error in Fetching Data");
       });
   	
-  };
-  /*End of deleteAcl method*/
+  };	//End of deleteAcl method
   
-  /*This method is used to share data within multiple controller*/
+  //This method is used to share data within multiple controller
   $scope.shareMyData = function (myValue) {
     $scope.dataToShare = myValue;
     srvShareData.addData($scope.dataToShare);
     
     window.location.href = "inoutbound_rule_interface.html";
-  }
-  /*End of shareMyData method*/
+  }	//End of shareMyData method
   
   
-  /*editApplication to share data and render update page*/
+  //editApplication to share data and render update page
   $scope.editAcl=function(acl){
  	 
  	 $scope.dataToShare = acl;
@@ -68,10 +65,8 @@ app.controller('MainCtrl', function($scope, srvShareData, $location,$http) {
   };//end of edit application
   
   
-});
-//End of MainCtrl controller
-
-
+});	
+/*===========================End of MainCtrl controller=======================================================*/
 
 
 //Controller2: createNewAcl 
@@ -79,7 +74,7 @@ app.controller('createNewAcl', function($scope, srvShareData,$http) {
 	$scope.acl = {};
 	$scope.selectedAclId = srvShareData.getData();
 	
-	/*regAcl method is to Register Acl into data base using tenant id*/
+	//regAcl method is to Register Acl into data base using tenant id
 	 $scope.regAcl = function() {
 	  	  console.log($scope.acl);
 	  	  var userData = JSON.stringify($scope.acl);
@@ -103,22 +98,45 @@ app.controller('createNewAcl', function($scope, srvShareData,$http) {
 	  	      data : data
 	  	    }));
 	  	  });
-	  	};
-	  	/* End of regAcl */
+	  	};	// End of regAcl method
 	  	
 	  	
-	  	
-
+	  	//ACL Server side validation
+	    $scope.aclValidation = function(acl) {
+		  	 console.log("<<<<<< acl validation >>>>>>>>>" +acl);
+		  	  var res = $http.get('/paas-gui/rest/aclService/checkAcl/'+acl);
+		  	  res.success(function(data, status, headers, config) {
+		  		  
+		  		if(data == 'success'){
+		   	    	document.getElementById('aclerror').innerHTML="data exist enter different name";
+		   	    	document.getElementById("myaclbtn").disabled = true;
+		   	    	
+		   		  }
+		   		  else{
+		   			 document.getElementById('aclerror').innerHTML="";
+		   			document.getElementById("myaclbtn").disabled =false;
+		   		  }
+	 	  		 
+		  	  });
+		  	  res.error(function(data, status, headers, config) {
+		  	    alert("failure message: " + JSON.stringify({
+		  	      data : data
+		  	    }));
+		  	  });
+		  	 
+		  	}; //End of aclValidation method
+		  	
+		  	
 });
-//End of createNewAcl controller
+/*=========================== End of createNewAcl controller =======================================================*/
+
 
 //Controller3: InOutBoundRuleCtrl 
 app.controller('InOutBoundRuleCtrl', function($scope, srvShareData,$http) {
 	$scope.selectedAclId = srvShareData.getData()[0];
 	$scope.inOutBndRule ={};
 	
-	
-	 	/*Get all in out bound rule*/
+	 	//Get all in out bound rule
 		$scope.getInOutBoundRuleByAclId = function(selectedAclId) {
 			 
 			var response = $http.get('/paas-gui/rest/aclService/getAllInOutBoundRuleByAclId/'+selectedAclId);
@@ -130,11 +148,10 @@ app.controller('InOutBoundRuleCtrl', function($scope, srvShareData,$http) {
 			response.error(function(data, status, headers, config) {
 				alert("Error in Fetching Data");
 			});
-	 };
-	 /*End of getInOutBoundRuleByAclId*/
+	 };	//End of getInOutBoundRuleByAclId
 	 
 	 
-	 /*deleteInOutBoundById is to delete the  InOutBound  by id*/
+	 //deleteInOutBoundById is to delete the  InOutBound  by id
 	 $scope.deleteInOutBoundById = function(id) {
 	 	 
 	  	var response = $http.get('/paas-gui/rest/aclService/deleteInOutBoundRuleById/'+id);
@@ -145,10 +162,9 @@ app.controller('InOutBoundRuleCtrl', function($scope, srvShareData,$http) {
 	              alert("Error in Fetching Data");
 	      });
 	  	
-	  };
-	  /*End of deleteAcl method*/
+	  }; 	//End of deleteAcl method
 	  
-	  /*shareInOutBoundId to share data and render update page*/
+	  //shareInOutBoundId to share data and render update page
 	  $scope.shareInOutBoundId=function(inOutBoundId){
 	 	 
 	 	 $scope.dataToShare = inOutBoundId;
@@ -156,8 +172,9 @@ app.controller('InOutBoundRuleCtrl', function($scope, srvShareData,$http) {
 		     window.location.href = "edit_inoutbound_rule.html"; 
 	  };//end of edit shareInOutBoundId
 	 
+	  
 });
-//End of InOutBoundRuleCtrl controller
+/*====================== End of InOutBoundRuleCtrl controller ==============================================*/
 
 //Controller4: createNewInOutBoundRule 
 app.controller('createNewInOutBoundRule', function($scope, srvShareData,$http) {
@@ -172,8 +189,15 @@ app.controller('createNewInOutBoundRule', function($scope, srvShareData,$http) {
 		  console.log(userData);
 		  res.success(function(data, status, headers, config) {
 			  console.log("data : " +" status : "+status+" headers : "+headers+"  config: "+config);
-			// $location.path('/paas-gui/html/Acl.html');
-		    //document.location.href = '/paas-gui/html/Acl.html';
+			  if(data == 'Success'){
+					console.log("login success");
+					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+					window.location.href = "acl.html";
+				}else{
+					console.log("Login Error Please Enter Proper Details");
+					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
+					window.location.href = "acl_wizard.html";
+				}
 		  });
 		  res.error(function(data, status, headers, config) {
 		    alert("failure message: " + JSON.stringify({
@@ -184,10 +208,11 @@ app.controller('createNewInOutBoundRule', function($scope, srvShareData,$http) {
 
 	
 });
-//End of createNewInOutBoundRule controller
+/*====================== End of createNewInOutBoundRule controller ==========================================*/
 
 
-//Controller5: createNewInOutBoundRule 
+
+//Controller5: editAcl 
 app.controller('editAcl', function($scope, srvShareData,$http) {
 	
 	$scope.sharedData = srvShareData.getData();
@@ -221,7 +246,8 @@ app.controller('editAcl', function($scope, srvShareData,$http) {
 
 	
 });
-//End of createNewInOutBoundRule controller
+/*====================== End of editAcl controller =========================================================*/
+
 
 //Controller6: editInOutBoundController 
 app.controller('editInOutBoundController', function($scope, srvShareData,$http) {
@@ -253,7 +279,8 @@ app.controller('editInOutBoundController', function($scope, srvShareData,$http) 
 
 	
 });
-//End of createNewInOutBoundRule controller
+/*====================== End of editInOutBoundController controller ========================================*/
+
 app.service('srvShareData', function($window) {
         var KEY = 'App.SelectedValue';
 

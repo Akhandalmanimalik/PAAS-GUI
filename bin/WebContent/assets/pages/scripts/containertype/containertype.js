@@ -15,7 +15,7 @@ mycontainertype.controller('MainCtrl', function ($scope,$http) {
     $scope.regContainerTypes = function() {
     	console.log($scope.field);
     	var userData = JSON.stringify($scope.field);
-    	var res = $http.post('/paas-gui/rest/policiesService/insertContainerTypes', userData);
+    	var res = $http.post('/paas-gui/rest/containersService/insertContainerTypes', userData);
     	console.log(userData);
 
     	res.success(function(data, status, headers, config) {
@@ -34,7 +34,7 @@ mycontainertype.controller('MainCtrl', function ($scope,$http) {
     
  	 $scope.selectContainerTypes = function() {
  		 console.log("hiii");
-    	var response = $http.get('/paas-gui/rest/policiesService/getAllContainerTypesData');
+    	var response = $http.get('/paas-gui/rest/containersService/getAllContainerTypesData');
     	response.success(function(data){
     		$scope.fields = data;
     		console.log("data given");
@@ -47,7 +47,7 @@ mycontainertype.controller('MainCtrl', function ($scope,$http) {
     /*=================== delete*====================*/
    
     $scope.deleteContainerTypes = function(data) {
-     	var response = $http.get('/paas-gui/rest/policiesService/deleteContainerTypes/'+data);
+     	var response = $http.get('/paas-gui/rest/containersService/deleteContainerTypes/'+data);
      	response.success(function(data){
      		$scope.select();
      	});

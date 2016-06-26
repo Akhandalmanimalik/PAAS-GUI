@@ -134,8 +134,6 @@ $scope.setAclId = function(aclIds) {
 
 	/*===============ACL validation==============*/
     $scope.aclValidation = function(acl) {
-    	
-    	
 	  	 console.log("<<<<<< acl validation >>>>>>>>>" +acl);
 	  	  var res = $http.get('/paas-gui/rest/aclService/checkAcl/'+acl);
 	  	  res.success(function(data, status, headers, config) {

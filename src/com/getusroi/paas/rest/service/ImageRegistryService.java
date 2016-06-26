@@ -138,7 +138,7 @@ public class ImageRegistryService {
 		}else{
 			logger.debug("No image repository availabel with name : "+repositoryName);
 		}		
-		response="{\"name\":\"paas\",\"tags\":[\"qatomcat07\",\"devtomcat04\",\"prodtomcat06\",\"qatomcat08\",\"prodtomcat05\",\"devtomcat03\"]}";
+		//response="{\"name\":\"paas\",\"tags\":[\"qatomcat07\",\"devtomcat04\",\"prodtomcat06\",\"qatomcat08\",\"prodtomcat05\",\"devtomcat03\"]}";
 		return response;
 	}//end of method getApplicationSummary
 	

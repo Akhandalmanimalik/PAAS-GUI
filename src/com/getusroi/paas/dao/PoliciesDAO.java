@@ -16,7 +16,6 @@ import com.getusroi.paas.db.helper.DataBaseConnectionFactory;
 import com.getusroi.paas.db.helper.DataBaseHelper;
 import com.getusroi.paas.helper.PAASConstant;
 import com.getusroi.paas.helper.PAASErrorCodeExceptionHelper;
-import com.getusroi.paas.vo.ContainerTypes;
 import com.getusroi.paas.vo.HostScalingPolicy;
 import com.getusroi.paas.vo.ResourceSelection;
 import com.getusroi.paas.vo.ScalingAndRecovery;
@@ -30,7 +29,7 @@ import com.mysql.jdbc.PreparedStatement;
  */
 public class PoliciesDAO {
 
-	private static final Logger logger = LoggerFactory.getLogger(PoliciesDAO.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PoliciesDAO.class);
 	private static final String INSERT_SACALING_AND_RECOVERY_QUERY = "INSERT INTO scaling_and_recovery VALUES(?,?,?,?,?)";
 	private static final String SELECT_ALL_DATA_FROM_SCALING_AND_RECOVERY = "SELECT * FROM scaling_and_recovery";
 	private static final String DELETE_SCALING_AND_RECOVERY_BY_APPLICATION = "DELETE FROM scaling_and_recovery WHERE application = ?";
@@ -44,11 +43,6 @@ public class PoliciesDAO {
 	private static final String SELECT_ALL_RESOURCE_SELECTION = "SELECT * FROM resource_selection";
 	private static final String DELETE_RESOURCE_SELECTION_BY_RANK = "DELETE from resource_selection WHERE rank = ?";
 	
-	private static final String INSERT_CONTAINER_TYPES_QUERY = "INSERT INTO container_type (container_type,memory,description,tenan_id,createdDTM) VALUES(?,?,?,?,NOW())";
-	private static final String SELECT_ALL_CONTAINER_TYPE_QUERY = "SELECT * FROM container_type";
-	private static final String GET_CONTAINER_TYPE_BY_TENANT_ID_QUERY = "SELECT * FROM container_type where tenan_id=?";
-	private static final String REMOVE_CONTAINER_TYPES_BY_NAME = "DELETE FROM container_type WHERE container_type = ?";
-	private static final String GET_CONTAINER_TYPE_NAME_BY_ID_AND_TENANT_ID_QUERY = "SELECT container_type FROM container_type where id=? and tenan_id=?";
 	
 	/**
 	 * this method is used to insert all values of scaling and recovery
@@ -58,7 +52,7 @@ public class PoliciesDAO {
 	 */
 	public void insertScalingAndRecovery(ScalingAndRecovery scalingAndRecovery)
 			throws DataBaseOperationFailedException {
-		logger.debug(".insertAllScalingAndRecovery method of PoliciesDAO");
+		LOGGER.debug(".insertAllScalingAndRecovery method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -72,10 +66,10 @@ public class PoliciesDAO {
 			preparedStatement.setString(4, scalingAndRecovery.getDesiredCount());
 			preparedStatement.setString(5, scalingAndRecovery.getAutoRecovery());
 			preparedStatement.executeUpdate();
-			logger.debug("scaling and recovery inserted successfully: " + scalingAndRecovery);
+			LOGGER.debug("scaling and recovery inserted successfully: " + scalingAndRecovery);
 
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to add scaling and recovery into db with data : " + scalingAndRecovery);
+			LOGGER.error("Unable to add scaling and recovery into db with data : " + scalingAndRecovery);
 			throw new DataBaseOperationFailedException(
 					"Unable to add scaling and recovery into db with data : " + scalingAndRecovery, e);
 		} catch(SQLException e) {
@@ -100,7 +94,7 @@ public class PoliciesDAO {
 	 * @throws DataBaseOperationFailedException : Unable to get data from db
 	 */
 	public List<ScalingAndRecovery> getAllScalingAndRecovery() throws DataBaseOperationFailedException {
-		logger.debug(".getAllScalingAndRecovery method of PoliciesDAO");
+		LOGGER.debug(".getAllScalingAndRecovery method of PoliciesDAO");
 		List<ScalingAndRecovery> scalingAndRecoveryList = new ArrayList<>();
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
@@ -124,7 +118,7 @@ public class PoliciesDAO {
 			}
 			
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to fetch scaling and recovery from db ");
+			LOGGER.error("Unable to fetch scaling and recovery from db ");
 			throw new DataBaseOperationFailedException("Unable to fetch scaling and recovery from ",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -149,7 +143,7 @@ public class PoliciesDAO {
 	 * @throws DataBaseOperationFailedException : Unable to remove scaling and recovery
 	 */
 	public void removeScalingAndRecoveryByApplication(String application) throws DataBaseOperationFailedException {
-		logger.debug(".removeScalingAndRecoveryByApplication method of PoliciesDAO");
+		LOGGER.debug(".removeScalingAndRecoveryByApplication method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;		
@@ -159,7 +153,7 @@ public class PoliciesDAO {
 			preparedStatement.setString(1, application);
 			preparedStatement.executeUpdate();
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to remove scaling and recovery from db ");
+			LOGGER.error("Unable to remove scaling and recovery from db ");
 			throw new DataBaseOperationFailedException("Unable to remove scaling and recovery",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -184,7 +178,7 @@ public class PoliciesDAO {
 	 */
 	public boolean insertAllHostScalingPolicy(HostScalingPolicy hostScalingPolicy) throws DataBaseOperationFailedException {
 		
-		logger.debug(".insertAllHostScaling method of PoliciesDAO");
+		LOGGER.debug(".insertAllHostScaling method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;		
@@ -196,7 +190,7 @@ public class PoliciesDAO {
 
 			preparedStatement.executeUpdate();
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to insert host and scaling into db ");
+			LOGGER.error("Unable to insert host and scaling into db ");
 			throw new DataBaseOperationFailedException("Unable to insert host and scaling into db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -221,7 +215,7 @@ public class PoliciesDAO {
 	 * @throws DataBaseOperationFailedException : Unable to store host and scaling into db
 	 */
 	public List<HostScalingPolicy> selectAllHostScalingPolicy() throws DataBaseOperationFailedException {
-		logger.debug(".selectAllHostScalingPolicy method of PoliciesDAO");
+		LOGGER.debug(".selectAllHostScalingPolicy method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -240,7 +234,7 @@ public class PoliciesDAO {
 				hostScalingPolicyList.add(hostScalingPolicy);
 			}
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to select host and scaling from db ");
+			LOGGER.error("Unable to select host and scaling from db ");
 			throw new DataBaseOperationFailedException("Unable to select host and scaling from db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -265,7 +259,7 @@ public class PoliciesDAO {
 	 * @throws DataBaseOperationFailedException : Unable to remove host scaling policy
 	 */
 	public void removeHostScalingPolicyByName(String name) throws DataBaseOperationFailedException {		
-		logger.debug(".removeHostScalingPolicyByName method of PoliciesDAO");
+		LOGGER.debug(".removeHostScalingPolicyByName method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -275,7 +269,7 @@ public class PoliciesDAO {
 			preparedStatement.setString(1, name);
 			preparedStatement.executeUpdate();
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to remove host and scaling from db ");
+			LOGGER.error("Unable to remove host and scaling from db ");
 			throw new DataBaseOperationFailedException("Unable to remove host and scaling from db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -300,7 +294,7 @@ public class PoliciesDAO {
 	 */
 	public boolean insertAllServiceAffinities(ServiceAffinities affinities) throws DataBaseOperationFailedException {
 		
-		logger.debug(".insertAllServiceAffinities method of PoliciesDAO");
+		LOGGER.debug(".insertAllServiceAffinities method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -314,7 +308,7 @@ public class PoliciesDAO {
 			preparedStatement.executeUpdate();
 			
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to insert service affinities into db ");
+			LOGGER.error("Unable to insert service affinities into db ");
 			throw new DataBaseOperationFailedException("Unable to insert service affinities into db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -338,7 +332,7 @@ public class PoliciesDAO {
 	 */
 	public List<ServiceAffinities> getAllServiceAffinities() throws DataBaseOperationFailedException {
 		
-		logger.debug(".getAllServiceAffinities method of PoliciesDAO");
+		LOGGER.debug(".getAllServiceAffinities method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		List<ServiceAffinities> serviceAffinitiesList = new ArrayList<ServiceAffinities>();
 		Connection connection = null;
@@ -359,7 +353,7 @@ public class PoliciesDAO {
 			}
 
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to get service affinities from db ");
+			LOGGER.error("Unable to get service affinities from db ");
 			throw new DataBaseOperationFailedException("Unable to get service affinities from db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -385,7 +379,7 @@ public class PoliciesDAO {
 	 */
 	public void removeServiceAffinitiesByApplication(String application) throws DataBaseOperationFailedException {
 		
-		logger.debug(".removeServiceAffinitiesByApplication method of PoliciesDAO");
+		LOGGER.debug(".removeServiceAffinitiesByApplication method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -396,7 +390,7 @@ public class PoliciesDAO {
 			preparedStatement.execute();
 			
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to remove service affinities from db ");
+			LOGGER.error("Unable to remove service affinities from db ");
 			throw new DataBaseOperationFailedException("Unable to remove service affinities from db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -422,7 +416,7 @@ public class PoliciesDAO {
 	 * @throws DataBaseOperationFailedException : Unable to insert data
 	 */
 	public boolean insertResourceSelection(ResourceSelection resourceSelection) throws DataBaseOperationFailedException {
-		logger.debug(".insertResourceSelection method of PoliciesDAO");
+		LOGGER.debug(".insertResourceSelection method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -440,7 +434,7 @@ public class PoliciesDAO {
 			preparedStatement.executeUpdate();
 			
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to insert resource selection into db ");
+			LOGGER.error("Unable to insert resource selection into db ");
 			throw new DataBaseOperationFailedException("Unable to insert resource selection into db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -464,7 +458,7 @@ public class PoliciesDAO {
 	 * @throws DataBaseOperationFailedException : Unable to fetch data from db
 	 */
 	public List<ResourceSelection> getAllResourceSelection() throws DataBaseOperationFailedException {
-		logger.debug(".getAllServiceAffinities method of PoliciesDAO");
+		LOGGER.debug(".getAllServiceAffinities method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		List<ResourceSelection> resourceSelectionList = new ArrayList<ResourceSelection>();
 		Connection connection = null;
@@ -489,7 +483,7 @@ public class PoliciesDAO {
 			}
 
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to get service affinities from db ");
+			LOGGER.error("Unable to get service affinities from db ");
 			throw new DataBaseOperationFailedException("Unable to get service affinities from db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -514,7 +508,7 @@ public class PoliciesDAO {
 	 * @throws DataBaseOperationFailedException : Unable to remove resource selection
 	 */
 	public void removeResourceSelectionByRank(String rank) throws DataBaseOperationFailedException {
-		logger.debug(".removeResourceSelectionByRank method of PoliciesDAO");
+		LOGGER.debug(".removeResourceSelectionByRank method of PoliciesDAO");
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -525,7 +519,7 @@ public class PoliciesDAO {
 			preparedStatement.execute();
 			
 		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to remove resource selection from db ");
+			LOGGER.error("Unable to remove resource selection from db ");
 			throw new DataBaseOperationFailedException("Unable to remove resource selection from db",e);
 		} catch(SQLException e) {
 			if(e.getErrorCode() == 1064) {
@@ -541,216 +535,12 @@ public class PoliciesDAO {
 			DataBaseHelper.dbCleanUp(connection, preparedStatement);
 		}
 	} // END OF removeResourceSelectionByRank
-
-	/**
-	 * this is used to insert all values of container type into db
-	 * @param containerTypes : list of values which is going to store into db
-	 * @return : true if data inserted successfully
-	 * @throws DataBaseOperationFailedException : Unable to store data into db
-	 */
-	public boolean insertContainerType(ContainerTypes containerTypes) throws DataBaseOperationFailedException {
-		logger.debug(".insertContainerType method of PoliciesDAO");
-		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		try {
-			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
-			preparedStatement = (PreparedStatement) connection.prepareStatement(INSERT_CONTAINER_TYPES_QUERY);
-			preparedStatement.setString(1, containerTypes.getName());
-			preparedStatement.setInt(2, containerTypes.getMemory());
-			preparedStatement.setString(3, containerTypes.getDescription());
-			preparedStatement.setInt(4, containerTypes.getTenantId());
-			
-			preparedStatement.executeUpdate();
-						
-		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to insert container type into db ");
-			throw new DataBaseOperationFailedException("Unable to insert container type into db",e);
-		} catch(SQLException e) {
-			if(e.getErrorCode() == 1064) {
-				String message = "Unable to insert container type into db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
-				throw new DataBaseOperationFailedException(message, e);
-			} else if(e.getErrorCode() == 1146) {
-				String message = "Unable to insert container type into db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
-				throw new DataBaseOperationFailedException(message, e);
-			} else {
-				throw new DataBaseOperationFailedException("Unable to insert container type into db ", e);
-			}
-		} finally {
-			DataBaseHelper.dbCleanUp(connection, preparedStatement);
-		}
-		return true;
-	} //end of insertContainerType
-	
-	/**
-	 * this method is used to get all data from container_type table
-	 * @return : it return list of data from container_table
-	 * @throws DataBaseOperationFailedException : Unable to fetch data from db
-	 */
-	public List<ContainerTypes> getAllContainerTypesData() throws DataBaseOperationFailedException {
-		logger.debug(".getAllContainerTypesData method of PoliciesDAO");
-		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
-		List<ContainerTypes> containerTypesList = new ArrayList<ContainerTypes>();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		
-		try {
-			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
-			preparedStatement = (PreparedStatement) connection.prepareStatement(SELECT_ALL_CONTAINER_TYPE_QUERY);
-			resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				ContainerTypes containerTypes = new ContainerTypes();
-				containerTypes.setId(resultSet.getInt("id"));
-				containerTypes.setName(resultSet.getString("container_type"));
-				containerTypes.setMemory(resultSet.getInt("memory"));
-				containerTypes.setTenantId(resultSet.getInt("tenan_id"));
-				containerTypes.setDescription(resultSet.getString("description"));
-				containerTypesList.add(containerTypes);
-			}
-
-		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to get container types from db ");
-			throw new DataBaseOperationFailedException("Unable to get container types from db",e);
-		} catch(SQLException e) {
-			if(e.getErrorCode() == 1064) {
-				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
-				throw new DataBaseOperationFailedException(message, e);
-			} else if(e.getErrorCode() == 1146) {
-				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
-				throw new DataBaseOperationFailedException(message, e);
-			} else {
-				throw new DataBaseOperationFailedException("Unable to get container types from db ", e);
-			}
-		} finally {
-			DataBaseHelper.dbCleanup(connection, preparedStatement, resultSet);
-		}
-
-		return containerTypesList;
-	} // end of getAllContainerTypesData
-	
-	/**
-	 * this method is used to get all data from container_type table
-	 * @return : it return list of data from container_table
-	 * @throws DataBaseOperationFailedException : Unable to fetch data from db
-	 */
-	public List<ContainerTypes> getAllContainerTypesByTenantId(int tenantId) throws DataBaseOperationFailedException {
-		logger.debug(".getAllContainerTypesByTenantId (.) of PoliciesDAO");
-		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
-		List<ContainerTypes> containerTypesList = new ArrayList<ContainerTypes>();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		
-		try {
-			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
-			preparedStatement = (PreparedStatement) connection.prepareStatement(GET_CONTAINER_TYPE_BY_TENANT_ID_QUERY);
-			preparedStatement.setInt(1, tenantId);
-			resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				ContainerTypes containerTypes = new ContainerTypes();
-				containerTypes.setName(resultSet.getString("container_type"));
-				containerTypes.setMemory(resultSet.getInt("memory"));
-				containerTypes.setDescription(resultSet.getString("description"));
-				containerTypesList.add(containerTypes);
-			}
-
-		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to get container types from db ");
-			throw new DataBaseOperationFailedException("Unable to get container types from db",e);
-		} catch(SQLException e) {
-			if(e.getErrorCode() == 1064) {
-				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
-				throw new DataBaseOperationFailedException(message, e);
-			} else if(e.getErrorCode() == 1146) {
-				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
-				throw new DataBaseOperationFailedException(message, e);
-			} else {
-				throw new DataBaseOperationFailedException("Unable to get container types from db ", e);
-			}
-		} finally {
-			DataBaseHelper.dbCleanup(connection, preparedStatement, resultSet);
-		}
-
-		return containerTypesList;
-	} // end of getAllContainerTypesData
-	
-	public void removeContainerTypesByName(String name) throws DataBaseOperationFailedException {		
-		logger.debug(".removeContainerTypesByName of PoliciesDAO"+name);
-		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		try {
-			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
-			preparedStatement = (PreparedStatement) connection.prepareStatement(REMOVE_CONTAINER_TYPES_BY_NAME);
-			preparedStatement.setString(1, name);
-			preparedStatement.execute();
-			
-		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to remove container type from db ");
-			throw new DataBaseOperationFailedException("Unable to remove container type from db",e);
-		} catch(SQLException e) {
-			if(e.getErrorCode() == 1064) {
-				String message = "Unable to remove container type from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
-				throw new DataBaseOperationFailedException(message, e);
-			} else if(e.getErrorCode() == 1146) {
-				String message = "Unable to remove container type from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
-				throw new DataBaseOperationFailedException(message, e);
-			} else {
-				throw new DataBaseOperationFailedException("Unable to remove container type from db ", e);
-			}
-		} finally {
-			DataBaseHelper.dbCleanUp(connection, preparedStatement);
-		}
-		
-	} // end of removeContainerTypesByName
 	
 	
-	
-//	 = "SELECT  FROM container_type where id=? and tenan_id=?";
-	/**
-	 * this method is used to get all data from container_type table
-	 * @return : it return list of data from container_table
-	 * @throws DataBaseOperationFailedException : Unable to fetch data from db
-	 */
-	public String getContainerTypeNameById(int contnrID,int tenantId) throws DataBaseOperationFailedException {
-		logger.debug(".getAllContainerTypesByTenantId (.) of PoliciesDAO");
-		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		String containerTypeName=null;
-		try {
-			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
-			preparedStatement = (PreparedStatement) connection.prepareStatement(GET_CONTAINER_TYPE_NAME_BY_ID_AND_TENANT_ID_QUERY);
-			preparedStatement.setInt(1, contnrID);
-			preparedStatement.setInt(2, tenantId);
-			resultSet = preparedStatement.executeQuery();
-			
-			while (resultSet != null && resultSet.next()) {
-				containerTypeName=resultSet.getString("container_type");
-			}
-		
-		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Unable to get container types from db ");
-			throw new DataBaseOperationFailedException("Unable to get container types from db",e);
-		} catch(SQLException e) {
-			if(e.getErrorCode() == 1064) {
-				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.ERROR_IN_SQL_SYNTAX);
-				throw new DataBaseOperationFailedException(message, e);
-			} else if(e.getErrorCode() == 1146) {
-				String message = "Unable to get container types from db because: " + PAASErrorCodeExceptionHelper.exceptionFormat(PAASConstant.TABLE_NOT_EXIST);
-				throw new DataBaseOperationFailedException(message, e);
-			} else {
-				throw new DataBaseOperationFailedException("Unable to get container types from db ", e);
-			}
-		} finally {
-			DataBaseHelper.dbCleanup(connection, preparedStatement, resultSet);
-		}
-
-		return containerTypeName;
-	} // end of getAllContainerTypesData
-	
+	public String getContainerTypeNameById(int i,int j)
+	{
+		return null;
+	}
 }
 
 

@@ -25,7 +25,7 @@
 
 <script src="../assets/global/scripts/angular.js" type="text/javascript"></script>
 <script src="../assets/global/scripts/angular-route.js" type="text/javascript"></script>
-<script src="../assets/pages/scripts/acl/newAcl.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/image-registry/imageregistry.js" type="text/javascript"></script>
 
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
 <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
@@ -45,7 +45,7 @@
 <body
 	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
 	<!-- BEGIN HEADER -->
-	<div data-ng-app="myAcl" data-ng-controller="createNewAcl">
+	<div data-ng-app="myimageregistry" data-ng-controller="MainCtrl">
 		<!-- END HEADER -->
 		<!-- BEGIN CONTAINER -->
 		<div class="page-container">
@@ -84,17 +84,15 @@
 									Your form validation is successful!
 								</div>
 
-								<!-- ACL Name -->
-								<div class="form-group"
-									data-ng-class="{ 'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
-									<label class="control-label col-md-3">ACL Name <span
+								<!-- Image Registry Name -->
+								<div class="form-group" class="form-group" data-ng-class="{ 'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
+									<label class="control-label col-md-3">  Name <span
 										class="required"> * </span>
 									</label>
 									<div class="col-xs-4">
-
 										<input type="text" name="name" id="name" data-required="1"
-											class="form-control" data-ng-model="acl.aclName" 
-											data-ng-maxlength="30" data-ng-minlength="2" data-ng-change="aclValidation(acl.aclName)" required/>
+											class="form-control" data-ng-model="field.name" 
+											data-ng-maxlength="20" data-ng-minlength="2" data-ng-change="registryValidation(field.name)" required/>
 										<p data-ng-show="userForm.name.$error.minlength"
 										class="help-block" style="color: red;">Acl name
 										Shouldn't below 2 chars.</p>
@@ -102,27 +100,80 @@
 										<p data-ng-show="userForm.name.$error.maxlength"
 										class="help-block" style="color: red;">Acl name
 										Shouldn't exceed 30 chars.</p>	
-										<span id="aclerror" style="color: red;"></span>
+										<span id="imgError" style="color: red;"></span>
 									</div>
 								</div>
-								<!-- DESCRIPTION -->
-								<div class="form-group">
-									<label class="control-label col-md-3"> Description </label>
+								
+								<!-- Location or Repository name -->
+								<div class="form-group"
+									data-ng-class="{ 'has-error' : userForm.location.$invalid && !userForm.location.$pristine }">
+									<label class="control-label col-md-3"> Location <span
+										class="required"> * </span>
+									</label>
 									<div class="col-xs-4">
-										<textarea rows="3" cols="9" class="form-control"
-											data-ng-model="acl.description">
-									</textarea>
+										<input type="text" id="location" class="form-control"
+											data-required="1" data-ng-model="field.location" required /> <span
+											class="help-block">URL of the Docker registry (eg
+											registry.roi)</span>
 									</div>
+								</div>
+								
+								<!-- Image Registry Version -->
+								<div class="form-group">
+									<label class="control-label col-md-3"> Version <span
+										class="required"> * </span>
+									</label>
+									<div class="col-xs-4">
+										<select name="version" id="version" aria-required="true"
+											aria-describedby="select-error" class="form-control"
+											data-ng-model="field.version">
+											<option value="1.0">Version 1.0</option>
+											<option value="2.0">Version 2.0</option>
+										</select> <span class="help-block"> Select Required Version</span>
+									</div>
+								</div>
+								<!-- Username for Image Registry -->
+								<div class="form-group"
+									data-ng-class="{ 'has-error' : userForm.username.$invalid && !userForm.username.$pristine }">
+									<label class="control-label col-md-3"> Username <span
+										class="required"> * </span>
+									</label>
+									<div class="col-xs-4">
+										<input type="text" name="username" class="form-control"
+											data-required="1" id="username" data-ng-model="field.user_name"
+											data-ng-minlength="2"
+											data-ng-change="registUsernameValidation(field.user_name)" />
+										<span class="help-block"> Enter Username</span>
+										<p data-ng-show="userForm.username.$error.minlength"
+											class="help-block" style="color: red;">User name
+											Shouldn't below 2 chars.</p>
+										<p data-ng-show="userForm.username.$error.maxlength"
+											class="help-block" style="color: red;">User name
+											Shouldn't exceed 30 chars.</p>
+										<span id="userNameerror" style="color: red;"></span>
+									</div>
+								</div>
+								<!-- Password for Image Registry -->
+								<div class="form-group"
+									data-ng-class="{ 'has-error' : userForm.password.$invalid && !userForm.password.$pristine }">
+									<label class="control-label col-md-3">
+										Password&nbsp;&nbsp; <span class="required"> * </span>
+									</label>
 
+									<div class="col-xs-4">
+										<input type="password" name="password" class="form-control"
+											data-required="1" id="password" data-ng-model="field.password" />
+										<span class="help-block">myimageregistrys Enter
+											Password </span>
+									</div>
 								</div>
 								<div class="form-actions">
 									<div class="row">
 										<div class="col-md-offset-3 col-md-9">
 											<button type="submit" class="btn green btn-success"
-												data-ng-disabled="userForm.$invalid" data-ng-click="regAcl();" id="myaclbtn">Submit</button>
+												data-ng-disabled="userForm.$invalid" data-ng-click="regImageRegistry();" id="registrybtn">Submit</button>
 											<!-- <button type="button" class="btn grey-salsa btn-outline">Cancel -->
-											<a href="/paas-gui/html/acl.html"
-												class="btn grey-salsa btn-outline">Cancel</a>
+											<a href="/paas-gui/html/imageregistry.html" class="btn grey-salsa btn-outline">Cancel</a>
 										</div>
 									</div>
 								</div>

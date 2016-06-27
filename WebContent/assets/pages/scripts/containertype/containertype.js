@@ -20,14 +20,23 @@ mycontainertype.controller('MainCtrl', function ($scope,$http,srvShareData) {
     	console.log("inside the regContainerTypes");
     	console.log($scope.field);
     	var userData = JSON.stringify($scope.field);
-    	var res = $http.put('/paas-gui/rest/containersService/insertContainerTypes/', userData);
+    	var res = $http.post('/paas-gui/rest/containersService/insertContainerTypes/', userData);
     	
 
     	res.success(function(data, status, headers, config) {
     		console.log("the data is coming "+data);
     		$scope.message = data;
-    		window.location.href = "containertype-interface.html";
+    		
     		//document.location.href = '/PAAS-GUI/html/containertype-interface.html';
+    		if(data =='Success'){
+				console.log("login success");
+//				document.location.href = '/paas-gui/html/acl.html';  
+				window.location.href = "containertype-interface.html";
+			}else{
+				console.log("Login Error Please Enter Proper Details");
+//				document.location.href = '/paas-gui/html/acl_wizard.html'; also working
+				 window.location.href = "create-new-image-registry.html"; 
+			}
     	});
     	res.error(function(data, status, headers, config) {
     		console.log("data"+data);
@@ -57,7 +66,7 @@ mycontainertype.controller('MainCtrl', function ($scope,$http,srvShareData) {
     $scope.deleteContainerTypes = function(data) {
      	var response = $http.get('/paas-gui/rest/containersService/deleteContainerTypes/'+data);
      	response.success(function(data){
-     		$scope.select();
+     		$scope.selectContainerTypes();
      	});
      	response.error(function(data, status, headers, config) {
      		console.log("error in data"+data);

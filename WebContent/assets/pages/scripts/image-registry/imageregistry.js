@@ -30,38 +30,17 @@ myimageregistry.controller('MainCtrl', function ($scope,$http,srvShareData) {
 			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
 				console.log("userData : "+userData);
 			  $scope.message = data;
-			  window.location.href="/html/imageregistry.html";
-			  /* if(data!='failed'){
+			 if(data =='Success'){
 					console.log("login success");
-					document.location.href = '/paas-gui/html/acl.html'; also working 
+//					document.location.href = '/paas-gui/html/acl.html';  
 					window.location.href = "imageregistry.html";
 				}else{
 					console.log("Login Error Please Enter Proper Details");
-					document.location.href = '/paas-gui/html/acl_wizard.html'; also working
-					 window.location.href = "editImageRegistry12.html"; 
+//					document.location.href = '/paas-gui/html/acl_wizard.html'; also working
+					 window.location.href = "create-new-image-registry.html"; 
 				}
-			*/
+			
 		  });
-    	 //test
-    
-   
-
-    /*	response.success(function(data, status) {
-    		console.log("data is coming "+data);
-    		console.log("coming after succress");
-    		alert("coming to success");
-    		$scope.message = data;
-    	
-    		
-    		window.location.href='http://localhost:8080/paas-gui/html/imageregistry.html';
-    	});*/
-    	/*response.error(function(data, status, headers, config) {
-    		alert("failure message: " + JSON.stringify({
-    			data : data
-    		}));
-    	});
-    	*/
-    	
     	response.error(function(data, status, headers, config) {
 			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
 		    alert("failure message: " + JSON.stringify({

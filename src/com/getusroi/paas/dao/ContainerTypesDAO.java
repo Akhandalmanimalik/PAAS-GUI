@@ -37,7 +37,7 @@ public class ContainerTypesDAO {
 	private static final String GET_CONTAINER_TYPE_BY_TENANT_ID_QUERY = "SELECT * FROM container_type where tenan_id=?";
 	private static final String GET_CONTAINER_TYPE_NAME_BY_ID_AND_TENANT_ID_QUERY = "SELECT container_type FROM container_type where id=? and tenan_id=?";
 	public static final String UPDATE_CONTAINER_TYPE_BYID="UPDATE  container_type set container_type=?,description =?,memory=? where id=?";
-	private static final String REMOVE_CONTAINER_TYPES_BY_NAME = "DELETE FROM container_type WHERE container_type = ?";
+	private static final String REMOVE_CONTAINER_TYPES_BY_ID = "DELETE FROM container_type WHERE id = ?";
 	
 	/**
 	 * this method is used to get all data from container_type table
@@ -302,15 +302,15 @@ public class ContainerTypesDAO {
 	} // end of getAllContainerTypesData
 	
 	
-	public void removeContainerTypesByName(String name) throws DataBaseOperationFailedException {		
-		LOGGER.debug(".removeContainerTypesByName of PoliciesDAO"+name);
+	public void removeContainerTypesByName(int id) throws DataBaseOperationFailedException {		
+		LOGGER.debug(".removeContainerTypesByName of ContainerTypesDAO id : "+id);
 		DataBaseConnectionFactory dataBaseConnectionFactory = new DataBaseConnectionFactory();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		try {
 			connection = dataBaseConnectionFactory.getConnection(MYSQL_DB);
-			preparedStatement = (PreparedStatement) connection.prepareStatement(REMOVE_CONTAINER_TYPES_BY_NAME);
-			preparedStatement.setString(1, name);
+			preparedStatement = (PreparedStatement) connection.prepareStatement(REMOVE_CONTAINER_TYPES_BY_ID);
+			preparedStatement.setInt(1, id);
 			preparedStatement.execute();
 			
 		} catch (ClassNotFoundException | IOException e) {

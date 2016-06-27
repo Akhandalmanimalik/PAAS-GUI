@@ -76,5 +76,24 @@ public class PAASGenericHelper {
 		 logger.debug("value "+data );
 		return data;
 	}//end of method getIncrementValue
+	
+	 /**
+	  * This method is used to read properties file
+	  * @param fileName : file name 
+	  * @return Properties 
+	  * @throws UnableToLoadPropertyFileException : Unable to read property file
+	  */
+	public synchronized static Properties getDockerHubPropertyFile(String fileName) throws UnableToLoadPropertyFileException{
+		logger.debug(".getPropertyFile mehod of PAASGenericHelper");
+		Properties prop=new Properties();
+		try {
+			prop.load(PAASGenericHelper.class.getClassLoader().getResourceAsStream(fileName));
+			return prop;
+		} catch (IOException e) {
+			logger.error("Unable to load the property file"+fileName);
+			throw new UnableToLoadPropertyFileException("Unable to load the property file"+fileName);
+		}			
+	}//end of method getPropertyFile
+	
 
 }

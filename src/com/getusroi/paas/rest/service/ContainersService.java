@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -66,6 +67,7 @@ public class ContainersService {
 		jsonObj.put("qa", qa);
 		return jsonObj.toString();
 	}
+	
 	/**
 	 * To Update the container by using container id
 	 * @param containerType
@@ -118,7 +120,7 @@ public class ContainersService {
 	 * @throws DataBaseOperationFailedException
 	 * @throws PoliciesServiceException
 	 */
-	@PUT
+	@POST
 	@Path("/insertContainerTypes")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
@@ -129,21 +131,13 @@ public class ContainersService {
 		containerTypeDao = new ContainerTypesDAO();
 		ObjectMapper mapper = new ObjectMapper();
 		ContainerTypes containerTypes = null;
-		RestServiceHelper restServiceHelper = new RestServiceHelper();
-
-		boolean isupdated = false;
 		try {
-			containerTypes = mapper.readValue(containerTypesData,
-					ContainerTypes.class);
+			containerTypes = mapper.readValue(containerTypesData, ContainerTypes.class);
 			HttpSession session = req.getSession(true);
 			if (containerTypes != null) {
-				containerTypes
-						.setTenantId(restServiceHelper
-								.convertStringToInteger(session
-										.getAttribute("id") + ""));
-				containerTypeDao = new ContainerTypesDAO();
-
+				containerTypes.setTenantId((int)session.getAttribute("id"));
 				containerTypeDao.insertContainerType(containerTypes);
+				return "Success";
 			}
 		} catch (IOException e) {
 			LOGGER.error("Error in reading data : " + containerTypesData
@@ -152,11 +146,8 @@ public class ContainersService {
 					+ containerTypesData
 					+ " using object mapper in insertScalingAndRecovery");
 		}
-		if (isupdated == true) {
-			return "success";
-		} else {
-			return "failed";
-		}
+		 
+		return "failed";
 	} // end of insertContainerTypes
 
 	/**
@@ -211,12 +202,12 @@ public class ContainersService {
 	 * @throws DataBaseOperationFailedException
 	 */
 	@GET
-	@Path("/deleteContainerTypes/{name}")
-	public void deleteContainerTypes(@PathParam("name") String name)
+	@Path("/deleteContainerTypes/{id}")
+	public void deleteContainerTypes(@PathParam("id") String containerId)
 			throws DataBaseOperationFailedException {
-		LOGGER.debug(".deleteContainerTypes of PoliciesService" + name);
+		LOGGER.debug(".deleteContainerTypes of PoliciesService" + containerId);
 		containerTypeDao = new ContainerTypesDAO();
-		containerTypeDao.removeContainerTypesByName(name);
+		containerTypeDao.removeContainerTypesByName(new RestServiceHelper().convertStringToInteger(containerId));
 
 	} // end of deleteContainerTypes
 

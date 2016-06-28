@@ -12,7 +12,7 @@ myenvironmenttype.controller('MainCtrl', function ($scope,$http,srvShareData) {
 	    $scope.dataToShare = myValue;
 	    srvShareData.addData($scope.dataToShare);
 	    
-	    window.location.href = "editenvironmenttypes12.html";
+	    window.location.href = "edit-environmenttype.html";
 	  };/**END OF SHARED SCOPE */
     
  /**============ ENVIRONMENT TYPES REG=============*/ // DONE
@@ -239,7 +239,7 @@ myenvironmenttype.controller('environmentUpdateCtrl', function($scope, srvShareD
 				}else{
 					console.log("Login Error Please Enter Proper Details");
 					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
-					 window.location.href = "editenvironmenttypes12.html"; 
+					 window.location.href = "edit-environmenttype.html"; 
 				}
 			
 		  });

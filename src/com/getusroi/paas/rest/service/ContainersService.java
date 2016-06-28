@@ -79,7 +79,6 @@ public class ContainersService {
 	 */
 	@PUT
 	@Path("/updateContainerType")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String updateContainerType(String containerType,
 			@Context HttpServletRequest req)
@@ -109,7 +108,7 @@ public class ContainersService {
 							+ " using object mapper in addImageRegistry");
 		}
 
-		return String.valueOf(updateContainer == 1 ? "success" : "failure");
+		return String.valueOf(updateContainer == 1 ? "Success" : "failure");
 	}
 
 	/**

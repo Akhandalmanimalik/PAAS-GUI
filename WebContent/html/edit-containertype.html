@@ -8,56 +8,34 @@
 <meta content="" name="description" />
 <meta content="" name="author" />
 
-<script src="../assets/global/scripts/angular.min.js"
-	type="text/javascript"></script>
-<script src="../assets/global/plugins/jquery.min.js"
-	type="text/javascript"></script>
-<script
-	src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
-	type="text/javascript"></script>
-<script src="../assets/global/plugins/uniform/jquery.uniform.min.js"
-	type="text/javascript"></script>
-<script src="../assets/pages/scripts/form-validation.min.js"
-	type="text/javascript"></script>
-<script
-	src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js"
-	type="text/javascript"></script>
-<script
-	src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js"
-	type="text/javascript"></script>
-<script
-	src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"
-	type="text/javascript"></script>
+<script src="../assets/global/scripts/angular.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/form-validation.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
 <script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
-<script src="../assets/pages/scripts/layout.min.js"
-	type="text/javascript"></script>
+<script src="../assets/pages/scripts/layout.min.js" type="text/javascript"></script>
 
+<!-- <script src="../assets/pages/scripts/acl/acl.js" type="text/javascript"></script>
+<script data-semver="1.2.28" src="https://code.angularjs.org/1.2.28/angular.js" data-require="angular.js@1.2.x"></script>
+<script src="https://code.angularjs.org/1.2.28/angular-route.js"></script>
+<script src="../assets/pages/scripts/acl/newAcl.js" type="text/javascript"></script> -->
 
 <script src="../assets/global/scripts/angular.js" type="text/javascript"></script>
-<script src="../assets/global/scripts/angular-route.js"
-	type="text/javascript"></script>
-<script src="../assets/pages/scripts/containertype/containertype.js"
-	type="text/javascript"></script>
+<script src="../assets/global/scripts/angular-route.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/containertype/containertype.js" type="text/javascript"></script>
 
-<link
-	href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all"
-	rel="stylesheet" type="text/css" />
-<link
-	href="../assets/global/plugins/font-awesome/css/font-awesome.min.css"
-	rel="stylesheet" type="text/css" />
-<link
-	href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css"
-	rel="stylesheet" type="text/css" />
-<link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css"
-	rel="stylesheet" type="text/css" />
-<link href="../assets/global/plugins/uniform/css/uniform.default.css"
-	rel="stylesheet" type="text/css" />
-<link href="../assets/global/css/components.min.css" rel="stylesheet"
-	id="style_components" type="text/css" />
-<link href="../assets/pages/css/layout.min.css" rel="stylesheet"
-	type="text/css" />
-<link href="../assets/pages/css/light.min.css" rel="stylesheet"
-	type="text/css" id="style_color" />
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+<link href="../assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+<link href="../assets/pages/css/layout.min.css" rel="stylesheet" type="text/css" />
+<link href="../assets/pages/css/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
 <link rel="shortcut icon" href="favicon.ico" />
 
 
@@ -68,8 +46,7 @@
 <body
 	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
 	<!-- BEGIN HEADER -->
-	<div data-ng-app="mycontainertype"
-		data-ng-controller="containertUpdateCtrl">
+	<div data-ng-app="mycontainertype" data-ng-controller="containertUpdateCtrl">
 		<!-- END HEADER -->
 		<!-- BEGIN CONTAINER -->
 		<div class="page-container">
@@ -79,7 +56,7 @@
 				<!-- Progress Bar -->
 				<div class="page-content">
 					<h4>
-						<b> Update Container </b>
+						<b>  Update Container Type </b>
 					</h4>
 				</div>
 				<hr>
@@ -92,13 +69,11 @@
 				<!-- End Progress Bar -->
 				<!-- BEGIN PAGE BASE CONTENT -->
 				<div class="row">
-
 					<div class="col-md-12">
 						<!-- BEGIN FORM-->
-						<form action="#" id="vpcWizardForm" name="vpcWizardForm"
+						<form action="#" id="step-1" name="vpcWizardForm"
 							class="form-horizontal">
 							<div class="form-body">
-
 								<div class="alert alert-danger display-hide">
 									<button class="close" data-close="alert"></button>
 									You have some form errors. Please check below.
@@ -108,36 +83,27 @@
 									Your form validation is successful!
 								</div>
 
-
-								<!--  Name -->
+								<!-- Name -->
 								<div class="form-group"
 									data-ng-class="{ 'has-error' : vpcWizardForm.name.$invalid && !vpcWizardForm.name.$pristine }">
-									<!-- ie8, ie9 does not support html5 placeholder, so we just show field	title for that -->
-									<!-- <label class="control-label col-md-3"> Name <span
-													class="required"> * </span> -->
-
 									<label class="control-label col-md-3"> Name <span
 										class="required"> * </span>
 									</label>
 									<div class="col-xs-4">
-										<input type="text" id="name" placeholder="Name"
-											data-ng-model="field.name" name="name" data-required="1"
-											class="form-control placeholder-no-fix" ng-minlength="2"
-											ng-maxlength="20" required /> <span class="error"
-											ng-show="vpcWizardForm.name.$error.maxlength"
-											class="help-block" style="color: red;"> Name should be
-											maximum 20 char</span> <span class="error"
-											ng-show="vpcWizardForm.name.$error.maxlength"
-											class="help-block" style="color: red;"> Name should be
-											minimum of 2 char</span>
-
+										<input type="text" name="name" id="name" data-required="1"
+											class="form-control" data-ng-model="field.name"
+											data-ng-maxlength="20" data-ng-minlength="2" required/>
+										<p data-ng-show="vpcWizardForm.name.$error.minlength"
+										class="help-block" style="color: red;"> name
+										Shouldn't below 2 chars.</p>
+										
+										<p data-ng-show="vpcWizardForm.name.$error.maxlength"
+										class="help-block" style="color: red;"> name
+										Shouldn't exceed 20 chars.</p>	
+										<span id="containerError" style="color: red;"></span>
 									</div>
-
 								</div>
-
-
-
-
+								
 								<!-- MEMORY -->
 								<div class="form-group"
 									data-ng-class="{ 'has-error' : vpcWizardForm.memory.$invalid && !vpcWizardForm.memory.$pristine }">
@@ -148,14 +114,15 @@
 									<div class="col-xs-4">
 										<input type="text" id="memory" data-ng-model="field.memory"
 											name="memory" placeholder="Memory" class="form-control"
-											ng-minlength="0" data-ng-maxlength="60" required /> <span
+											data-ng-minlength="0" data-ng-maxlength="60" required /> <span
 											class="error"
 											data-ng-show="vpcWizardForm.memory.$error.maxlength"
 											class="help-block" style="color: red;">Memory should
 											not be greater than 60</span>
 									</div>
 								</div>
-
+								
+								
 								<!-- Description FIELD  -->
 								<div class="form-group">
 									<label class="control-label col-md-3"> Description <span
@@ -170,23 +137,22 @@
 
 									</div>
 								</div>
-
 								
+								 
 								<div class="form-actions">
 									<div class="row">
 										<div class="col-md-offset-3 col-md-9">
 											<button type="submit" class="btn green btn-success"
-												ng-disabled="vpcWizardForm.$invalid"
-												ng-click="updateContainerType(field);" id="myaclbtn">
-												Update</button>
-											
-											<a href="containertype-interface.html" class="btn grey-salsa btn-outline">Cancel</a>
+												data-ng-disabled="vpcWizardForm.$invalid" data-ng-click="updateContainerType(field);" id="containerBtn"> Update </button>
+											<!-- <button type="button" class="btn grey-salsa btn-outline">Cancel -->
+											<a href="/paas-gui/html/containertype-interface.html"
+												class="btn grey-salsa btn-outline">Cancel</a>
 										</div>
 									</div>
 								</div>
 							</div>
 						</form>
-						
+						 
 						<!-- END FORM-->
 					</div>
 				</div>

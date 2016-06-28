@@ -171,7 +171,7 @@ app.controller('editVpc', function($scope, srvShareData,$http) {
 				}else{
 					console.log("Login Error Please Enter Proper Details");
 					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
-					 window.location.href = "edit_acl.html"; 
+					 window.location.href = "edit-vpc-wizard.html"; 
 				}
 			
 		  });

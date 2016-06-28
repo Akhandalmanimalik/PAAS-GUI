@@ -36,7 +36,7 @@ app.controller('MainCtrl', function($scope, srvShareData, $location,$http) {
  //deleteAcl is to delete the acl by id
  $scope.deleteAcl = function(data) {
  	 
-  	var response = $http.get('/paas-gui/rest/aclService/deleteACLByNameUsingTenantId/'+data);
+  	var response = $http.get('/paas-gui/rest/aclService/deleteACLByaclId/'+data);
   	response.success(function(data){
   		$scope.selectAcl();
   	});
@@ -169,7 +169,7 @@ app.controller('InOutBoundRuleCtrl', function($scope, srvShareData,$http) {
 	 	 
 	 	 $scope.dataToShare = inOutBoundId;
 		    srvShareData.addData($scope.dataToShare);
-		     window.location.href = "edit_inoutbound_rule.html"; 
+		     window.location.href = "edit-inoutbound-rule.html"; 
 	  };//end of edit shareInOutBoundId
 	 
 	  
@@ -192,11 +192,11 @@ app.controller('createNewInOutBoundRule', function($scope, srvShareData,$http) {
 			  if(data == 'Success'){
 					console.log("login success");
 					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
-					window.location.href = "acl.html";
+					window.location.href = "inoutbound_rule_interface.html";
 				}else{
 					console.log("Login Error Please Enter Proper Details");
 					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
-					window.location.href = "acl_wizard.html";
+					window.location.href = "create-new-in-out-bound-rule.html";
 				}
 		  });
 		  res.error(function(data, status, headers, config) {
@@ -251,11 +251,8 @@ app.controller('editAcl', function($scope, srvShareData,$http) {
 
 //Controller6: editInOutBoundController 
 app.controller('editInOutBoundController', function($scope, srvShareData,$http) {
-	
 	$scope.sharedData = srvShareData.getData();
-	  
 	$scope.rule = $scope.sharedData[0];
-	
 	$scope.updateInOutBoundRule = function(rule){
 		var userData = JSON.stringify($scope.rule);
 		var res = $http.put('/paas-gui/rest/aclService/updateInOutBoundRuleById/', userData);
@@ -263,12 +260,23 @@ app.controller('editInOutBoundController', function($scope, srvShareData,$http) 
 		  res.success(function(data, status, headers, config) {
 			  console.log("data : " +" status : "+status+" headers : "+headers+"  config: "+config);
 			  var mydata = [];
-	             
 	             mydata.push($scope.rule.aclId);
-	     		 $scope.sharedData=mydata;
-	     		window.location.href = "ainoutbound_rule_interface.html";
-			 
-			
+	             srvShareData.addData($scope.rule.aclId);
+//	     		 $scope.sharedData=mydata;
+	     		 
+	     		
+	     	    
+	     		 
+//	     		 window.location.href = "edit-inoutbound-rule.html";
+	     		if(data =='Success'){
+					console.log("login success");
+					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+					window.location.href = "inoutbound_rule_interface.html";
+				}else{
+					console.log("Login Error Please Enter Proper Details");
+					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
+					window.location.href = "edit-inoutbound-rule.html";
+				}
 		  });
 		  res.error(function(data, status, headers, config) {
 		    alert("failure message: " + JSON.stringify({

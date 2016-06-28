@@ -11,7 +11,7 @@ mycontainertype.controller('MainCtrl', function ($scope,$http,srvShareData) {
 	    $scope.dataToShare = myValue;
 	    srvShareData.addData($scope.dataToShare);
 	    
-	    window.location.href = "editcontainertype-interface12.html";
+	    window.location.href = "edit-containertype.html";
 	  };/**END OF SHARED SCOPE */
     
       /**FOR INSERT CONTAINER TYPE============ Container Types REG=============*/
@@ -117,14 +117,14 @@ mycontainertype.controller('containertUpdateCtrl', function($scope, srvShareData
 		  console.log(userData);
 		  res.success(function(data, status, headers, config) {
 			  console.log("data : "+data +" status : "+status+" headers : "+headers+"  config: "+config);
-			  if(data!='failed'){
+			  if(data == 'Success'){
 					console.log("login success");
 					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
 					window.location.href = "containertype-interface.html";
 				}else{
 					console.log("Login Error Please Enter Proper Details");
 					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
-					 window.location.href = "editcontainertype-interface12.html"; 
+					 window.location.href = "edit-containertype.html"; 
 				}
 			
 		  });

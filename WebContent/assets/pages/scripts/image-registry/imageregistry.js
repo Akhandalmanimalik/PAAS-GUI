@@ -14,7 +14,7 @@ myimageregistry.controller('MainCtrl', function ($scope,$http,srvShareData) {
 		    $scope.dataToShare = myValue;
 		    srvShareData.addData($scope.dataToShare);
 		    
-		    window.location.href = "editImageRegistry12.html";
+		    window.location.href = "edit-ImageRegistry.html";
 		  };
     
  
@@ -183,7 +183,7 @@ myimageregistry.controller('imageUpdateCtrl', function($scope, srvShareData,$htt
 				}else{
 					console.log("Login Error Please Enter Proper Details");
 					/*document.location.href = '/paas-gui/html/acl_wizard.html'; also working*/
-					 window.location.href = "editImageRegistry12.html"; 
+					 window.location.href = "edit-ImageRegistry.html"; 
 				}
 			
 		  });

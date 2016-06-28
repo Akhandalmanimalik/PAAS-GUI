@@ -120,22 +120,14 @@ public class ACLServices {
 	 }//end of method getAllACLNames
 	 
 	 	@GET
-		@Path("/deleteACLByNameUsingTenantId/{aclName}")
+		@Path("/deleteACLByaclId/{aclId}")
 		@Produces(MediaType.TEXT_PLAIN)
-		public String deleteACLByNameUsingTenantId(@PathParam("aclName") String aclName,@Context HttpServletRequest req)
+		public String deleteACLByaclId(@PathParam("aclId") String aclId,@Context HttpServletRequest req)
 				throws DataBaseOperationFailedException {
-	 		LOGGER.debug(".deleteAclByName method of ACLServices");
-	 		LOGGER.debug("Name is"+aclName);
-			 
+	 		LOGGER.debug(".deleteAclByName method of ACLServices aclId "+aclId);
 			aclDAO = new AclDAO();
-			RestServiceHelper restServiceHelper = new RestServiceHelper();
-			HttpSession session = req.getSession(true);
-			
-			int tenant_id = restServiceHelper.convertStringToInteger(session
-					.getAttribute("id") + "");
-			
-			aclDAO.deleteACLByName(aclName,tenant_id);
-			return "acl with name : " + aclName + " is delete successfully";
+			aclDAO.deleteACLByaclId(new RestServiceHelper().convertStringToInteger(aclId));
+			return "acl with aclId : " + aclId + " is delete successfully";
 		}// end 
 	 
 	 	/**
@@ -283,7 +275,6 @@ public class ACLServices {
 			LOGGER.debug(".updateInOutBoundRuleById method of AclServices "+inOutBndRule);
 			ObjectMapper mapper = new ObjectMapper();
 			aclDAO = new AclDAO();
-			
 			try{
 				
 				InOutBoundRule inOutBoundRule=mapper.readValue(inOutBndRule, InOutBoundRule.class);

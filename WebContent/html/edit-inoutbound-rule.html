@@ -7,6 +7,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport" />
 <meta content="" name="description" />
 <meta content="" name="author" />
+
 <script src="../assets/global/scripts/angular.min.js" type="text/javascript"></script>
 <script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
 <script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
@@ -45,7 +46,7 @@
 <body
 	class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo">
 	<!-- BEGIN HEADER -->
-	<div data-ng-app="myAcl" data-ng-controller="createNewInOutBoundRule">
+	<div data-ng-app="myAcl" data-ng-controller="editInOutBoundController">
 		<!-- END HEADER -->
 		<!-- BEGIN CONTAINER -->
 		<div class="page-container">
@@ -55,7 +56,7 @@
 				<!-- Progress Bar -->
 				<div class="page-content">
 					<h4>
-						<b> Create In Out Bound Rules </b>
+						<b> In Out Bound Edit Form </b>
 					</h4>
 				</div>
 				<hr>
@@ -84,7 +85,7 @@
 									Your form validation is successful!
 								</div>
 
-								<!-- RULE TYPE -->                                                
+								 <!-- RULE TYPE -->                                                
 								<div class="form-group">
 									<label class="control-label col-md-3"> Rule Type <span
 										class="required"> * </span>
@@ -155,6 +156,7 @@
 									<label class="control-label col-md-3"> Source IP <span
 										class="required"> * </span>
 									</label>
+
 									<div class="col-md-4">
 										<input type="text" id="sourceIp" name="sourceIp"
 											data-ng-model="rule.sourceIp" data-required="1"
@@ -164,7 +166,7 @@
 									<p data-ng-show="vpcWizardForm.sourceIp.$error.maxlength"
 										class="help-block" style="color: red;"> INVALID RULE TYPE </p>
 								</div>
-								
+								 
 								<!-- DESTINATION IP -->                                                
 								<div data-ng-show="rule.ruleType == 'Out Bound'" class="form-group"
 									data-ng-class="{ 'has-error' : vpcWizardForm.sourceIp.$invalid && !vpcWizardForm.sourceIp.$pristine }">
@@ -172,6 +174,7 @@
 									<label class="control-label col-md-3"> Destination IP <span
 										class="required"> * </span>
 									</label>
+
 									<div class="col-md-4">
 										<input type="text" id="sourceIp" name="sourceIp"
 											data-ng-model="rule.sourceIp" data-required="1"
@@ -196,12 +199,12 @@
 										</select>
 									</div>
 								</div>
-								
+								 
 								<div class="form-actions">
 									<div class="row">
 										<div class="col-md-offset-3 col-md-9">
 											<button type="submit" class="btn green btn-success"
-												data-ng-disabled="vpcWizardForm.$invalid" data-ng-click="regRule(selectedAclId);" id="inOutBnd">Submit</button>
+												data-ng-disabled="vpcWizardForm.$invalid" data-ng-click="updateInOutBoundRule(rule)"" id="myaclbtn"> Update </button>
 											<!-- <button type="button" class="btn grey-salsa btn-outline">Cancel -->
 											<a href="/paas-gui/html/inoutbound_rule_interface.html"
 												class="btn grey-salsa btn-outline">Cancel</a>

@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class AclDAO {
 	 private final String GEL_ALL_ACL_QUERY="select * from acl where tenant_id=?";
 	 private final String GET_ACL_ID_BY_ACLNAME_TENANT_ID="select acl_id from acl where acl_name=? and tenant_id=?";
 	 private final String UPDATE_ACL_BY_ID_QUERY="update acl set acl_name=?, tenant_id=?, description=? where acl_id=?";
-	 private final String DELETE_ACL_BY_NAME_QUERY_Using_TenantId = "delete from acl where acl_name=? and tenant_id=?";
+	 private final String DELETE_ACL_BY_ACL_ID = "delete from acl where acl_id=?";
 	 private final String GET_ACL_NAME_BY_ACL_ID_AND_TENANT_ID="select acl_name from acl where acl_id=? and tenant_id=?";
 	  
 	 private final String INSERT_INTO_INOUT_BOUND_RULE_QUERY = "insert into inoutbound_rule (type,protocol,protocol_range,inoutbound_type,source_ip,createDTM,acl_id,action) values(?,?,?,?,?,NOW(),?,?)"; 
@@ -203,12 +202,12 @@ public class AclDAO {
 	 * This method is to delete acl using aclname and tenantid
 	 */
 	/**
-	 * To delete acl by acl name
+	 * To delete acl by aclId
 	 * @param aclName
 	 * @param id
 	 * @throws DataBaseOperationFailedException
 	 */
-	public void deleteACLByName(String aclName,int id)
+	public void deleteACLByaclId(int aclId)
 			throws DataBaseOperationFailedException {
 		LOGGER.debug(".deleating acl method of NetworkDAO");
 		DataBaseConnectionFactory connectionFactory = new DataBaseConnectionFactory();
@@ -217,18 +216,17 @@ public class AclDAO {
 		try {
 			connection = connectionFactory.getConnection("mysql");
 			pstmt = (PreparedStatement) connection
-					.prepareStatement(DELETE_ACL_BY_NAME_QUERY_Using_TenantId);
-			pstmt.setString(1,aclName);
-			pstmt.setInt(2,id);
+					.prepareStatement(DELETE_ACL_BY_ACL_ID);
+			pstmt.setInt(1,aclId);
 			
 			pstmt.executeUpdate();
-			LOGGER.debug("acl : " + aclName + " deleted from db successfully");
+			LOGGER.debug("acl : " + aclId + " deleted from db successfully");
 		} catch (ClassNotFoundException | IOException e) {
-			LOGGER.error("Error in deleting the acl from table using acl name : "
-					+ aclName);
+			LOGGER.error("Error in deleting the acl from table using acl id : "
+					+ aclId);
 			throw new DataBaseOperationFailedException(
-					"Error in deleting the acl from table using acl name : "
-							+ aclName, e);
+					"Error in deleting the acl from table using acl aclId : "
+							+ aclId, e);
 		} catch (SQLException e) {
 			if (e.getErrorCode() == 1064) {
 				String message = "Error in deleting the acl from table using acl name because "
@@ -242,8 +240,8 @@ public class AclDAO {
 				throw new DataBaseOperationFailedException(message, e);
 			} else
 				throw new DataBaseOperationFailedException(
-						"Error in deleting the acl from table using acl name : "
-								+ aclName, e);
+						"Error in deleting the acl from table using acl aclId : "
+								+ aclId, e);
 		} finally {
 			DataBaseHelper.dbCleanUp(connection, pstmt);
 		}

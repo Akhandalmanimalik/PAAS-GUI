@@ -190,7 +190,7 @@ app.controller('editSubnet', function($scope, srvShareData,$http) {
 		var res = $http.put('/paas-gui/rest/subnetService/updateSubnet/', userData);
 		  console.log(userData);
 		  res.success(function(data, status, headers, config) {
-			  alert("coming");
+			  
 			  console.log("data : " +" status : "+status+" headers : "+headers+"  config: "+config);
 			  if(data =='Success'){
 				  

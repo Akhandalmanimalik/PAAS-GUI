@@ -57,18 +57,17 @@ public class SubnetService {
 				if (subnet != null) {
 					HttpSession session = request.getSession(true);
 					subnet.setTenantId((int)session.getAttribute("id"));
-				int id=	subnetDao.addSubnet(subnet);
-					scriptService.createSubnetNetwork(subnet.getCidr(),PAASConstant.TENANT+subnet.getTenantId()+"-"+PAASConstant.SUBNET_PREFIX+id);
-					
+					int id=	subnetDao.addSubnet(subnet);
+					//scriptService.createSubnetNetwork(subnet.getCidr(),PAASConstant.TENANT+subnet.getTenantId()+"-"+PAASConstant.SUBNET_PREFIX+id);
 				} 
 			} catch (IOException  e) {
 				 LOGGER.error(""+e);
 				 
 				throw new PAASNetworkServiceException("Error in reading data : "
 						+ subnetData + " using object mapper in addSubnet");
-			}catch ( InterruptedException e) {
+			}/*catch ( InterruptedException e) {
 				LOGGER.error("Error In Excuting subnetCrearion Script ",e);
-			}
+			}*/
 		}//end of method addSubnet
 	
 	/**
@@ -143,7 +142,7 @@ public class SubnetService {
 			HttpSession session = request.getSession(true);
 
 	
-				new ScriptService().deleteSubnetNetwork(PAASConstant.TENANT+(int)session.getAttribute("id")+"-"+PAASConstant.SUBNET_PREFIX+id);
+				//new ScriptService().deleteSubnetNetwork(PAASConstant.TENANT+(int)session.getAttribute("id")+"-"+PAASConstant.SUBNET_PREFIX+id);
 				 subnetDao.deleteSubnetById(restServHlper.convertStringToInteger(id));
 
 		

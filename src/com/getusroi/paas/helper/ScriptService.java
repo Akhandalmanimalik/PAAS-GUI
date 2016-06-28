@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,29 +22,27 @@ public class ScriptService  {
 	 private static String PASSWORD ="bizruntime@123"; // password of the remote host
 	 private static String host = "54.86.181.80"; // remote host address
 	 private static int port=22;
-	 
-	 private static final String NETWORK_SCRIPT_PATH_FOR_CREATION="/home/bizruntime/network.sh";
-	 private static final String NETWORK_SCRIPT_PATH_FOR_DELETION="/home/bizruntime/delete_subnet.sh";
-	 
-	 private static final String MESSOS_SCRIPT_PATH_FOR_GET_TASK_ID="/home/bizruntime/get_mesos_containerid.sh";
-	 private static final String MESSOS_SCRIPT_PATHE_FOR_UPDATE_NETWORK="/home/bizruntime/attach_dockernet_container.sh";
 
-	public  void callScript(String conainerName,String ip) throws InterruptedException, IOException {
-		  logger.debug(".callScript method of ScriptService");
-		  ProcessBuilder pb = new ProcessBuilder("/root/network.sh", conainerName, ip);
-		   Process p = pb.start();
-		   BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		   String line = null;
-		   while ((line = reader.readLine()) != null)
-		   {
-		      logger.debug(line);
-		   } 
-}//end of method callScript
+	 private static final String SCRITPT_PROPERTY_FILE="scriptConfigFile.properties";
+	 private static final String SUBNET_CREATE_SCRIPT_PATH="subnet_create_script_path";
+	 private static final String SUBNET_DELETE_SCRIPT_PATH="subnet_delete_script_path";
 	 
-	/*# added by sanath*/
-	public  void createSubnetNetwork(String cidr,String enivernment) throws InterruptedException, IOException {
+	 private static final String MESSOS_SCRIPT_PATH_FOR_GET_TASK_ID="messos_gettaskid_script_path";
+	 private static final String MESSOS_SCRIPT_PATHE_FOR_UPDATE_NETWORK="dockernet_attach_script_path";
+
+	
+	 /**
+	  * to create subnet by passing cidr and environment
+	  * @param cidr
+	  * @param enivernment
+	  * @throws InterruptedException
+	  * @throws IOException
+	 * @throws UnableToLoadPropertyFileException 
+	  */
+	public  void createSubnetNetwork(String cidr,String enivernment) throws InterruptedException, IOException, UnableToLoadPropertyFileException {
 		  logger.debug(".callScript method of ScriptService");
-		  ProcessBuilder pb = new ProcessBuilder(NETWORK_SCRIPT_PATH_FOR_CREATION, cidr, enivernment);
+		  Properties prop=PAASGenericHelper.getScriptPropertyFile(SCRITPT_PROPERTY_FILE);
+		  ProcessBuilder pb = new ProcessBuilder(prop.getProperty(SUBNET_CREATE_SCRIPT_PATH), cidr, enivernment);
 		   Process p = pb.start();
 		   BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		   String line = null;
@@ -54,10 +53,18 @@ public class ScriptService  {
 }//end of createDockerNetwork
 	
 	
-	/*# added by sanath*/
-	public  void deleteSubnetNetwork(String subnetName) throws InterruptedException, IOException {
+	/**
+	 * to delete subent based given subnet Name 
+	 * @param subnetName
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws UnableToLoadPropertyFileException
+	 */
+	public  void deleteSubnetNetwork(String subnetName) throws InterruptedException, IOException, UnableToLoadPropertyFileException {
 		  logger.debug(".callScript method of ScriptService");
-		  ProcessBuilder pb = new ProcessBuilder(NETWORK_SCRIPT_PATH_FOR_DELETION,subnetName);
+		  Properties prop=PAASGenericHelper.getScriptPropertyFile(SCRITPT_PROPERTY_FILE);
+
+		  ProcessBuilder pb = new ProcessBuilder(prop.getProperty(SUBNET_DELETE_SCRIPT_PATH),subnetName);
 		   Process p = pb.start();
 		   BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		   String line = null;
@@ -68,10 +75,19 @@ public class ScriptService  {
 }//end o
 	    
 	
-	/*# added by sanath*/
-	public  void updateSubnetNetworkInMessos(MessosTaskInfo messosTaskInfo,String subnetName) throws InterruptedException, IOException {
-		  logger.debug(".updateSubnetNetworkInMessos method of ScriptService");
-		  ProcessBuilder pb = new ProcessBuilder(MESSOS_SCRIPT_PATHE_FOR_UPDATE_NETWORK,messosTaskInfo.getHostIp(),subnetName,messosTaskInfo.getContainerId());
+	/**
+	 * to updated network in messos ( replace bridge by subnetNetwor) 
+	 * @param messosTaskInfo
+	 * @param subnetName
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws UnableToLoadPropertyFileException 
+	 */
+	public  void updateSubnetNetworkInMessos(MessosTaskInfo messosTaskInfo,String subnetName) throws InterruptedException, IOException, UnableToLoadPropertyFileException {
+		  logger.debug("  .updateSubnetNetworkInMessos method of ScriptService");
+		  Properties prop=PAASGenericHelper.getScriptPropertyFile(SCRITPT_PROPERTY_FILE);
+
+		  ProcessBuilder pb = new ProcessBuilder(prop.getProperty(MESSOS_SCRIPT_PATHE_FOR_UPDATE_NETWORK),messosTaskInfo.getHostIp(),subnetName,messosTaskInfo.getContainerId());
 		   Process p = pb.start();
 		   BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		   String line = null;
@@ -156,9 +172,12 @@ public class ScriptService  {
 
 	 
 	 //Added by sanath
-	 public static List<MessosTaskInfo> runSCriptGetMessosTaskId(String appID) throws IOException{
+	 public static List<MessosTaskInfo> runSCriptGetMessosTaskId(String appID) throws IOException, UnableToLoadPropertyFileException{
 		  logger.debug(".runSCriptGetMessosTaskId method of ScriptService with appiD "+ appID);
-		  ProcessBuilder pb = new ProcessBuilder(MESSOS_SCRIPT_PATH_FOR_GET_TASK_ID);
+		  
+		  Properties prop=PAASGenericHelper.getScriptPropertyFile(SCRITPT_PROPERTY_FILE);
+
+		  ProcessBuilder pb = new ProcessBuilder(prop.getProperty(MESSOS_SCRIPT_PATH_FOR_GET_TASK_ID));
 		   Process p = pb.start();
 		   BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		   String line = null;
@@ -185,7 +204,4 @@ public class ScriptService  {
 		  return listTaskInfo;
 	 }
 	 
-	 public static void main(String[] args) throws IOException {
-	ScriptService.runSCriptGetMessosTaskId("tenant1-dev-2324");
-	}
 }

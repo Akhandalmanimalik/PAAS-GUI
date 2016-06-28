@@ -105,6 +105,22 @@
 										<span id="errfn" style="color: red;"></span>
 									</div>
 								</div>
+								
+								<!-- Cidr -->
+								<div class="form-group"
+									data-ng-class="{ 'has-error' : vpcWizardForm.vpc_name.$invalid && !vpcWizardForm.name.$pristine }">
+									<label class="control-label col-md-3">Cidr <span
+										class="required"> * </span>
+									</label>
+									<div class="col-xs-4">
+
+										<input type="text" name="cidr" id="cidr" data-required="1"
+											class="form-control" data-ng-model="vpc.cidr" 
+											data-ng-maxlength="20" required/>
+										
+									</div>
+								</div>
+								
 								<!-- ACL -->
 
 								

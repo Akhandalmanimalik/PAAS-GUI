@@ -9,24 +9,32 @@ public class VPC {
 	private String aclName; 
 	private int aclId;
 	private int tenant_id;
+	private String cidr;
 	
 	public VPC() {
 		// TODO Auto-generated constructor stub
 	}
 	public VPC(int vpcId, String vpc_name, String aclName, int aclId,
-			int tenant_id) {
+			int tenant_id,String cidr) {
 		super();
 		this.vpcId = vpcId;
 		this.vpc_name = vpc_name;
 		this.aclName = aclName;
 		this.aclId = aclId;
 		this.tenant_id = tenant_id;
+		this.cidr=cidr;
+	}
+	public String getCidr() {
+		return cidr;
+	}
+	public void setCidr(String cidr) {
+		this.cidr = cidr;
 	}
 	@Override
 	public String toString() {
 		return "VPC [vpcId=" + vpcId + ", vpc_name=" + vpc_name + ", aclName="
 				+ aclName + ", aclId=" + aclId + ", tenant_id=" + tenant_id
-				+ "]";
+				+ ", cidr=" + cidr + "]";
 	}
 	public int getVpcId() {
 		return vpcId;

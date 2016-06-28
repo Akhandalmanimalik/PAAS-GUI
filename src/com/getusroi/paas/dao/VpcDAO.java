@@ -27,12 +27,12 @@ import com.getusroi.paas.vo.VPC;
 public class VpcDAO {
 	static final Logger LOGGER = LoggerFactory.getLogger(VpcDAO.class);
 	
-	private final String REGISTER_VPC_QUERY="insert into vpc(vpc_name,tenant_id,createdDTM,acl_id) values(?,?,NOW(),?)";
+	private final String REGISTER_VPC_QUERY="insert into vpc(vpc_name,tenant_id,createdDTM,acl_id,cidr) values(?,?,NOW(),?,?)";
 	private final String GET_ALL_VPC_QUERY="select * from vpc where tenant_id=?";
 	private final String GET_VPC_NAME_USING_VPCID_TENANTID = "select vpc_name from vpc where vpc_id =? and tenant_id=?";
 	private final String GET_VPCID_BY_VPCNAME_AND_TENANT_ID_QUERY="select vpc_id from vpc where vpc_name=? and tenant_id=?";
 	private final String DELETE_VPC_BY_NAME_QUERY="delete from vpc where vpc_id=?";
-	private final String UPDATE_VPC_BY_VPCID_QUERY="update vpc set vpc_name=?,tenant_id=?,acl_id=? where vpc_id=?";
+	private final String UPDATE_VPC_BY_VPCID_QUERY="update vpc set vpc_name=?,tenant_id=?,acl_id=?,cidr=? where vpc_id=?";
 	
 	AclDAO aclDAO = null;
 	
@@ -153,6 +153,7 @@ public class VpcDAO {
 			pstmt.setString(1, vpc.getVpc_name());
 			pstmt.setInt(2, vpc.getTenant_id());
 			pstmt.setInt(3, aclDAO.getACLIdByACLNames(vpc.getAclName(), vpc.getTenant_id()));
+			pstmt.setString(4, vpc.getCidr());
 			pstmt.executeUpdate();
 			LOGGER.debug("VPC registerd successfully with data : "+vpc);
 		} catch (ClassNotFoundException | IOException e) {
@@ -199,6 +200,7 @@ public class VpcDAO {
 						vpc.setVpc_name(result.getString("vpc_name"));
 						vpc.setTenant_id(result.getInt("tenant_id"));
 						vpc.setAclName(aclDAO.getACLNameByAclIdAndTenantId(result.getInt("acl_id"), tenant_id));
+						vpc.setCidr(result.getString("cidr"));
 						vpc.setVpcId(result.getInt("vpc_id"));
 						vpcList.add(vpc);
 					}
@@ -275,7 +277,8 @@ public class VpcDAO {
 				pstmt.setString(1, vpc.getVpc_name());
 				pstmt.setInt(2,vpc.getTenant_id());
 				pstmt.setInt(3,aclDAO.getACLIdByACLNames(vpc.getAclName(), vpc.getTenant_id()));
-				pstmt.setInt(4, vpc.getVpcId());
+				pstmt.setString(4, vpc.getCidr());
+				pstmt.setInt(5, vpc.getVpcId());
 				pstmt.execute();
 				LOGGER.debug("VPC update with data : "+vpc+" successfully");
 			} catch (ClassNotFoundException | IOException e) {

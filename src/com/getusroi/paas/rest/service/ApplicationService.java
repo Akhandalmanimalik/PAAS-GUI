@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import com.getusroi.paas.helper.UnableToLoadPropertyFileException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -92,6 +92,9 @@ public class ApplicationService {
 		} catch (IOException e) {
 			LOGGER.error("Error in reading data "+applicationServiceData+" using object mapper in addService" + e);
 			//throw new ApplicationServiceException("Error in reading data "+applicationServiceData+" using object mapper in addService");
+		}catch (UnableToLoadPropertyFileException e) {
+		
+			LOGGER.error("Error in loading script  configuration file ",e);
 		}
 	}//end of method addService
 	

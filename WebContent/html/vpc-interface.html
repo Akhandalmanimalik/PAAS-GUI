@@ -55,6 +55,7 @@
                                                 <tr id="tableheader">
                                                     <th width="10%"> VPC ID </th>
                                                     <th width="40%"> VPC Name </th>
+                                                     <th width="40%"> Cidr </th>
                                                     <th width="40%"> Acl </th>
                                                     <th width="5%"> Delete </th>
                                                     <th width="5%"> Update </th>
@@ -64,6 +65,7 @@
 												<tr data-ng-repeat="field in fields">
 													<td>{{field.vpcId}}</td>
 													<td>{{field.vpc_name}}</td>
+													<td>{{field.cidr}}</td>
 													<td>{{field.aclName}}</td>
 													<td align="center"><a data-ng-click="deleteData(field.vpcId)"><i class="fa fa-remove"></i></a></td>
 													<td align="center"><a data-ng-click="shareVpcObject(field)" ><i class="fa fa-undo"></i></a></td>

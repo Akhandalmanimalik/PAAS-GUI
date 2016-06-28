@@ -262,6 +262,9 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 		     	  res.success(function(data, status, headers, config) {
 		     		 if(data!='failed'){
 		 					/*document.location.href = '/paas-gui/html/acl.html'; also working*/ 
+		     			 var mydata = [];
+			             mydata.push($scope.service.appsId);
+			             srvShareData.addData($scope.service.appsId);
 		 					window.location.href = "applicationWizard.html";
 		 				}else{
 		 					console.log(" update sucessfull for service ");
@@ -338,7 +341,7 @@ app.controller('appCtrl', function($scope,$http, srvShareData) {
 		    	  //NEED TO SHOW IN DROP-DOWN LIST OF CONTAINER_TYPE FIELD IN THE SERVICE.HTML PAGE
 		    	  $scope.getAllRelatedContainerTypes = function() {
 		    	  	console.log("getAllRelatedContainerTypes ");
-		    		   var response = $http.get('/paas-gui/rest/policiesService/getContainerTypesByTenantId');
+		    		   var response = $http.get('/paas-gui/rest/containersService/getContainerTypesByTenantId');
 		    		   response.success(function(data){
 		    			$scope.containerObject = data;
 		    		    	console.log("return data from db: "+$scope.image);

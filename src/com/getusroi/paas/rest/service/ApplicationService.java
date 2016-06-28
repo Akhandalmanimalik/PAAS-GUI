@@ -375,8 +375,8 @@ public class ApplicationService {
 			if(service != null)
 			service.setTenantId((int)session.getAttribute("id"));
 			
-				applicationDAO.updateServiceByServiceId(service);
-				return SUCESS;
+			applicationDAO.updateServiceByServiceId(service);
+			return SUCESS;
 		}catch(Exception e){
 			LOGGER.error("Error updating pplication ",e);
 		}

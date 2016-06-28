@@ -167,7 +167,6 @@ public class ImageRegistryService {
 		String authentication= null;
 		if(imageRegistry != null ){
 			try {
-				
 				Properties prop = PAASGenericHelper.getPropertyFile(DOCKER_HUB_PROPERTY_FILE_KEY);
 				baseURL = prop.getProperty(HTTPS_PROTOCOL_KEY)+prop.getProperty(IMAGE_RESISTRY_NAME)+ prop.getProperty(ALL_REPOSTORY_KEY)+imageRegistry.getLocation()+prop.getProperty(ALL_TAGS_KEY);
 				LOGGER.debug("baseURL: "+baseURL);
